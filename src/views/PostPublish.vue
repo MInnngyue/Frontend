@@ -115,7 +115,9 @@ async function onSubmit() {
         <h1 class="hero-title">发布帖子</h1>
         <p class="hero-sub">填写物品信息，帮助失物早日回家</p>
       </div>
-      <el-button text class="back-btn" @click="router.push('/')">&larr; 返回广场</el-button>
+      <div class="hero-right">
+        <el-button class="back-btn" @click="router.push('/')">&larr; 返回广场</el-button>
+      </div>
     </div>
 
     <el-card class="form-card" shadow="never">
@@ -286,17 +288,24 @@ async function onSubmit() {
   font-size: 14px;
 }
 
+.hero-right {
+  display: flex;
+  align-items: center;
+}
+
 .back-btn {
-  color: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
   font-size: 14px;
-  border-radius: 6px;
-  padding: 6px 14px;
+  border-radius: 8px;
+  padding: 8px 18px;
   transition: all 0.2s;
 }
 
 .back-btn:hover {
-  color: #fff;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.35);
+  border-color: rgba(255,255,255,0.5);
 }
 
 /* Form */
