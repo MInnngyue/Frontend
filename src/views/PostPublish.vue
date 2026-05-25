@@ -151,13 +151,20 @@ async function onSubmit() {
             <el-col :span="8">
               <el-form-item label-width="0">
                 <el-select
+                  v-if="details.length > 0"
                   v-model="form.locationDetail"
                   placeholder="具体地点"
                   style="width: 100%"
-                  :disabled="!form.locationArea"
                 >
                   <el-option v-for="c in details" :key="c.id" :label="c.name" :value="c.name" />
                 </el-select>
+                <el-input
+                  v-else
+                  v-model="form.locationDetail"
+                  placeholder="输入具体地点"
+                  style="width: 100%"
+                  :disabled="!form.locationArea"
+                />
               </el-form-item>
             </el-col>
           </el-row>
