@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { publishPost } from '@/api/post'
 import { getCategories, getCategoryChildren } from '@/api/category'
+import { uploadImage } from '@/api/upload'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
@@ -37,6 +38,8 @@ const areas = ref([])
 const details = ref([])
 const selectedCampusId = ref(null)
 const selectedAreaId = ref(null)
+const imageFiles = ref([])
+const uploading = ref(false)
 
 onMounted(async () => {
   itemCategories.value = (await getCategories('item_category')).data
@@ -68,13 +71,32 @@ async function onAreaChange(name) {
   }
 }
 
+function handleFileChange(file) {
+  imageFiles.value.push(file.raw)
+}
+
+function removeFile(index) {
+  imageFiles.value.splice(index, 1)
+}
+
 async function onSubmit() {
   const valid = await formRef.value.validate().catch(() => false)
   if (!valid) return
 
   submitting.value = true
   try {
-    await publishPost(form.value)
+    // 先上传图片
+    const imageUrls = []
+    for (const file of imageFiles.value) {
+      uploading.value = true
+      const res = await uploadImage(file)
+      imageUrls.push(res.data.data.url)
+      uploading.value = false
+    }
+
+    // 发布帖子
+    const payload = { ...form.value, images: imageUrls }
+    await publishPost(payload)
     ElMessage.success('发布成功')
     router.push('/')
   } catch (e) {
@@ -198,6 +220,27 @@ async function onSubmit() {
           />
         </el-form-item>
 
+        <!-- 图片上传 -->
+        <el-form-item label="图片上传">
+          <el-upload
+            :auto-upload="false"
+            :file-list="[]"
+            accept="image/*"
+            :on-change="handleFileChange"
+          >
+            <el-button type="primary" plain>选择图片</el-button>
+            <template #tip>
+              <span class="el-upload__tip">最多9张，单张≤5MB</span>
+            </template>
+          </el-upload>
+          <div v-if="imageFiles.length > 0" class="preview-list">
+            <div v-for="(file, index) in imageFiles" :key="index" class="preview-item">
+              <span>{{ file.name }}</span>
+              <el-button type="danger" size="small" circle @click="removeFile(index)">✕</el-button>
+            </div>
+          </div>
+        </el-form-item>
+
         <el-form-item>
           <el-button type="primary" :loading="submitting" @click="onSubmit">发布</el-button>
           <el-button @click="router.push('/')">取消</el-button>
@@ -223,5 +266,22 @@ async function onSubmit() {
 
 .form-card {
   padding: 20px;
+}
+
+.preview-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.preview-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f5f7fa;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 13px;
 }
 </style>
