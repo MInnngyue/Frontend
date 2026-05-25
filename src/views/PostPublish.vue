@@ -35,23 +35,37 @@ const colors = ref([])
 const campuses = ref([])
 const areas = ref([])
 const details = ref([])
+const selectedCampusId = ref(null)
+const selectedAreaId = ref(null)
 
 onMounted(async () => {
-  itemCategories.value = await getCategories('item_category')
-  colors.value = await getCategories('color')
-  campuses.value = await getCategories('location')
+  itemCategories.value = (await getCategories('item_category')).data
+  colors.value = (await getCategories('color')).data
+  campuses.value = (await getCategories('location')).data
 })
 
-async function onCampusChange(val) {
+async function onCampusChange(name) {
   form.value.locationArea = ''
   form.value.locationDetail = ''
-  areas.value = val ? await getCategoryChildren('location', val) : []
+  areas.value = []
   details.value = []
+  const campus = campuses.value.find(c => c.name === name)
+  if (campus) {
+    selectedCampusId.value = campus.id
+    const res = await getCategoryChildren('location', campus.id)
+    areas.value = res.data
+  }
 }
 
-async function onAreaChange(val) {
+async function onAreaChange(name) {
   form.value.locationDetail = ''
-  details.value = val ? await getCategoryChildren('location', val) : []
+  details.value = []
+  const area = areas.value.find(c => c.name === name)
+  if (area) {
+    selectedAreaId.value = area.id
+    const res = await getCategoryChildren('location', area.id)
+    details.value = res.data
+  }
 }
 
 async function onSubmit() {
@@ -117,7 +131,7 @@ async function onSubmit() {
                   style="width: 100%"
                   @change="onCampusChange"
                 >
-                  <el-option v-for="c in campuses" :key="c.id" :label="c.name" :value="c.id" />
+                  <el-option v-for="c in campuses" :key="c.id" :label="c.name" :value="c.name" />
                 </el-select>
               </el-form-item>
             </el-col>

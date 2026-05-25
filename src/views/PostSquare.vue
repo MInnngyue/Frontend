@@ -18,7 +18,7 @@ const queryParams = ref({ type: null, itemCategory: '', keyword: '', status: 0 }
 const itemCategories = ref([])
 
 onMounted(async () => {
-  itemCategories.value = await getCategories('item_category')
+  itemCategories.value = (await getCategories('item_category')).data
   fetchPosts()
 })
 
@@ -30,8 +30,8 @@ async function fetchPosts() {
       if (params[k] === '' || params[k] === null) delete params[k]
     })
     const res = await getPosts(params)
-    posts.value = res.records
-    total.value = res.total
+    posts.value = res.data.records
+    total.value = res.data.total
   } finally {
     loading.value = false
   }

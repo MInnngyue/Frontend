@@ -11,7 +11,7 @@ const loading = ref(true)
 
 onMounted(async () => {
   try {
-    post.value = await getPostDetail(route.params.id)
+    post.value = (await getPostDetail(route.params.id)).data
   } finally {
     loading.value = false
   }
