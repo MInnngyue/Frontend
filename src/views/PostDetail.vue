@@ -60,6 +60,11 @@ function canClaim() {
   return !isOwner() && (post.value.status === 0 || post.value.status === 1)
 }
 
+function claimLabel() {
+  if (!post.value) return '发起认领'
+  return post.value.type === 0 ? '我捡到了这个物品' : '这是我的物品'
+}
+
 function findMyClaim() {
   if (!post.value) return null
   return claims.value.find(c => c.claimUserId === currentUserId())
@@ -117,21 +122,17 @@ async function handleDelete() {
       <!-- 标题卡片 -->
       <div class="header-card">
         <div class="header-tags">
-          <el-tag :type="typeTag(post.type)" size="large" effect="dark" round>{{ typeLabel(post.type) }}</el-tag>
-          <el-tag size="large" type="info" effect="plain" round>{{ statusLabel(post.status) }}</el-tag>
+          <span class="capsule capsule-type" :class="post.type === 0 ? 'lost' : 'found'">{{ typeLabel(post.type) }}</span>
+          <span class="capsule capsule-status">{{ statusLabel(post.status) }}</span>
         </div>
         <h2 class="header-title">{{ post.title || '无标题' }}</h2>
-        <div class="header-meta-row">
-          <span class="meta-item">{{ post.itemCategory }}</span>
-          <span class="meta-sep">·</span>
-          <span class="meta-item">{{ post.color }}</span>
-          <span class="meta-sep">·</span>
-          <span class="meta-item">{{ post.locationCampus }}
-            <template v-if="post.locationArea"> / {{ post.locationArea }}</template>
-            <template v-if="post.locationDetail"> / {{ post.locationDetail }}</template>
-          </span>
-          <span class="meta-sep">·</span>
-          <span class="meta-item meta-date">{{ post.lostTime }}</span>
+        <div class="capsule-row">
+          <span class="capsule capsule-field">{{ post.itemCategory }}</span>
+          <span class="capsule capsule-field">{{ post.color }}</span>
+          <span class="capsule capsule-field">{{ post.locationCampus }}</span>
+          <span class="capsule capsule-field" v-if="post.locationArea">{{ post.locationArea }}</span>
+          <span class="capsule capsule-field" v-if="post.locationDetail">{{ post.locationDetail }}</span>
+          <span class="capsule capsule-time">{{ post.lostTime }}</span>
         </div>
       </div>
 
@@ -143,7 +144,6 @@ async function handleDelete() {
 
       <!-- 图片展示 -->
       <div class="content-card" v-if="post.images && post.images.length > 0">
-        <h4>物品图片</h4>
         <div class="image-grid">
           <el-image
             v-for="(img, idx) in post.images"
@@ -174,28 +174,29 @@ async function handleDelete() {
           <el-button
             v-if="canClaim() && !findMyClaim()"
             type="primary"
+            class="action-btn claim-btn"
             :loading="claimLoading"
             @click="handleClaim"
           >
-            发起认领
+            {{ claimLabel() }}
           </el-button>
-          <el-tag v-if="findMyClaim()" type="warning" style="height:32px">
+          <el-tag v-if="findMyClaim()" type="warning" class="claim-status-tag">
             已发起认领 · {{ findMyClaim().status === 2 ? '已完结' : findMyClaim().status === 1 ? '部分确认' : '待确认' }}
           </el-tag>
 
           <!-- 双确认按钮 -->
-          <div v-if="claims.length > 0" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-            <div v-for="c in claims" :key="c.id" style="display:flex;align-items:center;gap:6px">
-              <span style="font-size:12px;color:#909399">认领者 {{ c.claimUserId }}</span>
+          <div v-if="claims.length > 0" class="confirm-row">
+            <div v-for="c in claims" :key="c.id" class="confirm-item">
+              <span class="confirm-hint">认领者 {{ c.claimUserId }}</span>
               <el-button
-                size="small"
+                class="action-btn confirm-btn"
                 v-if="(currentUserId() === c.postOwnerId && c.ownerConfirmed === 0) ||
                       (currentUserId() === c.claimUserId && c.claimerConfirmed === 0)"
                 @click="handleConfirm(c.id)"
               >
                 确认{{ c.status === 2 ? '(已完结)' : '' }}
               </el-button>
-              <el-tag v-else size="small" type="success">已确认</el-tag>
+              <el-tag v-else size="small" type="success" class="confirmed-tag">已确认</el-tag>
             </div>
           </div>
 
@@ -203,12 +204,12 @@ async function handleDelete() {
           <div v-if="isOwner()" class="owner-actions">
             <el-button
               v-if="post.status === 0 || post.status === 1"
-              type="success" plain round
+              type="success" class="action-btn"
               @click="handleComplete"
             >
               标记已找回/已归还
             </el-button>
-            <el-button type="danger" plain round @click="handleDelete">删除帖子</el-button>
+            <el-button type="danger" class="action-btn" @click="handleDelete">删除帖子</el-button>
           </div>
         </div>
       </div>
@@ -217,170 +218,74 @@ async function handleDelete() {
 </template>
 
 <style scoped>
-.detail-page {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 32px 20px;
-}
-
-.back-nav {
-  margin-bottom: 20px;
-}
-
+.detail-page { max-width: 860px; margin: 0 auto; padding: 24px 20px 32px; }
+.back-nav { margin-bottom: 16px; }
 .back-btn {
-  background: rgba(255,255,255,0.9);
-  border: 1px solid #e4e7ed;
-  color: #606266;
-  font-size: 14px;
-  border-radius: 8px;
-  padding: 8px 18px;
-  transition: all 0.2s;
+  background: rgba(255,255,255,0.9); border: 1px solid #e4e7ed; color: #606266;
+  font-size: 14px; border-radius: 8px; padding: 8px 18px; transition: all 0.2s;
 }
+.back-btn:hover { background: #fff; border-color: #409eff; color: #409eff; }
 
-.back-btn:hover {
-  background: #fff;
-  border-color: #409eff;
-  color: #409eff;
-}
-
-/* Header Card */
+/* Header */
 .header-card {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px;
-  padding: 32px;
-  margin-bottom: 20px;
-  color: #fff;
+  border-radius: 16px; padding: 28px 32px; margin-bottom: 16px; color: #fff;
+}
+.header-tags { display: flex; gap: 10px; margin-bottom: 14px; }
+.header-title { font-size: 22px; font-weight: 700; margin: 0 0 14px; }
+
+/* Capsules */
+.capsule {
+  padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; color: #fff;
+}
+.capsule-type.lost { background: #f56c6c; }
+.capsule-type.found { background: #67c23a; }
+.capsule-status { background: rgba(255,255,255,0.25); }
+.capsule-field { background: rgba(255,255,255,0.2); }
+.capsule-time { background: #ffd04b; color: #303133; }
+
+.capsule-row {
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
 }
 
-.header-tags {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.header-title {
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0 0 16px;
-}
-
-.header-meta-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  opacity: 0.9;
-}
-
-.meta-item {
-  font-weight: 500;
-}
-
-.meta-sep {
-  opacity: 0.5;
-}
-
-.meta-date {
-  color: #ffd04b;
-  font-weight: 600;
-}
-
-/* Content Card */
+/* Content */
 .content-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 12px;
+  background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 12px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
+.content-card p { color: #606266; line-height: 1.8; white-space: pre-wrap; margin: 0; }
 
-.content-card h4 {
-  margin: 0 0 12px;
-  color: #303133;
-  font-size: 16px;
-}
-
-.content-card p {
-  color: #606266;
-  line-height: 1.8;
-  white-space: pre-wrap;
-  margin: 0;
-}
-
-/* Image Grid */
-.image-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.detail-image {
-  width: 200px;
-  height: 150px;
-  border-radius: 8px;
-  overflow: hidden;
-}
+/* Images — larger */
+.image-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+.detail-image { width: 100%; max-width: 380px; height: 280px; border-radius: 10px; overflow: hidden; }
 
 /* Bottom */
 .bottom-section {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px 24px;
+  background: #fff; border-radius: 12px; padding: 20px 24px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
-
-.publisher-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 16px;
-}
-
+.publisher-card { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
 .publisher-avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
+  width: 44px; height: 44px; border-radius: 50%;
   background: linear-gradient(135deg, #409eff, #66b1ff);
-  color: #fff;
-  font-size: 18px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  color: #fff; font-size: 18px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
 }
+.publisher-name { font-size: 16px; font-weight: 600; color: #303133; }
+.publisher-meta { font-size: 13px; color: #909399; margin-top: 2px; }
 
-.publisher-detail {
-  flex: 1;
+/* Action Buttons — rectangular, taller */
+.action-buttons { display: flex; flex-direction: column; gap: 10px; }
+.action-btn {
+  height: 44px; border-radius: 8px; font-size: 15px; padding: 0 28px; font-weight: 600;
 }
+.claim-btn { width: 100%; }
+.claim-status-tag { height: 36px; font-size: 14px; display: inline-flex; align-items: center; }
 
-.publisher-name {
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-}
+.confirm-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.confirm-item { display: flex; align-items: center; gap: 8px; }
+.confirm-hint { font-size: 12px; color: #909399; }
+.confirmed-tag { height: 36px; display: inline-flex; align-items: center; }
 
-.publisher-meta {
-  font-size: 13px;
-  color: #909399;
-  margin-top: 2px;
-}
-
-.actions {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-}
-
-.action-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.owner-actions {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  margin-top: 8px;
-}
+.owner-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
 </style>
