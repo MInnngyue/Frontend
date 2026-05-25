@@ -287,13 +287,15 @@ async function onSubmit() {
 }
 
 .back-btn {
-  color: #fff;
+  color: rgba(255,255,255,0.8);
   font-size: 14px;
-  opacity: 0.9;
+  border-radius: 6px;
+  padding: 6px 14px;
+  transition: all 0.2s;
 }
 
 .back-btn:hover {
-  opacity: 1;
+  color: #fff;
   background: rgba(255,255,255,0.15);
 }
 
