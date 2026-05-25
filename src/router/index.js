@@ -10,9 +10,27 @@ const router = createRouter({
     },
     {
       path: '/',
-      name: 'home',
+      name: 'square',
+      component: () => import('../views/PostSquare.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/publish',
+      name: 'publish',
+      component: () => import('../views/PostPublish.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/post/:id',
+      name: 'postDetail',
+      component: () => import('../views/PostDetail.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/profile',
+      name: 'profile',
       component: () => import('../views/HomeView.vue'),
-      meta: { requiresAuth: true }, // 需要登录才能访问
+      meta: { requiresAuth: true },
     },
   ],
 })
