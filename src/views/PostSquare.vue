@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getPosts } from '@/api/post'
 import { getCategories } from '@/api/category'
+import { imageUrl } from '@/utils/url'
 import { Search } from '@element-plus/icons-vue'
 
 const router = useRouter()
@@ -129,7 +130,7 @@ function statusLabel(status) {
       >
         <div class="post-card-body">
           <div v-if="post.coverImage" class="post-cover">
-            <el-image :src="post.coverImage" fit="cover" style="width:120px;height:90px" />
+            <el-image :src="imageUrl(post.coverImage)" fit="cover" style="width:120px;height:90px" />
           </div>
           <div class="post-info">
             <div class="post-title">

@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getPostDetail, deletePost } from '@/api/post'
+import { imageUrl } from '@/utils/url'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const route = useRoute()
@@ -86,6 +87,21 @@ async function handleDelete() {
       <div class="description" v-if="post.description">
         <h4>详细描述</h4>
         <p>{{ post.description }}</p>
+      </div>
+
+      <!-- 图片展示 -->
+      <div class="image-gallery" v-if="post.images && post.images.length > 0">
+        <h4>物品图片</h4>
+        <div class="image-grid">
+          <el-image
+            v-for="(img, idx) in post.images"
+            :key="idx"
+            :src="imageUrl(img)"
+            fit="cover"
+            :preview-src-list="post.images.map(i => imageUrl(i))"
+            style="width:200px;height:150px;border-radius:4px"
+          />
+        </div>
       </div>
 
       <!-- 发布者信息 -->
@@ -176,5 +192,20 @@ async function handleDelete() {
 .actions {
   display: flex;
   gap: 12px;
+}
+
+.image-gallery {
+  margin-bottom: 20px;
+}
+
+.image-gallery h4 {
+  margin-bottom: 10px;
+  color: #303133;
+}
+
+.image-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 </style>
