@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getPostDetail, deletePost } from '@/api/post'
+import { createClaim, confirmClaim, getClaimsByPost, completePost } from '@/api/claim'
 import { imageUrl } from '@/utils/url'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
@@ -9,14 +10,22 @@ const route = useRoute()
 const router = useRouter()
 const post = ref(null)
 const loading = ref(true)
+const claims = ref([])
+const claimLoading = ref(false)
 
 onMounted(async () => {
   try {
     post.value = (await getPostDetail(route.params.id)).data
+    if (post.value) loadClaims()
   } finally {
     loading.value = false
   }
 })
+
+async function loadClaims() {
+  const res = await getClaimsByPost(post.value.id)
+  claims.value = res.data
+}
 
 function typeLabel(type) {
   return type === 0 ? '寻物启事' : '失物招领'
@@ -44,6 +53,45 @@ function currentUserId() {
 function isOwner() {
   if (!post.value) return false
   return post.value.userId === currentUserId()
+}
+
+function canClaim() {
+  if (!post.value) return false
+  return !isOwner() && (post.value.status === 0 || post.value.status === 1)
+}
+
+function findMyClaim() {
+  if (!post.value) return null
+  return claims.value.find(c => c.claimUserId === currentUserId())
+}
+
+async function handleClaim() {
+  claimLoading.value = true
+  try {
+    await createClaim(post.value.id, null)
+    ElMessage.success('认领申请已发起')
+    loadClaims()
+  } catch { /* interceptor handles */ }
+  finally { claimLoading.value = false }
+}
+
+async function handleConfirm(claimId) {
+  try {
+    await confirmClaim(claimId)
+    ElMessage.success('确认成功')
+    const updated = (await getPostDetail(route.params.id)).data
+    post.value = updated
+    loadClaims()
+  } catch { /* interceptor handles */ }
+}
+
+async function handleComplete() {
+  try {
+    await ElMessageBox.confirm('确定标记为已找回/已归还？', '完结帖子', { type: 'info' })
+    await completePost(post.value.id)
+    ElMessage.success('已标记为完结')
+    post.value.status = 3
+  } catch { /* cancelled */ }
 }
 
 async function handleDelete() {
@@ -120,8 +168,48 @@ async function handleDelete() {
           </div>
         </div>
 
-        <div class="actions" v-if="isOwner()">
-          <el-button type="danger" plain round @click="handleDelete">删除帖子</el-button>
+        <!-- 操作按钮组 -->
+        <div class="action-buttons">
+          <!-- 非发布者可发起认领 -->
+          <el-button
+            v-if="canClaim() && !findMyClaim()"
+            type="primary"
+            :loading="claimLoading"
+            @click="handleClaim"
+          >
+            发起认领
+          </el-button>
+          <el-tag v-if="findMyClaim()" type="warning" style="height:32px">
+            已发起认领 · {{ findMyClaim().status === 2 ? '已完结' : findMyClaim().status === 1 ? '部分确认' : '待确认' }}
+          </el-tag>
+
+          <!-- 双确认按钮 -->
+          <div v-if="claims.length > 0" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+            <div v-for="c in claims" :key="c.id" style="display:flex;align-items:center;gap:6px">
+              <span style="font-size:12px;color:#909399">认领者 {{ c.claimUserId }}</span>
+              <el-button
+                size="small"
+                v-if="(currentUserId() === c.postOwnerId && c.ownerConfirmed === 0) ||
+                      (currentUserId() === c.claimUserId && c.claimerConfirmed === 0)"
+                @click="handleConfirm(c.id)"
+              >
+                确认{{ c.status === 2 ? '(已完结)' : '' }}
+              </el-button>
+              <el-tag v-else size="small" type="success">已确认</el-tag>
+            </div>
+          </div>
+
+          <!-- 发布者操作 -->
+          <div v-if="isOwner()" class="owner-actions">
+            <el-button
+              v-if="post.status === 0 || post.status === 1"
+              type="success" plain round
+              @click="handleComplete"
+            >
+              标记已找回/已归还
+            </el-button>
+            <el-button type="danger" plain round @click="handleDelete">删除帖子</el-button>
+          </div>
         </div>
       </div>
     </template>
@@ -281,5 +369,18 @@ async function handleDelete() {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.owner-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 8px;
 }
 </style>
