@@ -109,12 +109,16 @@ async function onSubmit() {
 
 <template>
   <div class="publish-page">
-    <div class="page-header">
-      <h2>发布帖子</h2>
-      <el-button @click="router.push('/')">返回广场</el-button>
+    <!-- Hero -->
+    <div class="hero-section">
+      <div class="hero-left">
+        <h1 class="hero-title">发布帖子</h1>
+        <p class="hero-sub">填写物品信息，帮助失物早日回家</p>
+      </div>
+      <el-button text class="back-btn" @click="router.push('/')">&larr; 返回广场</el-button>
     </div>
 
-    <el-card class="form-card">
+    <el-card class="form-card" shadow="never">
       <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" size="large">
         <!-- 类型切换 -->
         <el-form-item label="类型" prop="type">
@@ -254,18 +258,50 @@ async function onSubmit() {
 .publish-page {
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 32px 20px;
 }
 
-.page-header {
+/* Hero */
+.hero-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  color: #fff;
 }
 
+.hero-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  letter-spacing: 0.5px;
+}
+
+.hero-sub {
+  margin: 0;
+  opacity: 0.85;
+  font-size: 14px;
+}
+
+.back-btn {
+  color: #fff;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.back-btn:hover {
+  opacity: 1;
+  background: rgba(255,255,255,0.15);
+}
+
+/* Form */
 .form-card {
-  padding: 20px;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 
 .preview-list {
@@ -281,7 +317,7 @@ async function onSubmit() {
   gap: 6px;
   background: #f5f7fa;
   padding: 4px 10px;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 13px;
 }
 </style>

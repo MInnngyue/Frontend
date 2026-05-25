@@ -63,34 +63,38 @@ async function handleDelete() {
     <template v-if="post">
       <!-- 返回 -->
       <div class="back-nav">
-        <el-button text @click="router.push('/')">&larr; 返回广场</el-button>
+        <el-button text @click="router.push('/')" class="back-link">&larr; 返回广场</el-button>
       </div>
 
-      <!-- 标题区 -->
-      <div class="post-header">
-        <el-tag :type="typeTag(post.type)" size="large">{{ typeLabel(post.type) }}</el-tag>
-        <el-tag size="large" type="info">{{ statusLabel(post.status) }}</el-tag>
-        <h2>{{ post.title || '无标题' }}</h2>
-      </div>
-
-      <!-- 结构化标签 -->
-      <div class="tag-row">
-        <el-tag size="large" effect="plain">{{ post.itemCategory }}</el-tag>
-        <el-tag size="large" effect="plain">{{ post.color }}</el-tag>
-        <el-tag size="large" effect="plain">{{ post.locationCampus }}</el-tag>
-        <el-tag size="large" effect="plain" v-if="post.locationArea">{{ post.locationArea }}</el-tag>
-        <el-tag size="large" effect="plain" v-if="post.locationDetail">{{ post.locationDetail }}</el-tag>
-        <el-tag size="large" effect="plain" type="warning">{{ post.lostTime }}</el-tag>
+      <!-- 标题卡片 -->
+      <div class="header-card">
+        <div class="header-tags">
+          <el-tag :type="typeTag(post.type)" size="large" effect="dark" round>{{ typeLabel(post.type) }}</el-tag>
+          <el-tag size="large" type="info" effect="plain" round>{{ statusLabel(post.status) }}</el-tag>
+        </div>
+        <h2 class="header-title">{{ post.title || '无标题' }}</h2>
+        <div class="header-meta-row">
+          <span class="meta-item">{{ post.itemCategory }}</span>
+          <span class="meta-sep">·</span>
+          <span class="meta-item">{{ post.color }}</span>
+          <span class="meta-sep">·</span>
+          <span class="meta-item">{{ post.locationCampus }}
+            <template v-if="post.locationArea"> / {{ post.locationArea }}</template>
+            <template v-if="post.locationDetail"> / {{ post.locationDetail }}</template>
+          </span>
+          <span class="meta-sep">·</span>
+          <span class="meta-item meta-date">{{ post.lostTime }}</span>
+        </div>
       </div>
 
       <!-- 正文 -->
-      <div class="description" v-if="post.description">
+      <div class="content-card" v-if="post.description">
         <h4>详细描述</h4>
         <p>{{ post.description }}</p>
       </div>
 
       <!-- 图片展示 -->
-      <div class="image-gallery" v-if="post.images && post.images.length > 0">
+      <div class="content-card" v-if="post.images && post.images.length > 0">
         <h4>物品图片</h4>
         <div class="image-grid">
           <el-image
@@ -99,27 +103,26 @@ async function handleDelete() {
             :src="imageUrl(img)"
             fit="cover"
             :preview-src-list="post.images.map(i => imageUrl(i))"
-            style="width:200px;height:150px;border-radius:4px"
+            class="detail-image"
           />
         </div>
       </div>
 
-      <!-- 发布者信息 -->
-      <el-card class="publisher-card">
-        <div class="publisher-info">
-          <el-avatar :size="40">{{ post.nickname?.charAt(0) || 'U' }}</el-avatar>
-          <div>
+      <!-- 发布者 + 操作 -->
+      <div class="bottom-section">
+        <div class="publisher-card">
+          <div class="publisher-avatar">{{ post.nickname?.charAt(0) || 'U' }}</div>
+          <div class="publisher-detail">
             <div class="publisher-name">{{ post.nickname }}</div>
             <div class="publisher-meta">
-              信用分：{{ post.creditScore }} | 发布于 {{ post.createTime?.substring(0, 16) }}
+              信用分 {{ post.creditScore }} · 发布于 {{ post.createTime?.substring(0, 16) }}
             </div>
           </div>
         </div>
-      </el-card>
 
-      <!-- 操作区 -->
-      <div class="actions" v-if="isOwner()">
-        <el-button type="danger" plain @click="handleDelete">删除帖子</el-button>
+        <div class="actions" v-if="isOwner()">
+          <el-button type="danger" plain round @click="handleDelete">删除帖子</el-button>
+        </div>
       </div>
     </template>
   </div>
@@ -129,83 +132,147 @@ async function handleDelete() {
 .detail-page {
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 32px 20px;
 }
 
 .back-nav {
+  margin-bottom: 20px;
+}
+
+.back-link {
+  color: #909399;
+  font-size: 14px;
+}
+
+.back-link:hover {
+  color: #409eff;
+}
+
+/* Header Card */
+.header-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+.header-tags {
+  display: flex;
+  gap: 10px;
   margin-bottom: 16px;
 }
 
-.post-header {
+.header-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 16px;
+}
+
+.header-meta-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 6px;
+  font-size: 14px;
+  opacity: 0.9;
 }
 
-.post-header h2 {
-  margin: 0;
-  flex: 1;
+.meta-item {
+  font-weight: 500;
 }
 
-.tag-row {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
+.meta-sep {
+  opacity: 0.5;
 }
 
-.description {
-  margin-bottom: 20px;
+.meta-date {
+  color: #ffd04b;
+  font-weight: 600;
 }
 
-.description h4 {
-  margin-bottom: 8px;
+/* Content Card */
+.content-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.content-card h4 {
+  margin: 0 0 12px;
   color: #303133;
+  font-size: 16px;
 }
 
-.description p {
+.content-card p {
   color: #606266;
   line-height: 1.8;
   white-space: pre-wrap;
+  margin: 0;
+}
+
+/* Image Grid */
+.image-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.detail-image {
+  width: 200px;
+  height: 150px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Bottom */
+.bottom-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 
 .publisher-card {
-  margin-bottom: 20px;
-}
-
-.publisher-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.publisher-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #409eff, #66b1ff);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.publisher-detail {
+  flex: 1;
 }
 
 .publisher-name {
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
+  color: #303133;
 }
 
 .publisher-meta {
   font-size: 13px;
   color: #909399;
+  margin-top: 2px;
 }
 
 .actions {
   display: flex;
   gap: 12px;
-}
-
-.image-gallery {
-  margin-bottom: 20px;
-}
-
-.image-gallery h4 {
-  margin-bottom: 10px;
-  color: #303133;
-}
-
-.image-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  justify-content: flex-end;
 }
 </style>
