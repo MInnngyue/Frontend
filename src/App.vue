@@ -61,41 +61,48 @@ body {
   background: #fff;
   border-bottom: 1px solid #e4e7ed;
   z-index: 100;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
 
 .header-inner {
   max-width: 1200px;
   margin: 0 auto;
   height: 100%;
-  display: flex;
+  display: grid;
+  grid-template-columns: 160px 1fr 160px;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 24px;
 }
 
 .brand {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   color: #409eff;
   cursor: pointer;
-  margin-right: 40px;
+  letter-spacing: 0.5px;
 }
 
 .nav-links {
   display: flex;
-  gap: 8px;
-  flex: 1;
+  justify-content: center;
+  gap: 4px;
 }
 
 .nav-links a {
   text-decoration: none;
   color: #606266;
-  padding: 6px 14px;
-  border-radius: 4px;
+  padding: 6px 18px;
+  border-radius: 6px;
   font-size: 14px;
+  font-weight: 500;
   transition: all 0.2s;
 }
 
-.nav-links a:hover,
+.nav-links a:hover {
+  color: #409eff;
+  background: #ecf5ff;
+}
+
 .nav-links a.active {
   color: #409eff;
   background: #ecf5ff;
@@ -104,6 +111,7 @@ body {
 .header-right {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
 }
 
 main.has-header {
