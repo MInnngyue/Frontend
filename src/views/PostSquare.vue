@@ -85,7 +85,7 @@ function statusLabel(status) {
         <h1 class="hero-title">失物广场</h1>
         <p class="hero-sub">找到你遗失的物品，或帮助他人找回失物</p>
       </div>
-      <el-button type="primary" size="large" round @click="goPublish">
+      <el-button class="publish-btn" @click="goPublish">
         <span style="font-size:18px;margin-right:4px">+</span> 发布帖子
       </el-button>
     </div>
@@ -378,5 +378,21 @@ function statusLabel(status) {
   display: flex;
   justify-content: center;
   margin-top: 24px;
+}
+
+.publish-btn {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  font-size: 15px;
+  border-radius: 8px;
+  padding: 10px 24px;
+  transition: all 0.2s;
+}
+
+.publish-btn:hover {
+  background: rgba(255,255,255,0.35);
+  border-color: rgba(255,255,255,0.5);
+  color: #fff;
 }
 </style>

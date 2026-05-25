@@ -63,7 +63,7 @@ async function handleDelete() {
     <template v-if="post">
       <!-- 返回 -->
       <div class="back-nav">
-        <el-button text @click="router.push('/')" class="back-link">&larr; 返回广场</el-button>
+        <el-button class="back-btn" @click="router.push('/')">&larr; 返回广场</el-button>
       </div>
 
       <!-- 标题卡片 -->
@@ -139,12 +139,19 @@ async function handleDelete() {
   margin-bottom: 20px;
 }
 
-.back-link {
-  color: #909399;
+.back-btn {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid #e4e7ed;
+  color: #606266;
   font-size: 14px;
+  border-radius: 8px;
+  padding: 8px 18px;
+  transition: all 0.2s;
 }
 
-.back-link:hover {
+.back-btn:hover {
+  background: #fff;
+  border-color: #409eff;
   color: #409eff;
 }
 
