@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getMessages, getUnreadCount, markAllRead, markRead } from '@/api/message'
+import { getUnreadCount } from '@/api/message'
 import { getConversations } from '@/api/pm'
 
 const route = useRoute()
@@ -11,8 +11,6 @@ const showNav = computed(() => route.path !== '/login')
 const isPublishPage = computed(() => route.path === '/publish')
 const unreadCount = ref(0)
 const pmUnread = ref(0)
-const messages = ref([])
-const showNotifications = ref(false)
 
 function isActive(path) {
   return route.path === path || (path === '/' && route.path.startsWith('/'))
@@ -27,32 +25,9 @@ async function loadUnreadCount() {
   } catch { /* ignore */ }
 }
 
-async function toggleNotifications() {
-  showNotifications.value = !showNotifications.value
-  if (showNotifications.value) {
-    const res = await getMessages()
-    messages.value = res.data
-  }
-}
-
-async function handleMarkRead(id) {
-  await markRead(id)
-  unreadCount.value = Math.max(0, unreadCount.value - 1)
-}
-
-async function handleMarkAllRead() {
-  await markAllRead()
-  unreadCount.value = 0
-}
-
-function goToPost(id) {
-  showNotifications.value = false
-  if (id) router.push(`/post/${id}`)
-}
-
 onMounted(() => {
   loadUnreadCount()
-  setInterval(loadUnreadCount, 30000) // 30s 轮询
+  setInterval(loadUnreadCount, 30000)
 })
 </script>
 
@@ -71,41 +46,10 @@ onMounted(() => {
           <router-link to="/profile" :class="{ active: route.path === '/profile' }">个人中心</router-link>
         </nav>
         <div class="header-right">
-          <!-- 通知铃铛 -->
-          <div class="notify-bell" @click="toggleNotifications">
-            <el-badge :value="unreadCount" :hidden="unreadCount === 0">
-              <span style="font-size:18px;cursor:pointer">🔔</span>
-            </el-badge>
-          </div>
-
-          <!-- 通知下拉 -->
-          <div v-if="showNotifications" class="notify-dropdown" @click.stop>
-            <div class="notify-header">
-              <span>消息通知</span>
-              <el-button text size="small" @click="handleMarkAllRead">全部已读</el-button>
-            </div>
-            <div class="notify-list" v-if="messages.length > 0">
-              <div
-                v-for="msg in messages"
-                :key="msg.id"
-                class="notify-item"
-                :class="{ unread: msg.isRead === 0 }"
-                @click="handleMarkRead(msg.id); goToPost(msg.relatedPostId)"
-              >
-                <div class="notify-title">{{ msg.title }}</div>
-                <div class="notify-content">{{ msg.content?.substring(0, 60) }}...</div>
-                <div class="notify-time">{{ msg.createTime?.substring(0, 16) }}</div>
-              </div>
-            </div>
-            <div v-else class="notify-empty">暂无消息</div>
-          </div>
-
           <el-button v-if="isPublishPage" class="header-back-btn" @click="router.push('/')">&larr; 返回广场</el-button>
           <el-button v-else class="header-publish-btn" @click="router.push('/publish')">+ 发布帖子</el-button>
         </div>
 
-        <!-- 通知下拉遮罩 -->
-        <div v-if="showNotifications" class="notify-overlay" @click="showNotifications = false" />
       </div>
     </header>
     <main :class="{ 'has-header': showNav }">
@@ -202,10 +146,10 @@ body {
 
 .nav-msg-link { position: relative; }
 .nav-badge {
-  position: absolute; top: -4px; right: -4px;
+  position: absolute; top: -2px; right: -6px;
   background: #ef4444; color: #fff; font-size: 10px; font-weight: 700;
-  min-width: 16px; height: 16px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center; padding: 0 4px;
+  min-width: 15px; height: 15px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; padding: 0 3px;
 }
 
 .header-right {

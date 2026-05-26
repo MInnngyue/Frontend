@@ -157,24 +157,24 @@ onMounted(() => {
 .profile-card {
   background: #fff;
   border-radius: 12px;
-  padding: 24px;
+  padding: 18px 20px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 
 .profile-top {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
 .profile-avatar {
-  width: 56px;
-  height: 56px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   background: #409eff;
   color: #fff;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -215,7 +215,7 @@ onMounted(() => {
 }
 
 /* Stats */
-.stats-row { display: flex; align-items: center; padding: 16px 0; }
+.stats-row { display: flex; align-items: center; padding: 12px 0; }
 
 .stat-item {
   flex: 1;

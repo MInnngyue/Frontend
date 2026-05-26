@@ -13,6 +13,7 @@ const dictType = ref('item_category')
 const dictItems = ref([])
 const stats = ref({})
 const loading = ref(false)
+const postFilter = ref('pending')
 
 onMounted(() => { loadAllPosts(); loadStats() })
 
@@ -58,6 +59,7 @@ async function handleDeleteDict(id) { await ElMessageBox.confirm('确定删除�
 
 // Stats
 async function loadStats() { stats.value = (await getStats()).data }
+function onPostFilterChange(val) { postFilter.value = val }
 </script>
 
 <template>
@@ -70,35 +72,34 @@ async function loadStats() { stats.value = (await getStats()).data }
     <el-tabs v-model="activeTab" @tab-change="onTabChange" class="admin-tabs">
       <!-- 帖子管理 -->
       <el-tab-pane label="帖子管理" name="posts">
-        <el-tabs type="card" style="margin-top:-8px">
-          <el-tab-pane :label="'待审核 (' + posts.length + ')'">
-            <el-table :data="posts" v-loading="loading" border stripe max-height="500">
-              <el-table-column prop="id" label="ID" width="60" />
-              <el-table-column label="类型" width="75">
-                <template #default="{ row }"><span class="s-capsule" :class="row.type === 0 ? 'sc-lost' : 'sc-found'">{{ row.type === 0 ? '寻物' : '招领' }}</span></template>
-              </el-table-column>
-              <el-table-column prop="title" label="标题" />
-              <el-table-column label="操作" width="140">
-                <template #default="{ row }"><el-button size="small" type="success" @click="handleApprove(row.id)">通过</el-button><el-button size="small" type="danger" @click="handleReject(row.id)">拒绝</el-button></template>
-              </el-table-column>
-            </el-table>
-          </el-tab-pane>
-          <el-tab-pane label="全部帖子">
-            <el-table :data="allPosts" v-loading="loading" border stripe max-height="500">
-              <el-table-column prop="id" label="ID" width="60" />
-              <el-table-column label="类型" width="75">
-                <template #default="{ row }"><span class="s-capsule" :class="row.type === 0 ? 'sc-lost' : 'sc-found'">{{ row.type === 0 ? '寻物' : '招领' }}</span></template>
-              </el-table-column>
-              <el-table-column prop="title" label="标题" />
-              <el-table-column label="状态" width="90">
-                <template #default="{ row }"><span class="s-capsule" :class="'sc-' + row.status">{{ statusLabel(row.status) }}</span></template>
-              </el-table-column>
-              <el-table-column label="操作" width="80">
-                <template #default="{ row }"><el-button v-if="row.status !== 4 && row.status !== 5" size="small" type="warning" @click="handleArchivePost(row.id)">归档</el-button><span v-else style="color:#c0c4cc;font-size:12px">已归档</span></template>
-              </el-table-column>
-            </el-table>
-          </el-tab-pane>
-        </el-tabs>
+        <div class="post-filter-row">
+          <el-radio-group v-model="postFilter" size="small" @change="onPostFilterChange">
+            <el-radio-button value="pending">待审核 ({{ posts.length }})</el-radio-button>
+            <el-radio-button value="all">全部帖子</el-radio-button>
+          </el-radio-group>
+        </div>
+        <el-table :data="postFilter === 'pending' ? posts : allPosts" v-loading="loading" max-height="500">
+          <el-table-column prop="id" label="ID" width="60" />
+          <el-table-column label="类型" width="80">
+            <template #default="{ row }"><span class="s-capsule" :class="row.type === 0 ? 'sc-lost' : 'sc-found'">{{ row.type === 0 ? '寻物' : '招领' }}</span></template>
+          </el-table-column>
+          <el-table-column prop="title" label="标题" min-width="200" />
+          <el-table-column v-if="postFilter === 'all'" label="状态" width="90">
+            <template #default="{ row }"><span class="s-capsule" :class="'sc-' + row.status">{{ statusLabel(row.status) }}</span></template>
+          </el-table-column>
+          <el-table-column label="操作" width="160">
+            <template #default="{ row }">
+              <template v-if="postFilter === 'pending'">
+                <el-button size="small" type="success" @click="handleApprove(row.id)">通过</el-button>
+                <el-button size="small" type="danger" @click="handleReject(row.id)">拒绝</el-button>
+              </template>
+              <template v-else>
+                <el-button v-if="row.status !== 4 && row.status !== 5" size="small" type="warning" @click="handleArchivePost(row.id)">归档</el-button>
+                <span v-else style="color:#c0c4cc;font-size:12px">已归档</span>
+              </template>
+            </template>
+          </el-table-column>
+        </el-table>
       </el-tab-pane>
 
       <!-- 数据字典 -->
@@ -172,6 +173,7 @@ async function loadStats() { stats.value = (await getStats()).data }
 .back-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: #fff; font-size: 14px; border-radius: 8px; padding: 8px 18px; }
 .back-btn:hover { background: rgba(255,255,255,0.35); }
 .admin-tabs :deep(.el-tabs__header) { background: #fff; border-radius: 10px; padding: 0 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-bottom: 12px; }
+.post-filter-row { margin-bottom: 12px; }
 
 /* Modern table */
 .admin-tabs :deep(.el-table) { border-radius: 10px; overflow: hidden; }
