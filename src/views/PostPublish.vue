@@ -254,9 +254,7 @@ async function onSubmit() {
   padding: 20px 20px 32px;
 }
 
-.page-title {
-  font-size: 56px; font-weight: 800; color: #111827; margin: 0 0 24px; text-align: center;
-}
+.page-title { font-size: 28px; font-weight: 800; color: #111827; margin: 0 0 16px; }
 
 /* Form */
 .form-card {

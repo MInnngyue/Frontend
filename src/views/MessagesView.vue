@@ -20,7 +20,7 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
 
 <template>
   <div class="msg-page">
-    <div class="hero-section"><h1 class="hero-title">消息</h1></div>
+    <h1 class="page-title">消息</h1>
 
     <!-- 系统通知 -->
     <div class="section-card">
@@ -56,8 +56,7 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
 
 <style scoped>
 .msg-page { max-width: 700px; margin: 0 auto; padding: 24px 20px 32px; }
-.hero-section { padding: 28px 32px; margin-bottom: 16px; background: #5a67d8; border-radius: 16px; color: #fff; }
-.hero-title { font-size: 26px; font-weight: 700; margin: 0; }
+.page-title { font-size: 28px; font-weight: 800; color: #111827; margin: 0 0 16px; }
 .section-card { background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
 .section-header { font-size: 16px; font-weight: 700; color: #303133; margin-bottom: 12px; }
 .empty-hint { text-align: center; color: #c0c4cc; padding: 30px 0; font-size: 13px; }

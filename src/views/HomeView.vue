@@ -138,9 +138,7 @@ onMounted(() => {
   padding: 20px 20px 32px;
 }
 
-.page-title {
-  font-size: 56px; font-weight: 800; color: #111827; margin: 0 0 24px; text-align: center;
-}
+.page-title { font-size: 28px; font-weight: 800; color: #111827; margin: 0 0 16px; }
 
 .logout-btn {
   background: none; border: 1px solid #f56c6c; color: #f56c6c;
@@ -221,7 +219,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   padding: 16px 0;
-  border-top: 1px solid #f2f3f5;
+  border-top: 1px solid #1a1a1a;
 }
 
 .stat-item {
@@ -241,11 +239,7 @@ onMounted(() => {
   margin-top: 4px;
 }
 
-.stat-divider {
-  width: 1px;
-  height: 36px;
-  background: #ebeef5;
-}
+.stat-divider { width: 1px; height: 36px; background: #1a1a1a; }
 
 .empty-info {
   text-align: center;
