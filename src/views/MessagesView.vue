@@ -56,7 +56,7 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
 
 <style scoped>
 .msg-page { max-width: 700px; margin: 0 auto; padding: 24px 20px 32px; }
-.page-title { font-size: 28px; font-weight: 800; color: #111827; margin: 0 0 16px; }
+.page-title { font-size: 56px; font-weight: 800; color: #111827; margin: 0 0 24px; text-align: center; }
 .section-card { background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
 .section-header { font-size: 16px; font-weight: 700; color: #303133; margin-bottom: 12px; }
 .empty-hint { text-align: center; color: #c0c4cc; padding: 30px 0; font-size: 13px; }

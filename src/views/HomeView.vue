@@ -138,7 +138,7 @@ onMounted(() => {
   padding: 20px 20px 32px;
 }
 
-.page-title { font-size: 28px; font-weight: 800; color: #111827; margin: 0 0 16px; }
+.page-title { font-size: 56px; font-weight: 800; color: #111827; margin: 0 0 24px; text-align: center; }
 
 .logout-btn {
   background: none; border: 1px solid #f56c6c; color: #f56c6c;

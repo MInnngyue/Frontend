@@ -130,7 +130,7 @@ function statusLabel(status) {
 .post-square { max-width: 1280px; margin: 0 auto; padding: 20px 24px 32px; }
 
 /* Title Bar */
-.page-title { font-size: 28px; font-weight: 800; color: #111827; margin: 0 0 16px; }
+.page-title { font-size: 56px; font-weight: 800; color: #111827; margin: 0 0 24px; text-align: center; }
 
 /* Layout */
 .main-layout { display: flex; gap: 24px; align-items: flex-start; }
