@@ -183,7 +183,7 @@ const getStatusClass = (s) => {
                 <th style="width:80px">类型</th>
                 <th>标题</th>
                 <th v-if="postFilter === 'all'" style="width:96px">状态</th>
-                <th style="width:140px">操作</th>
+                <th style="width:210px">操作</th>
               </tr>
             </thead>
             <tbody>
@@ -194,7 +194,7 @@ const getStatusClass = (s) => {
                 <td v-if="postFilter === 'all'"><span class="status-badge" :class="getStatusClass(row.status)">{{ statusLabel(row.status) }}</span></td>
                 <td class="td-actions">
                   <template v-if="postFilter === 'pending'">
-                    <a class="view-link" @click="goPost(row.id)">查看</a>
+                    <button class="btn btn-view" @click="goPost(row.id)">查看</button>
                     <button class="btn btn-approve" @click="handleApprove(row.id)">通过</button>
                     <button class="btn btn-reject" @click="handleReject(row.id)">拒绝</button>
                   </template>
@@ -403,8 +403,7 @@ const getStatusClass = (s) => {
 .data-table tbody tr:hover { background: #f1f5f9; }
 .td-id { font-family: 'SF Mono', 'JetBrains Mono', monospace; color: #64748b; font-size: 13px; font-weight: 500; }
 .td-title { font-weight: 500; max-width: 480px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.td-actions { display: flex; gap: 6px; flex-wrap: nowrap; }
-.text-muted { color: #cbd5e1; font-size: 13px; }
+.td-actions { display: flex; gap: 6px; flex-wrap: nowrap; align-items: center; }
 
 /* === Badges === */
 .type-badge {
@@ -436,6 +435,8 @@ const getStatusClass = (s) => {
 .btn-approve:hover { background: #bbf7d0; }
 .btn-reject { background: #fee2e2; color: #b91c1c; }
 .btn-reject:hover { background: #fecaca; }
+.btn-view { background: #eef2ff; color: #4338ca; }
+.btn-view:hover { background: #e0e7ff; }
 .btn-archive { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
 .btn-archive:hover { background: #e2e8f0; color: #1e293b; }
 .btn-credit { background: #dcfce7; color: #15803d; }
@@ -452,13 +453,6 @@ const getStatusClass = (s) => {
 .btn-ghost:hover { background: #f1f5f9; }
 .btn-primary { background: #4f46e5; color: #fff; padding: 7px 16px; font-weight: 600; }
 .btn-primary:hover { background: #4338ca; }
-
-/* View link */
-.view-link {
-  color: #4f46e5; font-size: 13px; font-weight: 600; cursor: pointer;
-  padding: 6px 10px; border-radius: 6px; text-decoration: none; transition: all 0.12s;
-}
-.view-link:hover { background: #eef2ff; }
 
 /* === Native Select === */
 .dict-select-wrap { position: relative; width: 140px; }
