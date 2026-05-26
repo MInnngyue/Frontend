@@ -60,6 +60,7 @@ onMounted(() => {
             消息
             <span v-if="unreadCount + pmUnread > 0" class="nav-badge">{{ unreadCount + pmUnread }}</span>
           </router-link>
+          <router-link to="/claims" :class="{ active: route.path === '/claims' }">认领进度</router-link>
           <router-link to="/profile" :class="{ active: route.path === '/profile' }">个人中心</router-link>
         </nav>
         <div class="header-right">

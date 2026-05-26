@@ -37,7 +37,15 @@ function canClaim() { if (!post.value) return false; return !isOwner() && (post.
 function findMyClaim() { if (!post.value) return null; return claims.value.find(c => c.claimUserId === currentUserId()) }
 function claimLabel() { if (!post.value) return '发起认领'; return post.value.type === 0 ? '我捡到了这个物品' : '这是我的物品' }
 
-async function handleClaim() { claimLoading.value = true; try { await createClaim(post.value.id, null); ElMessage.success('认领申请已发起'); loadClaims() } catch { } finally { claimLoading.value = false } }
+async function handleClaim() {
+  claimLoading.value = true
+  try {
+    await createClaim(post.value.id, null)
+    ElMessage.success('认领申请已发起！可在「认领进度」页面跟踪状态')
+    loadClaims()
+  } catch { }
+  finally { claimLoading.value = false }
+}
 async function handleConfirm(claimId) { try { await confirmClaim(claimId); ElMessage.success('确认成功'); post.value = (await getPostDetail(route.params.id)).data; loadClaims() } catch { } }
 async function handleComplete() { try { await ElMessageBox.confirm('确定标记为已找回/已归还？', '完结帖子', { type: 'info' }); await completePost(post.value.id); ElMessage.success('已标记为完结'); post.value.status = 3 } catch { } }
 async function handleDelete() { try { await ElMessageBox.confirm('确定要删除这个帖子吗？', '确认删除', { type: 'warning' }); await deletePost(post.value.id); ElMessage.success('删除成功'); router.push('/') } catch { } }
