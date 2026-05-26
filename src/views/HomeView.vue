@@ -9,6 +9,7 @@
           <div class="profile-avatar">{{ (userInfo?.nickname || userInfo?.username || 'U').charAt(0) }}</div>
           <div class="profile-main">
             <div class="profile-name">{{ userInfo?.nickname || userInfo?.username || '-' }}</div>
+            <div class="profile-sign">{{ userInfo?.signature || '这个人很懒，什么都没写' }}</div>
           </div>
           <div class="profile-right">
             <el-button v-if="isAdmin" class="admin-entry-btn" @click="$router.push('/admin')">管理后台</el-button>
@@ -48,17 +49,13 @@
 
       <!-- 快捷入口 -->
       <div class="quick-links">
-        <div class="quick-link" @click="$router.push('/')">
-          <span class="ql-icon">🔍</span>
-          <span class="ql-text">浏览广场</span>
+        <div class="quick-link" @click="$router.push('/profile')">
+          <span class="ql-icon">📝</span>
+          <span class="ql-text">我的发布</span>
         </div>
-        <div class="quick-link" @click="$router.push('/publish')">
-          <span class="ql-icon">✏️</span>
-          <span class="ql-text">发布帖子</span>
-        </div>
-        <div class="quick-link" @click="loadUserInfo">
-          <span class="ql-icon">🔄</span>
-          <span class="ql-text">刷新信息</span>
+        <div class="quick-link" @click="$router.push('/profile')">
+          <span class="ql-icon">👁️</span>
+          <span class="ql-text">浏览历史</span>
         </div>
       </div>
 
@@ -150,7 +147,7 @@ onMounted(() => {
 .page-title { font-size: 56px; font-weight: 800; color: #111827; margin: 0 0 24px; text-align: center; }
 
 .more-btn { background: #f3f4f6; border: 1px solid #e5e7eb; color: #4b5563; font-size: 13px; border-radius: 8px; padding: 6px 14px; }
-.more-btn:hover { background: #e5e7eb; }
+.more-btn:hover { background: #1a1a1a; border-color: #1a1a1a; color: #fff; }
 
 /* Content */
 .content-area {
@@ -200,12 +197,9 @@ onMounted(() => {
 }
 
 .profile-main { flex: 1; }
+.profile-sign { font-size: 12px; color: #909399; margin-top: 2px; }
 
-.profile-right {
-  display: flex;
-  align-items: center;
-  padding-right: 4px;
-}
+.profile-right { display: flex; align-items: center; gap: 10px; }
 
 .admin-entry-btn {
   background: #5a67d8;
