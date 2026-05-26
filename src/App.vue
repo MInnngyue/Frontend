@@ -16,6 +16,23 @@ function isActive(path) {
   return route.path === path || (path === '/' && route.path.startsWith('/'))
 }
 
+function getUserRole() {
+  try {
+    const ui = JSON.parse(localStorage.getItem('userInfo') || '{}')
+    return ui.role || 0
+  } catch { return 0 }
+}
+
+function isAdmin() {
+  return getUserRole() === 1
+}
+
+function logout() {
+  localStorage.removeItem('token')
+  localStorage.removeItem('userInfo')
+  router.push('/login')
+}
+
 async function loadUnreadCount() {
   try {
     const res = await getUnreadCount()

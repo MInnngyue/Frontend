@@ -36,7 +36,7 @@ const router = createRouter({
       path: '/admin',
       name: 'admin',
       component: () => import('../views/AdminDashboard.vue'),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, requiresAdmin: true },
     },
     {
       path: '/messages',
@@ -58,11 +58,18 @@ router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
 
   if (to.meta.requiresAuth && !token) {
-    // 需要登录但没有token → 跳转登录页
     next('/login')
   } else if (to.path === '/login' && token) {
-    // 已登录却访问登录页 → 跳转首页
     next('/')
+  } else if (to.meta.requiresAdmin) {
+    try {
+      const ui = JSON.parse(localStorage.getItem('userInfo') || '{}')
+      if (ui.role !== 1) {
+        next('/')
+        return
+      }
+    } catch { next('/'); return }
+    next()
   } else {
     next()
   }
