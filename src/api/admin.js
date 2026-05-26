@@ -12,8 +12,8 @@ export function rejectPost(id, reason) {
 export function getUsers(params) {
   return request.get('/api/admin/users', { params })
 }
-export function freezeUser(id) {
-  return request.put(`/api/admin/users/${id}/freeze`)
+export function freezeUser(id, days = 0) {
+  return request.put(`/api/admin/users/${id}/freeze`, null, { params: { days } })
 }
 export function adjustCredit(id, delta) {
   return request.put(`/api/admin/users/${id}/credit`, null, { params: { delta } })
@@ -29,6 +29,9 @@ export function updateDict(id, data) {
 }
 export function deleteDict(id) {
   return request.delete(`/api/admin/dict/${id}`)
+}
+export function blacklistUser(id, days) {
+  return request.put(`/api/admin/users/${id}/blacklist`, null, { params: { days } })
 }
 export function getStats() {
   return request.get('/api/admin/stats')

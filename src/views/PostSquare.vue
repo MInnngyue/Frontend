@@ -63,25 +63,22 @@ function statusLabel(status) {
     <div class="main-layout">
       <!-- 左侧筛选栏 -->
       <aside class="sidebar">
-        <!-- 搜索 -->
-        <div class="filter-section">
+        <div class="filter-card">
           <el-input v-model="queryParams.keyword" placeholder="搜索..." clearable :prefix-icon="Search" @keyup.enter="onSearch" @clear="onSearch" />
         </div>
 
-        <!-- 类型 -->
-        <div class="filter-section">
+        <div class="filter-card">
           <div class="section-title">类型</div>
-          <div class="section-body">
+          <div class="chip-row">
             <span class="chip" :class="{ active: activeTab === null }" @click="onTabChange(null)">全部</span>
             <span class="chip" :class="{ active: activeTab === 0 }" @click="onTabChange(0)">寻物</span>
             <span class="chip" :class="{ active: activeTab === 1 }" @click="onTabChange(1)">招领</span>
           </div>
         </div>
 
-        <!-- 状态 -->
-        <div class="filter-section">
+        <div class="filter-card">
           <div class="section-title">状态</div>
-          <div class="section-body">
+          <div class="chip-row">
             <span class="chip" :class="{ active: queryParams.status === undefined }" @click="delete queryParams.status; page=1; fetchPosts()">全部</span>
             <span class="chip" :class="{ active: queryParams.status === 0 }" @click="onFilterClick('status', 0)">进行中</span>
             <span class="chip" :class="{ active: queryParams.status === 1 }" @click="onFilterClick('status', 1)">已匹配</span>
@@ -90,16 +87,10 @@ function statusLabel(status) {
           </div>
         </div>
 
-        <!-- 物品大类 -->
-        <div class="filter-section">
+        <div class="filter-card">
           <div class="section-title">分类</div>
-          <div class="section-body">
-            <span
-              v-for="c in itemCategories" :key="c.id"
-              class="chip"
-              :class="{ active: queryParams.itemCategory === c.name }"
-              @click="onFilterClick('itemCategory', c.name)"
-            >{{ c.name }}</span>
+          <div class="chip-row">
+            <span v-for="c in itemCategories" :key="c.id" class="chip" :class="{ active: queryParams.itemCategory === c.name }" @click="onFilterClick('itemCategory', c.name)">{{ c.name }}</span>
           </div>
         </div>
       </aside>
@@ -143,37 +134,26 @@ function statusLabel(status) {
 
 /* Title Bar */
 .title-bar { margin-bottom: 16px; }
-.page-title { font-size: 56px; font-weight: 800; color: #111827; margin: 0 0 4px; text-align: center; position: relative; padding-bottom: 6px; line-height: 1.1; }
-.page-title::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 200px;
-  height: 4px;
-  border-radius: 2px;
-  background: #111827;
-}
+.page-title { font-size: 56px; font-weight: 800; color: #111827; margin: 0 0 20px; text-align: center; line-height: 1.1; }
 
 /* Layout */
 .main-layout { display: flex; gap: 24px; align-items: flex-start; }
 
 /* Sidebar */
 .sidebar {
-  width: 320px; flex-shrink: 0; background: #fff; border-radius: 12px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04); padding: 20px;
-  position: sticky; top: 72px;
+  width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px;
+  position: sticky; top: 84px;
 }
-.filter-section { margin-bottom: 22px; }
-.filter-section:last-child { margin-bottom: 0; }
+.filter-card {
+  background: #fff; border-radius: 10px; padding: 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
 .section-title {
-  font-size: 14px; font-weight: 700; color: #374151; margin-bottom: 12px;
-  letter-spacing: 0.5px;
+  font-size: 21px; font-weight: 700; color: #374151; margin-bottom: 10px;
 }
-.section-body { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip {
-  display: inline-block; font-size: 14px; padding: 6px 16px; border-radius: 8px;
+  display: inline-block; font-size: 14px; padding: 5px 14px; border-radius: 8px;
   cursor: pointer; background: #f3f4f6; color: #4b5563;
   transition: all 0.15s; user-select: none;
 }
@@ -188,7 +168,7 @@ function statusLabel(status) {
 
 .card {
   background: #fff; border-radius: 10px; overflow: hidden; cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #d6d0ca;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
   transition: box-shadow 0.15s, transform 0.15s;
 }
 .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-1px); }

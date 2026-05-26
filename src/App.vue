@@ -60,6 +60,7 @@ onMounted(() => {
         <nav class="nav-links">
           <router-link to="/" :class="{ active: route.path === '/' }">失物广场</router-link>
           <router-link to="/publish" :class="{ active: route.path === '/publish' }">发布帖子</router-link>
+          <router-link to="/messages" :class="{ active: route.path === '/messages' }">消息</router-link>
           <router-link to="/profile" :class="{ active: route.path === '/profile' }">个人中心</router-link>
         </nav>
         <div class="header-right">
