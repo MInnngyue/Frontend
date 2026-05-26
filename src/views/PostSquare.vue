@@ -36,7 +36,7 @@ async function fetchPosts() {
   } finally { loading.value = false }
 }
 
-function onTabChange(type) { queryParams.value.type = type; page.value = 1; fetchPosts() }
+function onTabChange(type) { activeTab.value = type; queryParams.value.type = type; page.value = 1; fetchPosts() }
 function onSearch() { page.value = 1; fetchPosts() }
 function onFilterClick(key, val) {
   if (queryParams.value[key] === val) { delete queryParams.value[key] }
@@ -142,7 +142,6 @@ function statusLabel(status) {
 /* Sidebar */
 .sidebar {
   width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px;
-  position: sticky; top: 84px;
 }
 .filter-card {
   background: #fff; border-radius: 10px; padding: 16px;
