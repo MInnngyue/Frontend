@@ -69,28 +69,28 @@ function statusLabel(status) {
 
         <div class="filter-card">
           <div class="section-title">类型</div>
-          <div class="chip-row">
-            <span class="chip" :class="{ active: activeTab === null }" @click="onTabChange(null)">全部</span>
-            <span class="chip" :class="{ active: activeTab === 0 }" @click="onTabChange(0)">寻物</span>
-            <span class="chip" :class="{ active: activeTab === 1 }" @click="onTabChange(1)">招领</span>
+          <div class="row-list">
+            <div class="row-chip" :class="{ active: activeTab === null }" @click="onTabChange(null)">全部 <span v-if="activeTab === null" class="check">☑️</span></div>
+            <div class="row-chip" :class="{ active: activeTab === 0 }" @click="onTabChange(0)">寻物 <span v-if="activeTab === 0" class="check">☑️</span></div>
+            <div class="row-chip" :class="{ active: activeTab === 1 }" @click="onTabChange(1)">招领 <span v-if="activeTab === 1" class="check">☑️</span></div>
           </div>
         </div>
 
         <div class="filter-card">
           <div class="section-title">状态</div>
-          <div class="chip-row">
-            <span class="chip" :class="{ active: queryParams.status === undefined }" @click="delete queryParams.status; page=1; fetchPosts()">全部</span>
-            <span class="chip" :class="{ active: queryParams.status === 0 }" @click="onFilterClick('status', 0)">进行中</span>
-            <span class="chip" :class="{ active: queryParams.status === 1 }" @click="onFilterClick('status', 1)">已匹配</span>
-            <span class="chip" :class="{ active: queryParams.status === 2 }" @click="onFilterClick('status', 2)">认领中</span>
-            <span class="chip" :class="{ active: queryParams.status === 3 }" @click="onFilterClick('status', 3)">已完结</span>
+          <div class="row-list">
+            <div class="row-chip" :class="{ active: queryParams.status === undefined }" @click="delete queryParams.status; page=1; fetchPosts()">全部 <span v-if="queryParams.status === undefined" class="check">☑️</span></div>
+            <div class="row-chip" :class="{ active: queryParams.status === 0 }" @click="onFilterClick('status', 0)">进行中 <span v-if="queryParams.status === 0" class="check">☑️</span></div>
+            <div class="row-chip" :class="{ active: queryParams.status === 1 }" @click="onFilterClick('status', 1)">已匹配 <span v-if="queryParams.status === 1" class="check">☑️</span></div>
+            <div class="row-chip" :class="{ active: queryParams.status === 2 }" @click="onFilterClick('status', 2)">认领中 <span v-if="queryParams.status === 2" class="check">☑️</span></div>
+            <div class="row-chip" :class="{ active: queryParams.status === 3 }" @click="onFilterClick('status', 3)">已完结 <span v-if="queryParams.status === 3" class="check">☑️</span></div>
           </div>
         </div>
 
         <div class="filter-card">
           <div class="section-title">分类</div>
-          <div class="chip-row">
-            <span v-for="c in itemCategories" :key="c.id" class="chip" :class="{ active: queryParams.itemCategory === c.name }" @click="onFilterClick('itemCategory', c.name)">{{ c.name }}</span>
+          <div class="row-list">
+            <div v-for="c in itemCategories" :key="c.id" class="row-chip" :class="{ active: queryParams.itemCategory === c.name }" @click="onFilterClick('itemCategory', c.name)">{{ c.name }} <span v-if="queryParams.itemCategory === c.name" class="check">☑️</span></div>
           </div>
         </div>
       </aside>
@@ -151,14 +151,16 @@ function statusLabel(status) {
 .section-title {
   font-size: 21px; font-weight: 700; color: #374151; margin-bottom: 10px;
 }
-.chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
-.chip {
-  display: inline-block; font-size: 14px; padding: 5px 14px; border-radius: 8px;
-  cursor: pointer; background: #f3f4f6; color: #4b5563;
+.row-list { display: flex; flex-direction: column; gap: 2px; }
+.row-chip {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 14px; padding: 9px 14px; border-radius: 8px;
+  cursor: pointer; background: #f9fafb; color: #4b5563;
   transition: all 0.15s; user-select: none;
 }
-.chip:hover { background: #e5e7eb; }
-.chip.active { background: #3b82f6; color: #fff; }
+.row-chip:hover { background: #e5e7eb; }
+.row-chip.active { background: #eff6ff; color: #3b82f6; }
+.row-chip .check { font-size: 14px; }
 
 /* Content */
 .content-area { flex: 1; min-height: 400px; }
