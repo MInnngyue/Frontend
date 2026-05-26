@@ -134,6 +134,7 @@ function statusLabel(status) {
                 </span>
                 <span class="overlay-tag overlay-item">{{ post.itemCategory }}</span>
               </div>
+              <span class="overlay-status" :class="'status-' + post.status">{{ statusLabel(post.status) }}</span>
             </div>
             <div class="card-info">
               <div class="card-title">{{ post.title || '无标题' }}</div>
@@ -179,7 +180,7 @@ function statusLabel(status) {
 
 /* Sidebar */
 .sidebar {
-  width: 200px; flex-shrink: 0; background: #fff; border-radius: 12px;
+  width: 240px; flex-shrink: 0; background: #fff; border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.04); padding: 12px;
   position: sticky; top: 72px; transition: width 0.2s;
 }
@@ -226,6 +227,17 @@ function statusLabel(status) {
 .overlay-type.lost { background: #f56c6c; }
 .overlay-type.found { background: #67c23a; }
 .overlay-item { background: rgba(0,0,0,0.55); }
+
+.overlay-status {
+  position: absolute; bottom: 10px; right: 10px;
+  padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; color: #fff;
+}
+.status-0 { background: #409eff; }
+.status-1 { background: #e6a23c; }
+.status-2 { background: #e6a23c; }
+.status-3 { background: #67c23a; }
+.status-4 { background: #909399; }
+.status-5 { background: #f56c6c; }
 
 .card-info { padding: 14px 16px; }
 .card-title {
