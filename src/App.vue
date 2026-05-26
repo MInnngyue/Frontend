@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, provide } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getUnreadCount } from '@/api/message'
 import { getConversations } from '@/api/pm'
@@ -41,6 +41,8 @@ async function loadUnreadCount() {
     pmUnread.value = cres.data.reduce((s, c) => s + (c.unread || 0), 0)
   } catch { /* ignore */ }
 }
+
+provide('refreshUnread', loadUnreadCount)
 
 onMounted(() => {
   loadUnreadCount()

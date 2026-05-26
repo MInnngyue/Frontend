@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import { getMessages, markRead } from '@/api/message'
 import { getConversations } from '@/api/pm'
@@ -10,6 +10,7 @@ const conversations = ref([])
 const sysExpanded = ref(false)
 
 const systemUnread = computed(() => systemMsgs.value.filter(m => m.isRead === 0).length)
+const refreshUnread = inject('refreshUnread', () => {})
 
 onMounted(async () => {
   const res = await getMessages(); systemMsgs.value = res.data
@@ -20,7 +21,7 @@ function goPost(id) { router.push(`/post/${id}#comments`) }
 function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId } }) }
 
 async function handleMsgClick(m) {
-  if (m.isRead === 0) { await markRead(m.id); m.isRead = 1 }
+  if (m.isRead === 0) { await markRead(m.id); m.isRead = 1; refreshUnread() }
   if (m.relatedPostId) goPost(m.relatedPostId)
 }
 </script>
