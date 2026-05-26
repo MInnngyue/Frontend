@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import * as echarts from 'echarts'
 import { getPendingPosts, approvePost, rejectPost, getUsers, freezeUser, adjustCredit, blacklistUser, getDict, addDict, updateDict, deleteDict, getStats, getAllPosts, archivePost } from '@/api/admin'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
@@ -15,7 +16,68 @@ const stats = ref({})
 const loading = ref(false)
 const postFilter = ref('pending')
 
+// ECharts refs
+const categoryChartRef = ref(null)
+const statusChartRef = ref(null)
+let categoryChart = null
+let statusChart = null
+
 onMounted(() => { loadAllPosts(); loadStats() })
+
+function initCharts() {
+  nextTick(() => {
+    initCategoryChart()
+    initStatusChart()
+  })
+}
+
+function initCategoryChart() {
+  if (!categoryChartRef.value) return
+  if (categoryChart) categoryChart.dispose()
+  categoryChart = echarts.init(categoryChartRef.value)
+  
+  const cats = stats.value.categoryDistribution || []
+  categoryChart.setOption({
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    grid: { left: '3%', right: '10%', bottom: '3%', top: '10%', containLabel: true },
+    xAxis: { type: 'value', axisLabel: { color: '#909399' }, splitLine: { lineStyle: { color: '#f3f4f6' } } },
+    yAxis: { type: 'category', data: cats.map(c => c.name), axisLabel: { color: '#606266' }, axisLine: { show: false }, axisTick: { show: false } },
+    series: [{
+      name: '帖子数', type: 'bar', data: cats.map(c => c.count),
+      itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+        { offset: 0, color: '#5a67d8' }, { offset: 1, color: '#7c8aff' }
+      ]), borderRadius: [0, 6, 6, 0] },
+      barWidth: 18,
+      label: { show: true, position: 'right', color: '#303133', fontSize: 12 }
+    }]
+  })
+}
+
+function initStatusChart() {
+  if (!statusChartRef.value) return
+  if (statusChart) statusChart.dispose()
+  statusChart = echarts.init(statusChartRef.value)
+  
+  const s = stats.value
+  statusChart.setOption({
+    tooltip: { trigger: 'item' },
+    legend: { bottom: 0, textStyle: { color: '#606266', fontSize: 12 } },
+    series: [{
+      name: '帖子状态', type: 'pie', radius: ['50%', '75%'], center: ['50%', '45%'],
+      avoidLabelOverlap: true,
+      itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 3 },
+      label: { show: true, formatter: '{b}\n{d}%', fontSize: 11 },
+      data: [
+        { value: s.activePosts || 0, name: '进行中', itemStyle: { color: '#3b82f6' } },
+        { value: s.matchedPosts || 0, name: '已匹配', itemStyle: { color: '#f59e0b' } },
+        { value: s.completedPosts || 0, name: '已完结', itemStyle: { color: '#86d3a4' } },
+        { value: s.pendingReviews || 0, name: '待审核', itemStyle: { color: '#ef4444' } }
+      ]
+    }]
+  })
+}
+
+watch(activeTab, (tab) => { if (tab === 'stats') initCharts() })
 
 function onTabChange(tab) {
   if (tab === 'posts') loadAllPosts()
@@ -150,14 +212,14 @@ function onPostFilterChange(val) { postFilter.value = val }
           <div class="stat-card"><div class="stat-num">{{ stats.activePosts || 0 }}</div><div class="stat-label">进行中</div></div>
           <div class="stat-card"><div class="stat-num">{{ stats.completedPosts || 0 }}</div><div class="stat-label">已完结</div></div>
         </div>
-        <div class="chart-section" v-if="stats.categoryDistribution">
-          <h4>物品分类分布</h4>
-          <div class="bar-chart">
-            <div v-for="c in stats.categoryDistribution" :key="c.name" class="bar-row">
-              <span class="bar-label">{{ c.name }}</span>
-              <div class="bar-track"><div class="bar-fill" :style="{ height: Math.max(4, (c.count / Math.max(1, stats.totalPosts || 1)) * 200) + 'px' }"></div></div>
-              <span class="bar-num">{{ c.count }}</span>
-            </div>
+        <div class="charts-row">
+          <div class="chart-card">
+            <h4>物品分类分布</h4>
+            <div ref="categoryChartRef" class="chart-box"></div>
+          </div>
+          <div class="chart-card">
+            <h4>帖子状态分布</h4>
+            <div ref="statusChartRef" class="chart-box"></div>
           </div>
         </div>
       </el-tab-pane>
@@ -192,12 +254,8 @@ function onPostFilterChange(val) { postFilter.value = val }
 .stat-card { background: #fff; border-radius: 10px; padding: 18px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
 .stat-num { font-size: 26px; font-weight: 700; color: #409eff; }
 .stat-label { font-size: 12px; color: #909399; margin-top: 4px; }
-.chart-section { background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-.chart-section h4 { margin: 0 0 16px; color: #303133; }
-.bar-chart { display: flex; align-items: flex-end; gap: 16px; height: 240px; padding: 0 4px; }
-.bar-row { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
-.bar-label { font-size: 12px; color: #606266; white-space: nowrap; }
-.bar-track { width: 100%; height: 200px; display: flex; align-items: flex-end; justify-content: center; background: #f5f6f8; border-radius: 6px; }
-.bar-fill { width: 32px; background: #409eff; border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.4s; }
-.bar-num { font-size: 12px; color: #909399; font-weight: 600; }
+.charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.chart-card { background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.chart-card h4 { margin: 0 0 12px; color: #303133; font-size: 15px; font-weight: 600; }
+.chart-box { width: 100%; height: 320px; }
 </style>

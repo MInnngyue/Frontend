@@ -50,6 +50,11 @@ const router = createRouter({
       component: () => import('../views/ChatView.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'notFound',
+      component: () => import('../views/NotFoundView.vue'),
+    },
   ],
 })
 

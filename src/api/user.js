@@ -25,3 +25,21 @@ export function getUserInfo() {
     method: 'get',
   })
 }
+
+// 更新个人资料
+export function updateProfile(data) {
+  return request({
+    url: '/api/user/profile',
+    method: 'put',
+    data,
+  })
+}
+
+// 获取我的帖子
+export function getMyPosts(params) {
+  return request({
+    url: '/api/user/posts',
+    method: 'get',
+    params,
+  })
+}

@@ -13,8 +13,9 @@
           </div>
           <div class="profile-right">
             <el-button v-if="isAdmin" class="admin-entry-btn" @click="$router.push('/admin')">管理后台</el-button>
+            <input ref="avatarInput" type="file" accept="image/*" style="display:none" @change="handleAvatarChange" />
             <el-dropdown @command="handleMore">
-              <el-button class="more-btn">更多 ▾</el-button>
+              <el-button class="more-btn" :loading="avatarUploading">更多 ▾</el-button>
               <template #dropdown>
                 <el-dropdown-menu>
                   <el-dropdown-item command="avatar">更换头像</el-dropdown-item>
@@ -32,12 +33,12 @@
               <div class="stat-value">{{ userInfo.creditScore ?? 100 }}</div>
               <div class="stat-label">信用分</div>
             </div>
-            <div class="stat-divider" />
+            <div class="stat-divider"></div>
             <div class="stat-item">
               <div class="stat-value">{{ userInfo.successCount ?? 0 }}</div>
               <div class="stat-label">成功认领</div>
             </div>
-            <div class="stat-divider" />
+            <div class="stat-divider"></div>
             <div class="stat-item">
               <div class="stat-value">{{ formatRole(userInfo.role) }}</div>
               <div class="stat-label">账户类型</div>
@@ -49,15 +50,54 @@
 
       <!-- 快捷入口 -->
       <div class="quick-links">
-        <div class="quick-link" @click="$router.push('/profile')">
+        <div class="quick-link" @click="$router.push('/publish')">
           <span class="ql-icon">📝</span>
-          <span class="ql-text">我的发布</span>
+          <span class="ql-text">发布帖子</span>
         </div>
-        <div class="quick-link" @click="$router.push('/profile')">
-          <span class="ql-icon">👁️</span>
-          <span class="ql-text">浏览历史</span>
+        <div class="quick-link" @click="$router.push('/messages')">
+          <span class="ql-icon">💬</span>
+          <span class="ql-text">消息中心</span>
         </div>
       </div>
+
+      <!-- 我的帖子 -->
+      <div class="info-card">
+        <div class="info-title">我的帖子</div>
+        <el-skeleton :loading="postsLoading" animated :rows="3">
+          <div v-if="myPosts.length > 0" class="archive-list">
+            <div v-for="p in myPosts" :key="p.id" class="archive-row" @click="goPost(p.id)" style="cursor:pointer">
+              <div class="archive-info">
+                <span class="s-capsule" :class="p.type === 0 ? 'sc-lost' : 'sc-found'">{{ p.type === 0 ? '寻物' : '招领' }}</span>
+                <span class="archive-title">{{ p.title }}</span>
+              </div>
+              <span class="archive-status">{{ statusLabel(p.status) }}</span>
+            </div>
+          </div>
+          <div v-else class="empty-info">还没有发布过帖子</div>
+        </el-skeleton>
+      </div>
+
+      <!-- Sign dialog -->
+      <el-dialog v-model="showSignDialog" title="修改签名" width="380px">
+        <el-input v-model="signForm.signature" maxlength="50" placeholder="写下你的个性签名" show-word-limit />
+        <template #footer>
+          <el-button @click="showSignDialog = false">取消</el-button>
+          <el-button type="primary" @click="saveSign">保存</el-button>
+        </template>
+      </el-dialog>
+
+      <!-- Info dialog -->
+      <el-dialog v-model="showInfoDialog" title="修改个人信息" width="400px">
+        <el-form label-width="60px">
+          <el-form-item label="昵称"><el-input v-model="infoForm.nickname" maxlength="20" /></el-form-item>
+          <el-form-item label="手机号"><el-input v-model="infoForm.phone" maxlength="11" placeholder="选填" /></el-form-item>
+          <el-form-item label="邮箱"><el-input v-model="infoForm.email" maxlength="50" placeholder="选填" /></el-form-item>
+        </el-form>
+        <template #footer>
+          <el-button @click="showInfoDialog = false">取消</el-button>
+          <el-button type="primary" @click="saveInfo">保存</el-button>
+        </template>
+      </el-dialog>
 
       <!-- 详细信息 -->
       <div class="info-card" v-if="userInfo">
@@ -86,12 +126,21 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { getUserInfo } from '../api/user'
+import { getUserInfo, updateProfile, getMyPosts } from '../api/user'
+import { uploadImage } from '@/api/upload'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const router = useRouter()
-
 const loading = ref(false)
 const userInfo = ref(null)
+const myPosts = ref([])
+const postsLoading = ref(false)
+
+const showSignDialog = ref(false)
+const showInfoDialog = ref(false)
+const signForm = ref({ signature: '' })
+const infoForm = ref({ nickname: '', phone: '', email: '' })
+const avatarUploading = ref(false)
 
 const isAdmin = computed(() => {
   return userInfo.value && (userInfo.value.role === 1 || userInfo.value.role === '1' || userInfo.value.role === 'ADMIN')
@@ -100,12 +149,7 @@ const isAdmin = computed(() => {
 const getLocalUserInfo = () => {
   const localUser = localStorage.getItem('userInfo')
   if (!localUser) return null
-  try {
-    return JSON.parse(localUser)
-  } catch {
-    localStorage.removeItem('userInfo')
-    return null
-  }
+  try { return JSON.parse(localUser) } catch { localStorage.removeItem('userInfo'); return null }
 }
 
 const loadUserInfo = async () => {
@@ -116,9 +160,16 @@ const loadUserInfo = async () => {
     localStorage.setItem('userInfo', JSON.stringify(res.data))
   } catch {
     userInfo.value = getLocalUserInfo()
-  } finally {
-    loading.value = false
-  }
+  } finally { loading.value = false }
+}
+
+const loadMyPosts = async () => {
+  postsLoading.value = true
+  try {
+    const res = await getMyPosts({ page: 1, size: 20 })
+    myPosts.value = res.data || []
+  } catch { myPosts.value = [] }
+  finally { postsLoading.value = false }
 }
 
 const formatRole = (role) => {
@@ -126,195 +177,111 @@ const formatRole = (role) => {
   return '普通用户'
 }
 
-const handleMore = (cmd) => {
-  if (cmd === 'avatar') ElMessage.info('头像更换功能开发中')
-  else if (cmd === 'info') ElMessage.info('个人信息修改开发中')
-  else if (cmd === 'sign') ElMessage.info('签名修改开发中')
+function statusLabel(s) {
+  const map = { 0: '进行中', 1: '已匹配', 2: '认领中', 3: '已完结', 4: '已归档', 5: '已下架' }
+  return map[s] || '未知'
 }
+
+async function handleAvatarChange(e) {
+  const file = e.target.files?.[0]
+  if (!file) return
+  avatarUploading.value = true
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
+    const res = await uploadImage(formData)
+    const url = res.data
+    await updateProfile({ avatar: url })
+    userInfo.value.avatar = url
+    ElMessage.success('头像已更新')
+  } catch { ElMessage.error('头像上传失败') }
+  finally { avatarUploading.value = false }
+}
+
+function openSignDialog() {
+  signForm.value.signature = userInfo.value?.signature || ''
+  showSignDialog.value = true
+}
+async function saveSign() {
+  await updateProfile({ signature: signForm.value.signature })
+  userInfo.value.signature = signForm.value.signature
+  showSignDialog.value = false
+  ElMessage.success('签名已更新')
+}
+
+function openInfoDialog() {
+  infoForm.value.nickname = userInfo.value?.nickname || ''
+  infoForm.value.phone = userInfo.value?.phone || ''
+  infoForm.value.email = userInfo.value?.email || ''
+  showInfoDialog.value = true
+}
+async function saveInfo() {
+  await updateProfile(infoForm.value)
+  Object.assign(userInfo.value, infoForm.value)
+  showInfoDialog.value = false
+  ElMessage.success('资料已更新')
+}
+
+function handleMore(cmd) {
+  if (cmd === 'avatar') {
+    const input = document.querySelector('input[ref="avatarInput"]')
+    if (input) input.click()
+  } else if (cmd === 'info') {
+    openInfoDialog()
+  } else if (cmd === 'sign') {
+    openSignDialog()
+  }
+}
+
+function goPost(id) { router.push(`/post/${id}`) }
 
 onMounted(() => {
   userInfo.value = getLocalUserInfo()
   loadUserInfo()
-})</script>
+  loadMyPosts()
+})
+</script>
 
 <style scoped>
-.profile-page {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 20px 20px 32px;
-}
-
+.profile-page { max-width: 720px; margin: 0 auto; padding: 20px 20px 32px; }
 .page-title { font-size: 56px; font-weight: 800; color: #111827; margin: 0 0 24px; text-align: center; }
-
 .more-btn { background: #f3f4f6; border: 1px solid #e5e7eb; color: #4b5563; font-size: 13px; border-radius: 8px; padding: 6px 14px; }
 .more-btn:hover { background: #1a1a1a; border-color: #1a1a1a; color: #fff; }
-
-/* Content */
-.content-area {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-/* Profile Card */
-.profile-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 18px 20px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-
-.profile-top {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.profile-avatar {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: #409eff;
-  color: #fff;
-  font-size: 20px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.profile-name {
-  font-size: 20px;
-  font-weight: 700;
-  color: #303133;
-}
-
-.profile-role {
-  font-size: 13px;
-  color: #909399;
-  margin-top: 2px;
-}
-
+.content-area { display: flex; flex-direction: column; gap: 12px; }
+.profile-card { background: #fff; border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.profile-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.profile-avatar { width: 46px; height: 46px; border-radius: 50%; background: #409eff; color: #fff; font-size: 20px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.profile-name { font-size: 20px; font-weight: 700; color: #303133; }
 .profile-main { flex: 1; }
 .profile-sign { font-size: 12px; color: #909399; margin-top: 2px; }
-
 .profile-right { display: flex; align-items: center; gap: 10px; }
-
-.admin-entry-btn {
-  background: #5a67d8;
-  border: none;
-  color: #fff;
-  font-size: 13px;
-  border-radius: 8px;
-  padding: 8px 18px;
-}
-.admin-entry-btn:hover {
-  opacity: 0.9;
-  color: #fff;
-}
-
-/* Stats */
+.admin-entry-btn { background: #5a67d8; border: none; color: #fff; font-size: 13px; border-radius: 8px; padding: 8px 18px; }
+.admin-entry-btn:hover { opacity: 0.9; color: #fff; }
 .stats-row { display: flex; align-items: center; padding: 12px 0; }
-
-.stat-item {
-  flex: 1;
-  text-align: center;
-}
-
-.stat-value {
-  font-size: 24px;
-  font-weight: 700;
-  color: #409eff;
-}
-
-.stat-label {
-  font-size: 12px;
-  color: #909399;
-  margin-top: 4px;
-}
-
-
-.empty-info {
-  text-align: center;
-  color: #c0c4cc;
-  padding: 20px 0;
-}
-
-/* Quick Links */
-.quick-links {
-  display: flex;
-  gap: 12px;
-}
-
-.quick-link {
-  flex: 1;
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  text-align: center;
-  cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.quick-link:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-.ql-icon {
-  font-size: 28px;
-  display: block;
-  margin-bottom: 6px;
-}
-
-.ql-text {
-  font-size: 14px;
-  color: #606266;
-  font-weight: 500;
-}
-
-/* Info Card */
-.info-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-
-.info-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  margin-bottom: 16px;
-}
-
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid #f5f6f8;
-}
-
-.info-row:last-child {
-  border-bottom: none;
-}
-
-.info-label {
-  color: #909399;
-  font-size: 14px;
-}
-
-.info-value {
-  color: #303133;
-  font-size: 14px;
-  font-weight: 500;
-}
-
+.stat-item { flex: 1; text-align: center; }
+.stat-value { font-size: 24px; font-weight: 700; color: #409eff; }
+.stat-label { font-size: 12px; color: #909399; margin-top: 4px; }
+.stat-divider { width: 1px; height: 32px; background: #e5e7eb; }
+.empty-info { text-align: center; color: #c0c4cc; padding: 20px 0; }
+.quick-links { display: flex; gap: 12px; }
+.quick-link { flex: 1; background: #fff; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.04); transition: transform 0.2s, box-shadow 0.2s; }
+.quick-link:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.ql-icon { font-size: 28px; display: block; margin-bottom: 6px; }
+.ql-text { font-size: 14px; color: #606266; font-weight: 500; }
+.info-card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.info-title { font-size: 16px; font-weight: 600; color: #303133; margin-bottom: 16px; }
+.info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f5f6f8; }
+.info-row:last-child { border-bottom: none; }
+.info-label { color: #909399; font-size: 14px; }
+.info-value { color: #303133; font-size: 14px; font-weight: 500; }
 .archive-list { display: flex; flex-direction: column; gap: 6px; }
 .archive-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f5f6f8; }
 .archive-row:last-child { border-bottom: none; }
+.archive-row:hover { background: #f9fafb; border-radius: 6px; padding-left: 8px; padding-right: 8px; }
 .archive-info { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
 .archive-title { font-size: 14px; color: #303133; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.archive-status { font-size: 12px; color: #909399; white-space: nowrap; }
+.s-capsule { padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #fff; }
+.sc-lost { background: #ef4444; }
+.sc-found { background: #0891b2; }
 </style>
