@@ -56,27 +56,6 @@
         </div>
       </div>
 
-      <!-- 详细信息 -->
-      <div class="info-card" v-if="userInfo">
-        <div class="info-title">账号信息</div>
-        <div class="info-row">
-          <span class="info-label">用户 ID</span>
-          <span class="info-value">{{ userInfo.id || userInfo.userId || '-' }}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">用户名</span>
-          <span class="info-value">{{ userInfo.username || '-' }}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">昵称</span>
-          <span class="info-value">{{ userInfo.nickname || '-' }}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">邮箱</span>
-          <span class="info-value">{{ userInfo.email || '未设置' }}</span>
-        </div>
-      </div>
-
       <!-- 管理员：帖子归档 -->
       <div class="info-card" v-if="isAdmin">
         <div class="info-title" style="display:flex;justify-content:space-between;align-items:center">
@@ -112,6 +91,27 @@
       </div>
       <div class="info-card" v-if="isAdmin" style="text-align:center">
         <el-button @click="router.push('/admin')">进入管理后台 →</el-button>
+      </div>
+
+      <!-- 详细信息 -->
+      <div class="info-card" v-if="userInfo">
+        <div class="info-title">账号信息</div>
+        <div class="info-row">
+          <span class="info-label">用户 ID</span>
+          <span class="info-value">{{ userInfo.id || userInfo.userId || '-' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">用户名</span>
+          <span class="info-value">{{ userInfo.username || '-' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">昵称</span>
+          <span class="info-value">{{ userInfo.nickname || '-' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">邮箱</span>
+          <span class="info-value">{{ userInfo.email || '未设置' }}</span>
+        </div>
       </div>
     </div>
   </div>
