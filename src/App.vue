@@ -48,6 +48,7 @@ onMounted(() => {
         <div class="header-right">
           <el-button v-if="isPublishPage" class="header-back-btn" @click="router.push('/')">&larr; 返回广场</el-button>
           <el-button v-else class="header-publish-btn" @click="router.push('/publish')">+ 发布帖子</el-button>
+          <el-button class="header-logout-btn" @click="logout">退出</el-button>
         </div>
 
       </div>
@@ -162,6 +163,9 @@ body {
 .header-publish-btn {
   background: #3b82f6; border: none; color: #fff; font-size: 13px; font-weight: 600;
   border-radius: 8px; padding: 7px 18px; transition: background 0.15s; white-space: nowrap;
+}
+.header-logout-btn { background: none; border: 1px solid #dcdfe6; color: #909399; font-size: 13px; border-radius: 8px; padding: 5px 14px; }
+.header-logout-btn:hover { border-color: #f56c6c; color: #f56c6c; }
 }
 .header-publish-btn:hover { background: #2563eb; color: #fff; }
 

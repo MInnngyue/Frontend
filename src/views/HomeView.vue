@@ -12,7 +12,16 @@
           </div>
           <div class="profile-right">
             <el-button v-if="isAdmin" class="admin-entry-btn" @click="$router.push('/admin')">管理后台</el-button>
-            <el-button class="logout-btn" @click="handleLogout">退出登录</el-button>
+            <el-dropdown @command="handleMore">
+              <el-button class="more-btn">更多 ▾</el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item command="avatar">更换头像</el-dropdown-item>
+                  <el-dropdown-item command="info">更改个人信息</el-dropdown-item>
+                  <el-dropdown-item command="sign">更改签名</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </div>
         </div>
 
@@ -120,10 +129,10 @@ const formatRole = (role) => {
   return '普通用户'
 }
 
-const handleLogout = () => {
-  localStorage.removeItem('token')
-  localStorage.removeItem('userInfo')
-  router.push('/login')
+const handleMore = (cmd) => {
+  if (cmd === 'avatar') ElMessage.info('头像更换功能开发中')
+  else if (cmd === 'info') ElMessage.info('个人信息修改开发中')
+  else if (cmd === 'sign') ElMessage.info('签名修改开发中')
 }
 
 onMounted(() => {
@@ -140,11 +149,8 @@ onMounted(() => {
 
 .page-title { font-size: 56px; font-weight: 800; color: #111827; margin: 0 0 24px; text-align: center; }
 
-.logout-btn {
-  background: none; border: 1px solid #f56c6c; color: #f56c6c;
-  font-size: 13px; border-radius: 8px; padding: 6px 16px; transition: all 0.15s;
-}
-.logout-btn:hover { background: #fef0f0; }
+.more-btn { background: #f3f4f6; border: 1px solid #e5e7eb; color: #4b5563; font-size: 13px; border-radius: 8px; padding: 6px 14px; }
+.more-btn:hover { background: #e5e7eb; }
 
 /* Content */
 .content-area {
