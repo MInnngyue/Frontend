@@ -167,7 +167,6 @@ body {
 .header-logout-btn { background: none; border: 1px solid #dcdfe6; color: #909399; font-size: 13px; border-radius: 8px; padding: 5px 14px; transition: all 0.15s; }
 .header-logout-btn:hover { border-color: #f56c6c; color: #f56c6c; }
 .header-logout-btn:focus { border-color: #dcdfe6; color: #909399; }
-}
 .header-publish-btn:hover { background: #2563eb; color: #fff; }
 
 .header-back-btn {
