@@ -55,9 +55,9 @@ function statusLabel(status) {
 
 <template>
   <div class="post-square">
-    <!-- 标题栏 -->
-    <div class="title-bar">
-      <h1 class="page-title">失物广场</h1>
+    <!-- Hero -->
+    <div class="hero-section">
+      <h1 class="hero-title">失物广场</h1>
     </div>
 
     <div class="main-layout">
@@ -133,8 +133,8 @@ function statusLabel(status) {
 .post-square { max-width: 1280px; margin: 0 auto; padding: 20px 24px 32px; }
 
 /* Title Bar */
-.title-bar { margin-bottom: 16px; }
-.page-title { font-size: 56px; font-weight: 800; color: #111827; margin: 0 0 20px; text-align: center; line-height: 1.1; }
+.hero-section { padding: 28px 32px; margin-bottom: 20px; background: #5a67d8; border-radius: 16px; color: #fff; }
+.hero-title { font-size: 26px; font-weight: 700; margin: 0; }
 
 /* Layout */
 .main-layout { display: flex; gap: 24px; align-items: flex-start; }

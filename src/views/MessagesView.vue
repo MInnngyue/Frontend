@@ -20,7 +20,7 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
 
 <template>
   <div class="msg-page">
-    <div class="title-bar"><h1 class="page-title">消息</h1></div>
+    <div class="hero-section"><h1 class="hero-title">消息</h1></div>
 
     <!-- 系统通知 -->
     <div class="section-card">
@@ -56,8 +56,8 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
 
 <style scoped>
 .msg-page { max-width: 700px; margin: 0 auto; padding: 24px 20px 32px; }
-.title-bar { margin-bottom: 20px; }
-.page-title { font-size: 56px; font-weight: 800; color: #111827; margin: 0; text-align: center; line-height: 1.1; }
+.hero-section { padding: 28px 32px; margin-bottom: 16px; background: #5a67d8; border-radius: 16px; color: #fff; }
+.hero-title { font-size: 26px; font-weight: 700; margin: 0; }
 .section-card { background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
 .section-header { font-size: 16px; font-weight: 700; color: #303133; margin-bottom: 12px; }
 .empty-hint { text-align: center; color: #c0c4cc; padding: 30px 0; font-size: 13px; }
@@ -74,6 +74,6 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
 .conv-name { font-size: 14px; font-weight: 600; color: #303133; display: flex; align-items: center; }
 .conv-last { font-size: 12px; color: #909399; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .conv-time { font-size: 11px; color: #c0c4cc; flex-shrink: 0; }
-.expand-btn { background: #3b82f6; border: none; color: #fff; border-radius: 6px; font-size: 13px; padding: 5px 14px; }
+.expand-btn { background: #3b82f6; border: none; color: #fff; border-radius: 6px; font-size: 14px; padding: 7px 18px; }
 .expand-btn:hover { background: #2563eb; color: #fff; }
 </style>

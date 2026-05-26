@@ -227,7 +227,7 @@ async function onSubmit() {
           >
             <el-button type="primary" plain>选择图片</el-button>
             <template #tip>
-              <span class="el-upload__tip">最多9张，单张≤5MB</span>
+              <span class="upload-tip">最多9张，单张≤5MB</span>
             </template>
           </el-upload>
           <div v-if="imageFiles.length > 0" class="preview-list">
@@ -281,4 +281,5 @@ async function onSubmit() {
   border-radius: 6px;
   font-size: 13px;
 }
+.upload-tip { margin-left: 12px; font-size: 12px; color: #909399; }
 </style>

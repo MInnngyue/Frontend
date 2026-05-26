@@ -9,7 +9,6 @@
           <div class="profile-avatar">{{ (userInfo?.nickname || userInfo?.username || 'U').charAt(0) }}</div>
           <div class="profile-main">
             <div class="profile-name">{{ userInfo?.nickname || userInfo?.username || '-' }}</div>
-            <div class="profile-role">{{ formatRole(userInfo?.role) }}</div>
           </div>
           <div class="profile-right">
             <el-button v-if="isAdmin" class="admin-entry-btn" @click="$router.push('/admin')">管理后台</el-button>
@@ -144,10 +143,10 @@ onMounted(() => {
 }
 
 .logout-btn {
-  background: none; border: 1px solid #dcdfe6; color: #909399;
+  background: none; border: 1px solid #f56c6c; color: #f56c6c;
   font-size: 13px; border-radius: 8px; padding: 6px 16px; transition: all 0.15s;
 }
-.logout-btn:hover { border-color: #f56c6c; color: #f56c6c; }
+.logout-btn:hover { background: #fef0f0; }
 
 /* Content */
 .content-area {
