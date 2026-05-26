@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getMessages, markRead } from '@/api/message'
 import { getConversations } from '@/api/pm'
@@ -9,6 +9,8 @@ const systemMsgs = ref([])
 const conversations = ref([])
 const sysExpanded = ref(false)
 
+const systemUnread = computed(() => systemMsgs.value.filter(m => m.isRead === 0).length)
+
 onMounted(async () => {
   const res = await getMessages(); systemMsgs.value = res.data
   const cres = await getConversations(); conversations.value = cres.data
@@ -16,6 +18,11 @@ onMounted(async () => {
 
 function goPost(id) { router.push(`/post/${id}#comments`) }
 function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId } }) }
+
+async function handleMsgClick(m) {
+  if (m.isRead === 0) { await markRead(m.id); m.isRead = 1 }
+  if (m.relatedPostId) goPost(m.relatedPostId)
+}
 </script>
 
 <template>
@@ -25,12 +32,15 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
     <!-- 系统通知 -->
     <div class="section-card">
       <div class="section-header">
-        <span>系统通知</span>
+        <span>系统通知 <span v-if="systemUnread > 0" class="sys-badge">{{ systemUnread }}</span></span>
         <el-button size="small" class="expand-btn" @click="sysExpanded = !sysExpanded">{{ sysExpanded ? '收起 ▲' : '展开 ▼' }}</el-button>
       </div>
       <div v-if="systemMsgs.length === 0" class="empty-hint">暂无系统通知</div>
-      <div v-if="sysExpanded" v-for="m in systemMsgs" :key="m.id" class="msg-item" :class="{ unread: m.isRead === 0 }" @click="markRead(m.id); if(m.relatedPostId) goPost(m.relatedPostId)">
-        <div class="msg-title">{{ m.title }}</div>
+      <div v-if="sysExpanded" v-for="m in systemMsgs" :key="m.id" class="msg-item" :class="{ unread: m.isRead === 0 }" @click="handleMsgClick(m)">
+        <div class="msg-title">
+          {{ m.title }}
+          <span v-if="m.isRead === 0" class="item-badge">●</span>
+        </div>
         <div class="msg-content">{{ m.content }}</div>
         <div class="msg-time">{{ m.createTime?.substring(0, 16).replace('T', ' ') }}</div>
       </div>
@@ -76,4 +86,13 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
 .conv-time { font-size: 12px; color: #94a3b8; flex-shrink: 0; }
 .expand-btn { background: #eef2ff; border: 1px solid #e0e7ff; color: #4338ca; border-radius: 7px; font-size: 13px; padding: 6px 14px; height: auto; }
 .expand-btn:hover { background: #e0e7ff; color: #3730a3; border-color: #c7d2fe; }
+
+/* Badges */
+.sys-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px;
+  background: #ef4444; color: #fff; font-size: 11px; font-weight: 700;
+  margin-left: 6px; vertical-align: middle;
+}
+.item-badge { color: #ef4444; font-size: 10px; margin-left: 6px; }
 </style>

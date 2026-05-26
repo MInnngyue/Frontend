@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getMyClaims, confirmClaim } from '@/api/claim'
 import { ElMessage } from 'element-plus'
@@ -9,6 +9,10 @@ const claims = ref([])
 const loading = ref(true)
 const confirming = ref(null)
 
+// Search & filter
+const searchText = ref('')
+const filterStatus = ref('all') // all | pending | waiting | done
+
 onMounted(async () => {
   try { claims.value = (await getMyClaims()).data }
   catch { claims.value = [] }
@@ -16,59 +20,92 @@ onMounted(async () => {
 })
 
 function typeLabel(t) { return t === 0 ? '寻物' : '招领' }
-function statusLabel(s) {
+function statusCn(s) {
   const map = { 0: '待确认', 1: '一方已确认', 2: '已完结', 3: '已取消' }
   return map[s] || '未知'
 }
 
-const steps = [
-  { key: 'init', label: '发起认领', desc: '一方发起认领申请' },
-  { key: 'confirm', label: '双方确认', desc: '双方均确认物品归属' },
-  { key: 'done', label: '认领完结', desc: '流程结束，双方加分' },
-]
+// Sorting: 待我确认 > 我已确认等待对方 > 已完成
+function sortPriority(c) {
+  if (c.claimStatus === 2 || c.claimStatus === 3) return 3
+  const myConfirmed = c.myRole === 'owner' ? c.ownerConfirmed : c.claimerConfirmed
+  const otherConfirmed = c.myRole === 'owner' ? c.claimerConfirmed : c.ownerConfirmed
+  if (!myConfirmed) return 0  // 待我确认 → 最高优先
+  if (!otherConfirmed) return 1 // 我已确认，等对方
+  return 2
+}
 
-function progressStep(status, ownerConfirmed, claimerConfirmed, myRole) {
-  // Determine which step we're at
-  if (status === 2) return 2  // 已完结 → step 2 done
-  if (status === 0) return 0  // 待确认 → step 0
-  if (status === 1) {
-    // 一方已确认 → step 1
-    return 1
+const filteredClaims = computed(() => {
+  let list = [...claims.value]
+
+  // Sort: priority
+  list.sort((a, b) => sortPriority(a) - sortPriority(b))
+
+  // Search text
+  if (searchText.value.trim()) {
+    const q = searchText.value.trim().toLowerCase()
+    list = list.filter(c =>
+      c.postTitle?.toLowerCase().includes(q) ||
+      typeLabel(c.postType).includes(q) ||
+      c.otherPartyName?.toLowerCase().includes(q)
+    )
   }
+
+  // Status filter
+  if (filterStatus.value === 'pending') {
+    list = list.filter(c => {
+      const myC = c.myRole === 'owner' ? c.ownerConfirmed : c.claimerConfirmed
+      return c.claimStatus < 2 && !myC
+    })
+  } else if (filterStatus.value === 'waiting') {
+    list = list.filter(c => {
+      const myC = c.myRole === 'owner' ? c.ownerConfirmed : c.claimerConfirmed
+      const otherC = c.myRole === 'owner' ? c.claimerConfirmed : c.ownerConfirmed
+      return c.claimStatus < 2 && myC && !otherC
+    })
+  } else if (filterStatus.value === 'done') {
+    list = list.filter(c => c.claimStatus === 2)
+  }
+
+  return list
+})
+
+function progressStep(c) {
+  if (c.claimStatus === 2) return 2
+  const myConfirmed = c.myRole === 'owner' ? c.ownerConfirmed : c.claimerConfirmed
+  const otherConfirmed = c.myRole === 'owner' ? c.claimerConfirmed : c.ownerConfirmed
+  if (myConfirmed && otherConfirmed) return 2
+  if (myConfirmed || otherConfirmed) return 1
   return 0
 }
 
-function stepClass(stepIdx, claim) {
-  const current = progressStep(claim.claimStatus, claim.ownerConfirmed, claim.claimerConfirmed, claim.myRole)
-  if (stepIdx < current) return 'step-done'
-  if (stepIdx === current) return 'step-active'
-  return 'step-pending'
+function roleBadge(c) {
+  if (c.myRole === 'owner') return { text: '我是发布者', cls: 'role-owner' }
+  return { text: '我是认领人', cls: 'role-claimer' }
 }
 
-function actionText(claim) {
-  if (claim.claimStatus === 2) return '已完成'
-  if (claim.claimStatus === 3) return '已取消'
-
-  const myConfirmed = claim.myRole === 'owner' ? claim.ownerConfirmed : claim.claimerConfirmed
-  const otherConfirmed = claim.myRole === 'owner' ? claim.claimerConfirmed : claim.ownerConfirmed
-
-  if (!myConfirmed && !otherConfirmed) return '待我确认'
-  if (!myConfirmed && otherConfirmed) return '对方已确认，待我确认'
-  if (myConfirmed && !otherConfirmed) return '我已确认，等待对方'
-  return '确认中'
+function actionLabel(c) {
+  if (c.claimStatus === 2) return '✅ 已完成'
+  if (c.claimStatus === 3) return '已取消'
+  const myC = c.myRole === 'owner' ? c.ownerConfirmed : c.claimerConfirmed
+  const otherC = c.myRole === 'owner' ? c.claimerConfirmed : c.ownerConfirmed
+  if (!myC && !otherC) return '🔔 待我确认'
+  if (!myC && otherC) return '🔔 对方已确认，待我确认'
+  if (myC && !otherC) return '⏳ 我已确认，等待对方'
+  return ''
 }
 
-function canConfirm(claim) {
-  if (claim.claimStatus >= 2) return false
-  const myConfirmed = claim.myRole === 'owner' ? claim.ownerConfirmed : claim.claimerConfirmed
-  return !myConfirmed
+function canConfirm(c) {
+  if (c.claimStatus >= 2) return false
+  const myC = c.myRole === 'owner' ? c.ownerConfirmed : c.claimerConfirmed
+  return !myC
 }
 
-async function handleConfirm(claim) {
-  confirming.value = claim.claimId
+async function handleConfirm(c) {
+  confirming.value = c.claimId
   try {
-    await confirmClaim(claim.claimId)
-    ElMessage.success('确认成功！')
+    await confirmClaim(c.claimId)
+    ElMessage.success('确认成功！对方已收到通知')
     claims.value = (await getMyClaims()).data
   } catch { }
   finally { confirming.value = null }
@@ -81,56 +118,71 @@ function goPost(id) { router.push(`/post/${id}`) }
   <div class="claims-page">
     <h1 class="page-title">认领进度</h1>
 
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <div class="search-input-wrap">
+        <span class="search-icon">🔍</span>
+        <input v-model="searchText" placeholder="搜索帖子标题、类型或对方昵称..." class="search-input" />
+      </div>
+      <div class="filter-chips">
+        <button :class="['chip', { active: filterStatus === 'all' }]" @click="filterStatus = 'all'">全部</button>
+        <button :class="['chip', { active: filterStatus === 'pending' }]" @click="filterStatus = 'pending'">待我确认</button>
+        <button :class="['chip', { active: filterStatus === 'waiting' }]" @click="filterStatus = 'waiting'">等待对方</button>
+        <button :class="['chip', { active: filterStatus === 'done' }]" @click="filterStatus = 'done'">已完成</button>
+      </div>
+    </div>
+
     <div class="claims-list" v-loading="loading">
-      <!-- Empty state -->
-      <div v-if="!loading && claims.length === 0" class="empty-state">
+      <div v-if="!loading && filteredClaims.length === 0" class="empty-state">
         <div class="empty-icon">📋</div>
         <div class="empty-title">暂无认领记录</div>
         <div class="empty-desc">在失物广场找到你的物品后，点击"这是我的物品"即可发起认领</div>
         <button class="empty-btn" @click="router.push('/')">去失物广场</button>
       </div>
 
-      <!-- Claim cards -->
-      <div v-for="c in claims" :key="c.claimId" class="claim-card" :class="'status-' + c.claimStatus">
-        <!-- Header -->
+      <div v-for="c in filteredClaims" :key="c.claimId" class="claim-card" :class="'status-' + c.claimStatus">
+        <!-- Top bar: type + title + status -->
         <div class="claim-header" @click="goPost(c.postId)">
           <span class="claim-type" :class="c.postType === 0 ? 't-lost' : 't-found'">{{ typeLabel(c.postType) }}</span>
           <span class="claim-title">{{ c.postTitle }}</span>
-          <span class="claim-status-tag" :class="'st-' + c.claimStatus">{{ statusLabel(c.claimStatus) }}</span>
+          <span class="claim-badge" :class="'cs-' + c.claimStatus">{{ statusCn(c.claimStatus) }}</span>
         </div>
 
-        <!-- Progress timeline -->
+        <!-- Role + Party Info -->
+        <div class="party-row">
+          <div class="party-card" :class="c.myRole === 'owner' ? 'pc-owner' : 'pc-claimer'">
+            <span class="party-label">{{ c.myRole === 'owner' ? '我(发布者)' : '我(认领人)' }}</span>
+            <span class="party-confirm" v-if="(c.myRole === 'owner' ? c.ownerConfirmed : c.claimerConfirmed)">✓ 已确认</span>
+            <span class="party-confirm no" v-else>待确认</span>
+          </div>
+          <span class="party-arrow">⇄</span>
+          <div class="party-card" :class="c.myRole === 'owner' ? 'pc-claimer' : 'pc-owner'">
+            <span class="party-label">{{ c.otherPartyName }}</span>
+            <span class="party-role-hint">{{ c.myRole === 'owner' ? '认领人' : '发布者' }}</span>
+            <span class="party-confirm" v-if="(c.myRole === 'owner' ? c.claimerConfirmed : c.ownerConfirmed)">✓ 已确认</span>
+            <span class="party-confirm no" v-else>待确认</span>
+          </div>
+        </div>
+
+        <!-- Progress bar -->
         <div class="progress-bar">
           <div class="progress-track">
-            <div class="progress-fill" :style="{ width: progressStep(c.claimStatus, c.ownerConfirmed, c.claimerConfirmed, c.myRole) === 2 ? '100%' : progressStep(c.claimStatus, c.ownerConfirmed, c.claimerConfirmed, c.myRole) === 1 ? '50%' : '0%' }"></div>
+            <div class="progress-fill" :style="{ width: progressStep(c) === 2 ? '100%' : progressStep(c) === 1 ? '50%' : '0%' }"></div>
           </div>
-          <div class="progress-steps">
-            <div v-for="(step, idx) in steps" :key="step.key" class="progress-step" :class="stepClass(idx, c)">
-              <div class="step-dot">{{ idx < progressStep(c.claimStatus, c.ownerConfirmed, c.claimerConfirmed, c.myRole) ? '✓' : idx + 1 }}</div>
-              <div class="step-label">{{ step.label }}</div>
-              <div class="step-desc">{{ step.desc }}</div>
-            </div>
+          <div class="progress-labels">
+            <span :class="progressStep(c) >= 1 ? 'pl-done' : 'pl-active'">发起认领</span>
+            <span :class="progressStep(c) >= 2 ? 'pl-done' : (progressStep(c) === 1 ? 'pl-active' : '')">双方确认</span>
+            <span :class="progressStep(c) === 2 ? 'pl-done' : ''">完结</span>
           </div>
         </div>
 
-        <!-- Info row -->
-        <div class="claim-info">
-          <span class="info-role" :class="c.myRole === 'owner' ? 'role-owner' : 'role-claimer'">
-            {{ c.myRole === 'owner' ? '我是发布者' : '我是认领人' }}
-          </span>
-          <span class="info-party">对方：{{ c.otherPartyName }}</span>
-          <span class="info-time">{{ c.updateTime?.substring(0, 16).replace('T', ' ') }}</span>
-        </div>
+        <!-- Time -->
+        <div class="claim-time">更新于 {{ c.updateTime?.substring(0, 16).replace('T', ' ') }}</div>
 
         <!-- Action -->
         <div class="claim-action" v-if="c.claimStatus < 2">
-          <span class="action-hint">{{ actionText(c) }}</span>
-          <button
-            v-if="canConfirm(c)"
-            class="btn-confirm"
-            :disabled="confirming === c.claimId"
-            @click="handleConfirm(c)"
-          >
+          <span class="action-hint">{{ actionLabel(c) }}</span>
+          <button v-if="canConfirm(c)" class="btn-confirm" :disabled="confirming === c.claimId" @click="handleConfirm(c)">
             {{ confirming === c.claimId ? '确认中...' : '确认认领' }}
           </button>
         </div>
@@ -144,7 +196,25 @@ function goPost(id) { router.push(`/post/${id}`) }
 
 <style scoped>
 .claims-page { max-width: 800px; margin: 0 auto; padding: 24px 20px 40px; min-height: 100vh; }
-.page-title { font-size: 28px; font-weight: 700; color: #1e293b; margin: 0 0 24px; }
+.page-title { font-size: 28px; font-weight: 700; color: #1e293b; margin: 0 0 20px; text-align: center; }
+
+/* Search */
+.search-bar { margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.search-input-wrap { position: relative; width: 100%; max-width: 520px; }
+.search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 15px; }
+.search-input {
+  width: 100%; padding: 10px 14px 10px 38px; border: 1px solid #e2e8f0; border-radius: 10px;
+  font-size: 14px; color: #1e293b; outline: none; transition: border 0.15s; background: #fff;
+}
+.search-input:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+.search-input::placeholder { color: #94a3b8; }
+.filter-chips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.chip {
+  padding: 5px 14px; border-radius: 16px; border: 1px solid #e2e8f0; background: #fff;
+  font-size: 12px; font-weight: 500; color: #64748b; cursor: pointer; transition: all 0.15s;
+}
+.chip:hover { border-color: #cbd5e1; }
+.chip.active { background: #4f46e5; border-color: #4f46e5; color: #fff; }
 
 /* Empty */
 .empty-state { text-align: center; padding: 60px 0; }
@@ -156,57 +226,51 @@ function goPost(id) { router.push(`/post/${id}`) }
 
 /* Cards */
 .claims-list { display: flex; flex-direction: column; gap: 16px; }
-.claim-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 24px; transition: border-color 0.2s; }
-.claim-card:hover { border-color: #cbd5e1; }
+.claim-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 24px; }
 .claim-card.status-2 { border-color: #bbf7d0; }
-.claim-card.status-3 { opacity: 0.6; }
+.claim-card.status-3 { opacity: 0.5; }
 
 /* Header */
-.claim-header { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; cursor: pointer; }
+.claim-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; cursor: pointer; }
 .claim-type { padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; color: #fff; }
 .t-lost { background: #ef4444; }
 .t-found { background: #4f46e5; }
 .claim-title { flex: 1; font-size: 16px; font-weight: 600; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.claim-status-tag { padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; }
-.st-0 { background: #fef3c7; color: #b45309; }
-.st-1 { background: #eef2ff; color: #4f46e5; }
-.st-2 { background: #dcfce7; color: #15803d; }
-.st-3 { background: #f3f4f6; color: #6b7280; }
+.claim-badge { padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.cs-0 { background: #fef3c7; color: #b45309; }
+.cs-1 { background: #eef2ff; color: #4f46e5; }
+.cs-2 { background: #dcfce7; color: #15803d; }
+.cs-3 { background: #f3f4f6; color: #6b7280; }
+
+/* Party row */
+.party-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+.party-card {
+  flex: 1; padding: 10px 14px; border-radius: 10px; display: flex; flex-direction: column; gap: 3px;
+}
+.pc-owner { background: #eef2ff; border: 1px solid #c7d2fe; }
+.pc-claimer { background: #fef3c7; border: 1px solid #fde68a; }
+.party-label { font-size: 14px; font-weight: 700; color: #1e293b; }
+.party-role-hint { font-size: 11px; color: #64748b; }
+.party-confirm { font-size: 12px; font-weight: 600; color: #22c55e; }
+.party-confirm.no { color: #94a3b8; }
+.party-arrow { font-size: 18px; color: #94a3b8; flex-shrink: 0; }
 
 /* Progress */
-.progress-bar { margin-bottom: 16px; padding: 0 4px; }
-.progress-track { height: 3px; background: #e2e8f0; border-radius: 2px; margin-bottom: 14px; position: relative; }
-.progress-fill { height: 100%; background: #4f46e5; border-radius: 2px; transition: width 0.5s ease; }
-.progress-steps { display: flex; justify-content: space-between; }
-.progress-step { flex: 1; text-align: center; position: relative; }
-.step-dot {
-  width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 700; margin: 0 auto 6px;
-  background: #f1f5f9; color: #94a3b8; border: 2px solid #e2e8f0;
-}
-.step-active .step-dot { background: #4f46e5; border-color: #4f46e5; color: #fff; }
-.step-done .step-dot { background: #22c55e; border-color: #22c55e; color: #fff; }
-.step-label { font-size: 13px; font-weight: 600; color: #94a3b8; }
-.step-active .step-label { color: #4f46e5; }
-.step-done .step-label { color: #22c55e; }
-.step-desc { font-size: 11px; color: #cbd5e1; margin-top: 2px; display: none; }
+.progress-bar { margin-bottom: 10px; }
+.progress-track { height: 3px; background: #e2e8f0; border-radius: 2px; margin-bottom: 6px; }
+.progress-fill { height: 100%; background: #4f46e5; border-radius: 2px; transition: width 0.5s; }
+.progress-labels { display: flex; justify-content: space-between; font-size: 11px; color: #cbd5e1; }
+.pl-active { color: #4f46e5; font-weight: 600; }
+.pl-done { color: #22c55e; font-weight: 600; }
 
-/* Info */
-.claim-info { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 13px; }
-.info-role { padding: 2px 8px; border-radius: 6px; font-weight: 600; }
-.role-owner { background: #eef2ff; color: #4f46e5; }
-.role-claimer { background: #fef3c7; color: #b45309; }
-.info-party { color: #64748b; }
-.info-time { color: #94a3b8; margin-left: auto; }
+/* Time */
+.claim-time { font-size: 12px; color: #94a3b8; margin-bottom: 12px; }
 
 /* Action */
 .claim-action { display: flex; align-items: center; justify-content: flex-end; gap: 12px; padding-top: 12px; border-top: 1px solid #f1f5f9; }
 .action-hint { font-size: 13px; color: #64748b; }
 .action-hint.done { color: #22c55e; font-weight: 600; }
-.btn-confirm {
-  padding: 8px 20px; background: #4f46e5; color: #fff; border: none; border-radius: 8px;
-  font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s;
-}
+.btn-confirm { padding: 8px 20px; background: #4f46e5; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
 .btn-confirm:hover { background: #4338ca; }
 .btn-confirm:disabled { background: #cbd5e1; cursor: not-allowed; }
 </style>
