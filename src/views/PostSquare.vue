@@ -210,7 +210,7 @@ function statusLabel(status) {
   overflow: hidden; min-height: 38px;
 }
 
-.card-meta { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
+.card-meta { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
 
 .meta-capsule {
   padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; color: #fff;
