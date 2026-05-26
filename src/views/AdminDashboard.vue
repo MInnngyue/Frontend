@@ -248,11 +248,14 @@ const getStatusClass = (s) => {
         <header class="panel-header">
           <h2>数据字典</h2>
           <div class="panel-actions">
-            <el-select v-model="dictType" @change="loadDict" class="dict-select" size="small">
-              <el-option label="物品大类" value="item_category" />
-              <el-option label="颜色" value="color" />
-              <el-option label="校区" value="location" />
-            </el-select>
+            <div class="dict-select-wrap">
+              <select v-model="dictType" @change="loadDict" class="dict-native-select">
+                <option value="item_category">物品大类</option>
+                <option value="color">颜色</option>
+                <option value="location">校区</option>
+              </select>
+              <span class="select-arrow">▾</span>
+            </div>
             <button class="btn btn-primary" @click="handleAddDict">+ 新增</button>
           </div>
         </header>
@@ -272,8 +275,8 @@ const getStatusClass = (s) => {
                 <td>{{ row.name }}</td>
                 <td>{{ row.sortOrder }}</td>
                 <td class="td-actions">
-                  <button class="btn btn-ghost" @click="handleUpdateDict(row)">编辑</button>
-                  <button class="btn btn-ghost btn-ghost-danger" @click="handleDeleteDict(row.id)">删除</button>
+                  <button class="btn btn-edit" @click="handleUpdateDict(row)">编辑</button>
+                  <button class="btn btn-del" @click="handleDeleteDict(row.id)">删除</button>
                 </td>
               </tr>
             </tbody>
@@ -441,9 +444,12 @@ const getStatusClass = (s) => {
 .btn-freeze:hover { background: #fde68a; }
 .btn-ban { background: #fee2e2; color: #b91c1c; }
 .btn-ban:hover { background: #fecaca; }
+.btn-edit { background: #dbeafe; color: #1d4ed8; }
+.btn-edit:hover { background: #bfdbfe; }
+.btn-del { background: #fee2e2; color: #b91c1c; }
+.btn-del:hover { background: #fecaca; }
 .btn-ghost { background: transparent; color: #475569; padding: 6px 12px; }
 .btn-ghost:hover { background: #f1f5f9; }
-.btn-ghost-danger:hover { background: #fee2e2; color: #b91c1c; }
 .btn-primary { background: #4f46e5; color: #fff; padding: 7px 16px; font-weight: 600; }
 .btn-primary:hover { background: #4338ca; }
 
@@ -454,10 +460,20 @@ const getStatusClass = (s) => {
 }
 .view-link:hover { background: #eef2ff; }
 
-/* === Select === */
-.dict-select { width: 130px; }
-.dict-select :deep(.el-input__wrapper) { border-radius: 8px; box-shadow: 0 0 0 1px #e2e8f0 inset; }
-.dict-select :deep(.el-input__wrapper:hover) { box-shadow: 0 0 0 1px #cbd5e1 inset; }
+/* === Native Select === */
+.dict-select-wrap { position: relative; width: 140px; }
+.dict-native-select {
+  width: 100%; padding: 8px 32px 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px;
+  background: #fff; color: #1e293b; font-size: 13px; font-weight: 500;
+  cursor: pointer; appearance: none; -webkit-appearance: none; outline: none;
+  transition: border-color 0.15s;
+}
+.dict-native-select:hover { border-color: #94a3b8; }
+.dict-native-select:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+.select-arrow {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  color: #64748b; font-size: 12px; pointer-events: none;
+}
 
 /* === Stats === */
 .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
