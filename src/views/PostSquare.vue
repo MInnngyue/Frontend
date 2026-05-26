@@ -134,16 +134,18 @@ function statusLabel(status) {
                 </span>
                 <span class="overlay-tag overlay-item">{{ post.itemCategory }}</span>
               </div>
-              <span class="overlay-status" :class="'status-' + post.status">{{ statusLabel(post.status) }}</span>
             </div>
             <div class="card-info">
               <div class="card-title">{{ post.title || '无标题' }}</div>
               <div class="card-sub">
-                <span>{{ post.color }}</span>
-                <span class="dot">·</span>
-                <span>{{ post.locationCampus }}</span>
-                <span class="dot">·</span>
-                <span class="time-text">{{ post.lostTime }}</span>
+                <div class="sub-left">
+                  <span>{{ post.color }}</span>
+                  <span class="dot">·</span>
+                  <span>{{ post.locationCampus }}</span>
+                  <span class="dot">·</span>
+                  <span class="time-text">{{ post.lostTime }}</span>
+                </div>
+                <span class="status-capsule" :class="'status-' + post.status">{{ statusLabel(post.status) }}</span>
               </div>
             </div>
           </div>
@@ -228,9 +230,8 @@ function statusLabel(status) {
 .overlay-type.found { background: #67c23a; }
 .overlay-item { background: rgba(0,0,0,0.55); }
 
-.overlay-status {
-  position: absolute; bottom: 10px; right: 10px;
-  padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; color: #fff;
+.status-capsule {
+  padding: 3px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; color: #fff; white-space: nowrap;
 }
 .status-0 { background: #409eff; }
 .status-1 { background: #e6a23c; }
@@ -244,7 +245,8 @@ function statusLabel(status) {
   font-size: 15px; font-weight: 600; color: #303133; margin-bottom: 6px;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.card-sub { font-size: 12px; color: #909399; display: flex; gap: 4px; align-items: center; }
+.card-sub { font-size: 12px; color: #909399; display: flex; justify-content: space-between; align-items: center; }
+.sub-left { display: flex; gap: 4px; align-items: center; }
 .dot { color: #dcdfe6; }
 .time-text { color: #409eff; font-weight: 500; }
 

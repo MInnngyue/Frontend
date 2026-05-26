@@ -1,8 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { getPendingPosts, approvePost, rejectPost, getUsers, freezeUser, adjustCredit, getDict, addDict, updateDict, deleteDict, getStats } from '@/api/admin'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
+const router = useRouter()
 const activeTab = ref('review')
 const posts = ref([])
 const users = ref([])
@@ -101,8 +103,11 @@ function onTabChange(tab) {
 <template>
   <div class="admin-page">
     <div class="hero-section">
-      <h1 class="hero-title">管理后台</h1>
-      <p class="hero-sub">帖子审核 · 用户管理 · 数据字典 · 数据统计</p>
+      <div class="hero-left">
+        <h1 class="hero-title">管理后台</h1>
+        <p class="hero-sub">帖子审核 · 用户管理 · 数据字典 · 数据统计</p>
+      </div>
+      <el-button class="back-btn" @click="router.push('/profile')">← 返回个人中心</el-button>
     </div>
 
     <el-tabs v-model="activeTab" @tab-change="onTabChange" class="admin-tabs">
@@ -207,9 +212,11 @@ function onTabChange(tab) {
 
 <style scoped>
 .admin-page { max-width: 1000px; margin: 0 auto; padding: 32px 20px; }
-.hero-section { padding: 28px 32px; margin-bottom: 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; color: #fff; }
+.hero-section { display: flex; justify-content: space-between; align-items: center; padding: 28px 32px; margin-bottom: 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; color: #fff; }
 .hero-title { font-size: 26px; font-weight: 700; margin: 0 0 6px; }
 .hero-sub { margin: 0; opacity: 0.85; font-size: 14px; }
+.back-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: #fff; font-size: 14px; border-radius: 8px; padding: 8px 18px; }
+.back-btn:hover { background: rgba(255,255,255,0.35); border-color: rgba(255,255,255,0.5); color: #fff; }
 .admin-tabs :deep(.el-tabs__header) { background: #fff; border-radius: 12px; padding: 0 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-bottom: 12px; }
 .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
 .stat-card { background: #fff; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
