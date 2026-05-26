@@ -45,7 +45,11 @@ function onTabChange(type) { queryParams.value.type = type; page.value = 1; fetc
 function onSearch() { page.value = 1; fetchPosts() }
 function onCategoryChange() { page.value = 1; fetchPosts() }
 function onFilterClick(key, val) {
-  queryParams.value[key] = queryParams.value[key] === val ? '' : val
+  if (queryParams.value[key] === val) {
+    delete queryParams.value[key]
+  } else {
+    queryParams.value[key] = val
+  }
   page.value = 1; fetchPosts()
 }
 function goDetail(id) { router.push(`/post/${id}`) }
@@ -78,13 +82,31 @@ function statusLabel(status) {
           {{ sidebarOpen ? '◀ 收起' : '▶' }}
         </div>
         <div v-if="sidebarOpen" class="sidebar-content">
-          <!-- 类型 -->
+          <!-- 搜索 -->
+          <div class="filter-group">
+            <div class="filter-label">关键词搜索</div>
+            <el-input v-model="queryParams.keyword" placeholder="搜索标题或描述..." clearable size="small" :prefix-icon="Search" @keyup.enter="onSearch" @clear="onSearch" />
+          </div>
+
+          <!-- 帖子类型 -->
           <div class="filter-group">
             <div class="filter-label">帖子类型</div>
             <div class="filter-tags">
               <span class="filter-tag" :class="{ active: activeTab === null }" @click="onTabChange(null)">全部</span>
               <span class="filter-tag" :class="{ active: activeTab === 0 }" @click="onTabChange(0)">寻物</span>
               <span class="filter-tag" :class="{ active: activeTab === 1 }" @click="onTabChange(1)">招领</span>
+            </div>
+          </div>
+
+          <!-- 帖子状态 -->
+          <div class="filter-group">
+            <div class="filter-label">帖子状态</div>
+            <div class="filter-tags">
+              <span class="filter-tag" :class="{ active: queryParams.status === undefined }" @click="delete queryParams.status; page=1; fetchPosts()">全部</span>
+              <span class="filter-tag" :class="{ active: queryParams.status === 0 }" @click="onFilterClick('status', 0)">进行中</span>
+              <span class="filter-tag" :class="{ active: queryParams.status === 1 }" @click="onFilterClick('status', 1)">已匹配</span>
+              <span class="filter-tag" :class="{ active: queryParams.status === 2 }" @click="onFilterClick('status', 2)">认领中</span>
+              <span class="filter-tag" :class="{ active: queryParams.status === 3 }" @click="onFilterClick('status', 3)">已完结</span>
             </div>
           </div>
 
@@ -99,12 +121,6 @@ function statusLabel(status) {
                 @click="onFilterClick('itemCategory', c.name)"
               >{{ c.name }}</span>
             </div>
-          </div>
-
-          <!-- 搜索 -->
-          <div class="filter-group">
-            <div class="filter-label">关键词</div>
-            <el-input v-model="queryParams.keyword" placeholder="搜索..." clearable size="small" :prefix-icon="Search" @keyup.enter="onSearch" @clear="onSearch" />
           </div>
 
           <el-button size="small" type="primary" @click="onSearch" style="width:100%;margin-top:8px">搜索</el-button>
