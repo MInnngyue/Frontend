@@ -11,18 +11,15 @@ const posts = ref([])
 const loading = ref(false)
 const total = ref(0)
 const page = ref(1)
-const pageSize = ref(10)
+const pageSize = ref(20)
 
 const activeTab = ref(null)
 const queryParams = ref({ type: null, itemCategory: '', keyword: '' })
 
 const itemCategories = ref([])
-const colors = ref([])
-const campuses = ref([])
+
 onMounted(async () => {
   itemCategories.value = (await getCategories('item_category')).data
-  colors.value = (await getCategories('color')).data
-  campuses.value = (await getCategories('location')).data
   fetchPosts()
 })
 
@@ -41,13 +38,9 @@ async function fetchPosts() {
 
 function onTabChange(type) { queryParams.value.type = type; page.value = 1; fetchPosts() }
 function onSearch() { page.value = 1; fetchPosts() }
-function onCategoryChange() { page.value = 1; fetchPosts() }
 function onFilterClick(key, val) {
-  if (queryParams.value[key] === val) {
-    delete queryParams.value[key]
-  } else {
-    queryParams.value[key] = val
-  }
+  if (queryParams.value[key] === val) { delete queryParams.value[key] }
+  else { queryParams.value[key] = val }
   page.value = 1; fetchPosts()
 }
 function goDetail(id) { router.push(`/post/${id}`) }
@@ -55,7 +48,7 @@ function goPublish() { router.push('/publish') }
 function onPageChange(p) { page.value = p; fetchPosts() }
 function typeLabel(type) { return type === 0 ? '寻物启事' : '失物招领' }
 function statusLabel(status) {
-  const map = { 0: '进行中', 1: '已匹配', 2: '认领中', 3: '已完结', 4: '已过期', 5: '已下架' }
+  const map = { 0: '进行中', 1: '已匹配', 2: '认领中', 3: '已完结', 4: '已归档', 5: '已下架' }
   return map[status] || '未知'
 }
 </script>
@@ -65,95 +58,76 @@ function statusLabel(status) {
     <!-- 标题栏 -->
     <div class="title-bar">
       <h1 class="page-title">失物广场</h1>
-      <el-button class="publish-btn" @click="goPublish">
-        <span style="font-size:16px;margin-right:3px">+</span> 发布帖子
-      </el-button>
+      <el-button class="publish-btn" @click="goPublish">+ 发布帖子</el-button>
     </div>
 
     <div class="main-layout">
       <!-- 左侧筛选栏 -->
       <aside class="sidebar">
-        <div class="sidebar-content">
-          <!-- 搜索 -->
-          <div class="filter-group">
-            <div class="filter-label">关键词搜索</div>
-            <el-input v-model="queryParams.keyword" placeholder="搜索标题或描述..." clearable size="small" :prefix-icon="Search" @keyup.enter="onSearch" @clear="onSearch" />
-          </div>
+        <!-- 搜索 -->
+        <div class="filter-section">
+          <el-input v-model="queryParams.keyword" placeholder="搜索..." clearable :prefix-icon="Search" @keyup.enter="onSearch" @clear="onSearch" />
+        </div>
 
-          <!-- 帖子类型 -->
-          <div class="filter-group">
-            <div class="filter-label">帖子类型</div>
-            <div class="filter-tags">
-              <span class="filter-tag" :class="{ active: activeTab === null }" @click="onTabChange(null)">全部</span>
-              <span class="filter-tag" :class="{ active: activeTab === 0 }" @click="onTabChange(0)">寻物</span>
-              <span class="filter-tag" :class="{ active: activeTab === 1 }" @click="onTabChange(1)">招领</span>
-            </div>
+        <!-- 类型 -->
+        <div class="filter-section">
+          <div class="section-title">类型</div>
+          <div class="section-body">
+            <span class="chip" :class="{ active: activeTab === null }" @click="onTabChange(null)">全部</span>
+            <span class="chip" :class="{ active: activeTab === 0 }" @click="onTabChange(0)">寻物</span>
+            <span class="chip" :class="{ active: activeTab === 1 }" @click="onTabChange(1)">招领</span>
           </div>
+        </div>
 
-          <!-- 帖子状态 -->
-          <div class="filter-group">
-            <div class="filter-label">帖子状态</div>
-            <div class="filter-tags">
-              <span class="filter-tag" :class="{ active: queryParams.status === undefined }" @click="delete queryParams.status; page=1; fetchPosts()">全部</span>
-              <span class="filter-tag" :class="{ active: queryParams.status === 0 }" @click="onFilterClick('status', 0)">进行中</span>
-              <span class="filter-tag" :class="{ active: queryParams.status === 1 }" @click="onFilterClick('status', 1)">已匹配</span>
-              <span class="filter-tag" :class="{ active: queryParams.status === 2 }" @click="onFilterClick('status', 2)">认领中</span>
-              <span class="filter-tag" :class="{ active: queryParams.status === 3 }" @click="onFilterClick('status', 3)">已完结</span>
-            </div>
+        <!-- 状态 -->
+        <div class="filter-section">
+          <div class="section-title">状态</div>
+          <div class="section-body">
+            <span class="chip" :class="{ active: queryParams.status === undefined }" @click="delete queryParams.status; page=1; fetchPosts()">全部</span>
+            <span class="chip" :class="{ active: queryParams.status === 0 }" @click="onFilterClick('status', 0)">进行中</span>
+            <span class="chip" :class="{ active: queryParams.status === 1 }" @click="onFilterClick('status', 1)">已匹配</span>
+            <span class="chip" :class="{ active: queryParams.status === 2 }" @click="onFilterClick('status', 2)">认领中</span>
+            <span class="chip" :class="{ active: queryParams.status === 3 }" @click="onFilterClick('status', 3)">已完结</span>
           </div>
+        </div>
 
-          <!-- 物品大类 -->
-          <div class="filter-group">
-            <div class="filter-label">物品大类</div>
-            <div class="filter-tags">
-              <span
-                v-for="c in itemCategories" :key="c.id"
-                class="filter-tag"
-                :class="{ active: queryParams.itemCategory === c.name }"
-                @click="onFilterClick('itemCategory', c.name)"
-              >{{ c.name }}</span>
-            </div>
+        <!-- 物品大类 -->
+        <div class="filter-section">
+          <div class="section-title">分类</div>
+          <div class="section-body">
+            <span
+              v-for="c in itemCategories" :key="c.id"
+              class="chip"
+              :class="{ active: queryParams.itemCategory === c.name }"
+              @click="onFilterClick('itemCategory', c.name)"
+            >{{ c.name }}</span>
           </div>
-
-          <el-button size="small" type="primary" @click="onSearch" style="width:100%;margin-top:8px">搜索</el-button>
         </div>
       </aside>
 
-      <!-- 右侧帖子网格 -->
-      <section class="post-grid" v-loading="loading">
+      <!-- 右侧卡片区 -->
+      <section class="content-area" v-loading="loading">
         <div v-if="posts.length === 0 && !loading" class="empty-state">
-          <div class="empty-icon">📋</div>
           <p class="empty-text">还没有帖子</p>
           <p class="empty-hint">成为第一个发布寻物或招领信息的人吧</p>
         </div>
 
-        <div class="grid-cards">
-          <div
-            v-for="post in posts" :key="post.id"
-            class="grid-card" @click="goDetail(post.id)"
-          >
-            <div class="card-img">
+        <div class="card-grid">
+          <div v-for="post in posts" :key="post.id" class="card" @click="goDetail(post.id)">
+            <div class="card-cover">
               <el-image v-if="post.coverImage" :src="imageUrl(post.coverImage)" fit="cover" />
-              <div v-else class="card-img-placeholder">📷</div>
-              <!-- 胶囊覆盖层 -->
-              <div class="card-overlays">
-                <span class="overlay-tag overlay-type" :class="post.type === 0 ? 'lost' : 'found'">
-                  {{ typeLabel(post.type) }}
-                </span>
-                <span class="overlay-tag overlay-item">{{ post.itemCategory }}</span>
-              </div>
+              <div v-else class="cover-placeholder">📷</div>
             </div>
-            <div class="card-info">
-              <div class="card-title">{{ post.title || '无标题' }}</div>
-              <div class="card-sub">
-                <div class="sub-left">
-                  <span>{{ post.color }}</span>
-                  <span class="dot">·</span>
-                  <span>{{ post.locationCampus }}</span>
-                  <span class="dot">·</span>
-                  <span class="time-text">{{ post.lostTime }}</span>
-                </div>
-                <span class="status-capsule" :class="'status-' + post.status">{{ statusLabel(post.status) }}</span>
+            <div class="card-body">
+              <span class="card-type-tag" :class="post.type === 0 ? 'lost' : 'found'">{{ typeLabel(post.type) }}</span>
+              <span class="card-status-tag" :class="'s-' + post.status">{{ statusLabel(post.status) }}</span>
+              <h3 class="card-title">{{ post.title || '无标题' }}</h3>
+              <div class="card-meta">
+                <span>{{ post.itemCategory }}</span>
+                <span class="sep">·</span>
+                <span>{{ post.locationCampus }}</span>
+                <span class="sep">·</span>
+                <span class="date">{{ post.lostTime }}</span>
               </div>
             </div>
           </div>
@@ -168,96 +142,91 @@ function statusLabel(status) {
 </template>
 
 <style scoped>
-.post-square { max-width: 1200px; margin: 0 auto; padding: 24px 24px 32px; }
+.post-square { max-width: 1280px; margin: 0 auto; padding: 32px 24px; }
 
 /* Title Bar */
-.title-bar {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 20px;
-}
-.page-title { font-size: 32px; font-weight: 800; color: #1a1a1a; margin: 0; text-align: center; flex: 1; }
+.title-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.page-title { font-size: 28px; font-weight: 800; color: #111827; margin: 0; }
 .publish-btn {
-  background: #409eff; border: none; color: #fff; font-size: 14px;
-  border-radius: 8px; padding: 9px 20px; transition: opacity 0.2s;
+  background: #3b82f6; border: none; color: #fff; font-size: 14px; font-weight: 600;
+  border-radius: 8px; padding: 10px 22px; transition: background 0.15s;
 }
-.publish-btn:hover { opacity: 0.85; color: #fff; }
+.publish-btn:hover { background: #2563eb; }
 
 /* Layout */
-.main-layout { display: flex; gap: 20px; align-items: flex-start; }
+.main-layout { display: flex; gap: 24px; align-items: flex-start; }
 
 /* Sidebar */
 .sidebar {
-  width: 320px; flex-shrink: 0; background: #fff; border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04); padding: 20px;
+  width: 260px; flex-shrink: 0; background: #fff; border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04); padding: 16px;
   position: sticky; top: 72px;
 }
-.sidebar-content { display: flex; flex-direction: column; gap: 4px; }
-.filter-group { margin-bottom: 12px; }
-.filter-label { font-size: 14px; font-weight: 600; color: #303133; margin-bottom: 8px; }
-.filter-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.filter-tag {
-  font-size: 13px; padding: 5px 12px; border-radius: 14px; cursor: pointer;
-  background: #f5f7fa; color: #606266; transition: all 0.15s; white-space: nowrap;
+.filter-section { margin-bottom: 18px; }
+.filter-section:last-child { margin-bottom: 0; }
+.section-title {
+  font-size: 13px; font-weight: 700; color: #374151; margin-bottom: 10px;
+  text-transform: uppercase; letter-spacing: 0.5px;
 }
-.filter-tag:hover { background: #ecf5ff; color: #409eff; }
-.filter-tag.active { background: #409eff; color: #fff; }
+.section-body { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  display: inline-block; font-size: 13px; padding: 5px 14px; border-radius: 8px;
+  cursor: pointer; background: #f3f4f6; color: #4b5563;
+  transition: all 0.15s; user-select: none;
+}
+.chip:hover { background: #e5e7eb; }
+.chip.active { background: #3b82f6; color: #fff; }
 
-/* Grid */
-.post-grid { flex: 1; min-height: 300px; }
-.grid-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+/* Content */
+.content-area { flex: 1; min-height: 400px; }
 
-.grid-card {
-  background: #fff; border-radius: 12px; overflow: hidden; cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04); transition: transform 0.2s, box-shadow 0.2s;
-}
-.grid-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+/* Cards */
+.card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 
-.card-img {
-  position: relative; width: 100%; height: 180px; overflow: hidden;
-  background: #f0f2f5;
+.card {
+  background: #fff; border-radius: 10px; overflow: hidden; cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04); border: 1px solid #f3f4f6;
+  transition: box-shadow 0.15s, transform 0.15s;
 }
-.card-img :deep(.el-image) { width: 100%; height: 100%; }
-.card-img :deep(.el-image img) { object-fit: cover; width: 100%; height: 100%; }
-.card-img-placeholder {
-  width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-  font-size: 40px; color: #dcdfe6;
-}
+.card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-1px); }
 
-.card-overlays {
-  position: absolute; top: 10px; left: 10px; right: 10px;
-  display: flex; justify-content: space-between;
-}
-.overlay-tag {
-  padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; color: #fff;
-}
-.overlay-type.lost { background: #f56c6c; }
-.overlay-type.found { background: #67c23a; }
-.overlay-item { background: rgba(0,0,0,0.55); }
+.card-cover { width: 100%; height: 160px; background: #f9fafb; overflow: hidden; }
+.card-cover :deep(.el-image) { width: 100%; height: 100%; }
+.card-cover :deep(.el-image img) { object-fit: cover; width: 100%; height: 100%; }
+.cover-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 36px; }
 
-.status-capsule {
-  padding: 3px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; color: #fff; white-space: nowrap;
+.card-body { padding: 14px 16px; }
+.card-type-tag {
+  display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px;
+  font-weight: 600; color: #fff; margin-right: 6px;
 }
-.status-0 { background: #409eff; }
-.status-1 { background: #e6a23c; }
-.status-2 { background: #e6a23c; }
-.status-3 { background: #67c23a; }
-.status-4 { background: #909399; }
-.status-5 { background: #f56c6c; }
+.card-type-tag.lost { background: #ef4444; }
+.card-type-tag.found { background: #22c55e; }
 
-.card-info { padding: 12px 14px; }
+.card-status-tag {
+  display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px;
+  font-weight: 500; color: #fff;
+}
+.s-0 { background: #3b82f6; }
+.s-1, .s-2 { background: #f59e0b; }
+.s-3 { background: #22c55e; }
+.s-4, .s-5 { background: #6b7280; }
+
 .card-title {
-  font-size: 15px; font-weight: 600; color: #303133; margin-bottom: 6px;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 14px; font-weight: 600; color: #111827; margin: 8px 0 6px;
+  line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; min-height: 36px;
 }
-.card-sub { font-size: 12px; color: #909399; display: flex; justify-content: space-between; align-items: center; }
-.sub-left { display: flex; gap: 4px; align-items: center; }
-.dot { color: #dcdfe6; }
-.time-text { color: #409eff; font-weight: 500; }
 
-/* Empty & Pagination */
-.empty-state { padding: 100px 0; text-align: center; }
-.empty-icon { font-size: 48px; margin-bottom: 12px; }
-.empty-text { font-size: 16px; color: #606266; margin: 0 0 4px; }
-.empty-hint { font-size: 13px; color: #c0c4cc; margin: 0; }
-.pagination { display: flex; justify-content: center; margin-top: 24px; }
+.card-meta { display: flex; align-items: center; gap: 4px; font-size: 12px; color: #9ca3af; }
+.sep { color: #d1d5db; }
+.date { color: #3b82f6; font-weight: 500; }
+
+/* Empty */
+.empty-state { text-align: center; padding: 120px 0; }
+.empty-text { font-size: 16px; color: #6b7280; margin: 0 0 6px; }
+.empty-hint { font-size: 13px; color: #9ca3af; margin: 0; }
+
+/* Pagination */
+.pagination { display: flex; justify-content: center; margin-top: 28px; }
 </style>
