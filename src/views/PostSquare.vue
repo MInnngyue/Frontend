@@ -150,19 +150,19 @@ function statusLabel(status) {
 
 /* Sidebar */
 .sidebar {
-  width: 260px; flex-shrink: 0; background: #fff; border-radius: 10px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04); padding: 16px;
+  width: 320px; flex-shrink: 0; background: #fff; border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04); padding: 20px;
   position: sticky; top: 72px;
 }
-.filter-section { margin-bottom: 18px; }
+.filter-section { margin-bottom: 22px; }
 .filter-section:last-child { margin-bottom: 0; }
 .section-title {
-  font-size: 13px; font-weight: 700; color: #374151; margin-bottom: 10px;
-  text-transform: uppercase; letter-spacing: 0.5px;
+  font-size: 14px; font-weight: 700; color: #374151; margin-bottom: 12px;
+  letter-spacing: 0.5px;
 }
-.section-body { display: flex; flex-wrap: wrap; gap: 6px; }
+.section-body { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip {
-  display: inline-block; font-size: 13px; padding: 5px 14px; border-radius: 8px;
+  display: inline-block; font-size: 14px; padding: 6px 16px; border-radius: 8px;
   cursor: pointer; background: #f3f4f6; color: #4b5563;
   transition: all 0.15s; user-select: none;
 }
@@ -201,7 +201,7 @@ function statusLabel(status) {
 }
 .s-0 { background: #3b82f6; }
 .s-1, .s-2 { background: #f59e0b; }
-.s-3 { background: #22c55e; }
+.s-3 { background: #86d3a4; }
 .s-4, .s-5 { background: #6b7280; }
 
 .card-title {
