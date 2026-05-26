@@ -189,14 +189,14 @@ function statusLabel(status) {
 
 .card-body { padding: 12px 16px; }
 .card-type-tag {
-  display: inline-block; font-size: 12px; padding: 3px 12px; border-radius: 20px;
-  font-weight: 600; color: #fff; margin-right: 6px;
+  display: inline-block; font-size: 16px; padding: 5px 16px; border-radius: 20px;
+  font-weight: 600; color: #fff; margin-right: 8px;
 }
 .card-type-tag.lost { background: #ef4444; }
 .card-type-tag.found { background: #22c55e; }
 
 .card-status-tag {
-  display: inline-block; font-size: 11px; padding: 3px 10px; border-radius: 20px;
+  display: inline-block; font-size: 14px; padding: 5px 14px; border-radius: 20px;
   font-weight: 500; color: #fff;
 }
 .s-0 { background: #3b82f6; }
@@ -205,15 +205,15 @@ function statusLabel(status) {
 .s-4, .s-5 { background: #6b7280; }
 
 .card-title {
-  font-size: 15px; font-weight: 600; color: #111827; margin: 4px 0 0;
+  font-size: 18px; font-weight: 600; color: #111827; margin: 6px 0 2px;
   line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.card-meta { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+.card-meta { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
 
 .meta-capsule {
-  padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; color: #fff;
+  padding: 5px 14px; border-radius: 20px; font-size: 14px; font-weight: 600; color: #fff;
 }
 .mc-cat { background: #6366f1; }
 .mc-loc { background: #8b5cf6; }
