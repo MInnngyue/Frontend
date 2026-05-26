@@ -14,7 +14,7 @@ const page = ref(1)
 const pageSize = ref(10)
 
 const activeTab = ref(null)
-const queryParams = ref({ type: null, itemCategory: '', keyword: '', status: 0 })
+const queryParams = ref({ type: null, itemCategory: '', keyword: '' })
 
 const itemCategories = ref([])
 const colors = ref([])
