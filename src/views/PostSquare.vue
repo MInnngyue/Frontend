@@ -189,15 +189,15 @@ function statusLabel(status) {
 
 .card-body { padding: 12px 16px; }
 .card-type-tag {
-  display: inline-block; font-size: 16px; padding: 5px 16px; border-radius: 20px;
+  display: inline-block; font-size: 14px; padding: 5px 14px; border-radius: 20px;
   font-weight: 600; color: #fff; margin-right: 8px;
 }
 .card-type-tag.lost { background: #ef4444; }
-.card-type-tag.found { background: #22c55e; }
+.card-type-tag.found { background: #0891b2; }
 
 .card-status-tag {
   display: inline-block; font-size: 14px; padding: 5px 14px; border-radius: 20px;
-  font-weight: 500; color: #fff;
+  font-weight: 600; color: #fff;
 }
 .s-0 { background: #3b82f6; }
 .s-1, .s-2 { background: #f59e0b; }
