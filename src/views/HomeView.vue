@@ -283,5 +283,5 @@ onMounted(() => {
 .archive-status { font-size: 12px; color: #909399; white-space: nowrap; }
 .s-capsule { padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #fff; }
 .sc-lost { background: #ef4444; }
-.sc-found { background: #0891b2; }
+.sc-found { background: #4f46e5; }
 </style>

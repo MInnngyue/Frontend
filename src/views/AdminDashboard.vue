@@ -445,8 +445,8 @@ const getStatusClass = (s) => {
 .btn-freeze:hover { background: #fde68a; }
 .btn-ban { background: #fee2e2; color: #b91c1c; }
 .btn-ban:hover { background: #fecaca; }
-.btn-edit { background: #dbeafe; color: #1d4ed8; }
-.btn-edit:hover { background: #bfdbfe; }
+.btn-edit { background: #eef2ff; color: #4338ca; }
+.btn-edit:hover { background: #e0e7ff; }
 .btn-del { background: #fee2e2; color: #b91c1c; }
 .btn-del:hover { background: #fecaca; }
 .btn-ghost { background: transparent; color: #475569; padding: 6px 12px; }

@@ -89,8 +89,8 @@ html {
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #f5f3f1;
-  color: #303133;
+  background: #f8fafc;
+  color: #1e293b;
 }
 
 .app-header {
@@ -100,9 +100,8 @@ body {
   right: 0;
   height: 72px;
   background: #fff;
-  border-bottom: 1px solid #e4e7ed;
+  border-bottom: 1px solid #e2e8f0;
   z-index: 100;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
 
 .header-inner {
@@ -118,7 +117,7 @@ body {
 .brand {
   font-size: 22px;
   font-weight: 700;
-  color: #409eff;
+  color: #4f46e5;
   cursor: pointer;
   letter-spacing: 0.5px;
 }
@@ -131,7 +130,7 @@ body {
 
 .nav-links a {
   text-decoration: none;
-  color: #606266;
+  color: #475569;
   padding: 8px 22px;
   border-radius: 8px;
   font-size: 16px;
@@ -141,13 +140,13 @@ body {
 }
 
 .nav-links a:hover {
-  color: #409eff;
-  background: #ecf5ff;
+  color: #4f46e5;
+  background: #eef2ff;
 }
 
 .nav-links a.active {
-  color: #409eff;
-  background: #ecf5ff;
+  color: #4f46e5;
+  background: #eef2ff;
 }
 
 .nav-links a.active::after {
@@ -159,7 +158,7 @@ body {
   width: 16px;
   height: 3px;
   border-radius: 2px;
-  background: #409eff;
+  background: #4f46e5;
 }
 
 .nav-msg-link { position: relative; }
@@ -178,19 +177,19 @@ body {
 }
 
 .header-publish-btn {
-  background: #3b82f6; border: none; color: #fff; font-size: 13px; font-weight: 600;
+  background: #4f46e5; border: none; color: #fff; font-size: 13px; font-weight: 600;
   border-radius: 8px; padding: 7px 18px; transition: background 0.15s; white-space: nowrap;
 }
-.header-logout-btn { background: none; border: 1px solid #dcdfe6; color: #909399; font-size: 13px; border-radius: 8px; padding: 5px 14px; transition: all 0.15s; }
-.header-logout-btn:hover { border-color: #f56c6c; color: #f56c6c; }
-.header-logout-btn:focus { border-color: #dcdfe6; color: #909399; }
-.header-publish-btn:hover { background: #2563eb; color: #fff; }
+.header-logout-btn { background: none; border: 1px solid #e2e8f0; color: #64748b; font-size: 13px; border-radius: 8px; padding: 5px 14px; transition: all 0.15s; }
+.header-logout-btn:hover { border-color: #ef4444; color: #ef4444; }
+.header-logout-btn:focus { border-color: #e2e8f0; color: #64748b; }
+.header-publish-btn:hover { background: #4338ca; color: #fff; }
 
 .header-back-btn {
-  background: #3b82f6; border: none; color: #fff; font-size: 13px; font-weight: 600;
+  background: #4f46e5; border: none; color: #fff; font-size: 13px; font-weight: 600;
   border-radius: 8px; padding: 7px 18px; transition: background 0.15s; white-space: nowrap;
 }
-.header-back-btn:hover { background: #2563eb; color: #fff; }
+.header-back-btn:hover { background: #4338ca; color: #fff; }
 
 main.has-header {
   padding-top: 72px;
@@ -249,32 +248,32 @@ main.has-header {
 }
 
 .notify-item.unread {
-  background: #ecf5ff;
+  background: #eef2ff;
 }
 
 .notify-title {
   font-size: 14px;
   font-weight: 600;
-  color: #303133;
+  color: #1e293b;
   margin-bottom: 4px;
 }
 
 .notify-content {
   font-size: 12px;
-  color: #909399;
+  color: #64748b;
   margin-bottom: 4px;
   white-space: pre-line;
 }
 
 .notify-time {
   font-size: 11px;
-  color: #c0c4cc;
+  color: #94a3b8;
 }
 
 .notify-empty {
   padding: 40px 0;
   text-align: center;
-  color: #c0c4cc;
+  color: #94a3b8;
   font-size: 14px;
 }
 </style>
