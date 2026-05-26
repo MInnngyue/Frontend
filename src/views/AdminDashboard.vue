@@ -401,7 +401,7 @@ const getStatusClass = (s) => {
   background: #f1f5f9; color: #475569; font-size: 14px; font-weight: 600;
   cursor: pointer; transition: all 0.15s;
 }
-.sb-back:hover { background: #e2e8f0; color: #1e293b; }
+.sb-back:hover { background: #eef2ff; color: #4f46e5; }
 
 /* === Main === */
 .main-content {
@@ -502,18 +502,18 @@ const getStatusClass = (s) => {
 .btn-primary:hover { background: #4338ca; }
 
 /* === Native Select === */
-.dict-select-wrap { position: relative; width: 140px; }
+.dict-select-wrap { position: relative; width: 150px; }
 .dict-native-select {
-  width: 100%; padding: 8px 32px 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px;
-  background: #fff; color: #1e293b; font-size: 13px; font-weight: 500;
+  width: 100%; padding: 9px 36px 9px 14px; border: 1px solid #cbd5e1; border-radius: 8px;
+  background: #fff; color: #1e293b; font-size: 14px; font-weight: 500;
   cursor: pointer; appearance: none; -webkit-appearance: none; outline: none;
-  transition: border-color 0.15s;
+  transition: all 0.15s; line-height: 1.4;
 }
-.dict-native-select:hover { border-color: #94a3b8; }
-.dict-native-select:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+.dict-native-select:hover { border-color: #94a3b8; background: #f8fafc; }
+.dict-native-select:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79,70,229,0.12); }
 .select-arrow {
-  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-  color: #64748b; font-size: 12px; pointer-events: none;
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  color: #94a3b8; font-size: 13px; pointer-events: none;
 }
 
 /* === Stats === */
