@@ -215,12 +215,7 @@ onMounted(() => {
 }
 
 /* Stats */
-.stats-row {
-  display: flex;
-  align-items: center;
-  padding: 16px 0;
-  border-top: 1px solid #1a1a1a;
-}
+.stats-row { display: flex; align-items: center; padding: 16px 0; }
 
 .stat-item {
   flex: 1;
@@ -239,7 +234,6 @@ onMounted(() => {
   margin-top: 4px;
 }
 
-.stat-divider { width: 1px; height: 36px; background: #1a1a1a; }
 
 .empty-info {
   text-align: center;

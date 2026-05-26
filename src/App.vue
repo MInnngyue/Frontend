@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getMessages, getUnreadCount, markAllRead, markRead } from '@/api/message'
+import { getConversations } from '@/api/pm'
 
 const route = useRoute()
 const router = useRouter()
@@ -9,6 +10,7 @@ const router = useRouter()
 const showNav = computed(() => route.path !== '/login')
 const isPublishPage = computed(() => route.path === '/publish')
 const unreadCount = ref(0)
+const pmUnread = ref(0)
 const messages = ref([])
 const showNotifications = ref(false)
 
@@ -20,6 +22,8 @@ async function loadUnreadCount() {
   try {
     const res = await getUnreadCount()
     unreadCount.value = res.data
+    const cres = await getConversations()
+    pmUnread.value = cres.data.reduce((s, c) => s + (c.unread || 0), 0)
   } catch { /* ignore */ }
 }
 
@@ -60,7 +64,10 @@ onMounted(() => {
         <nav class="nav-links">
           <router-link to="/" :class="{ active: route.path === '/' }">失物广场</router-link>
           <router-link to="/publish" :class="{ active: route.path === '/publish' }">发布帖子</router-link>
-          <router-link to="/messages" :class="{ active: route.path === '/messages' }">消息</router-link>
+          <router-link to="/messages" :class="{ active: route.path === '/messages' }" class="nav-msg-link">
+            消息
+            <span v-if="unreadCount + pmUnread > 0" class="nav-badge">{{ unreadCount + pmUnread }}</span>
+          </router-link>
           <router-link to="/profile" :class="{ active: route.path === '/profile' }">个人中心</router-link>
         </nav>
         <div class="header-right">
@@ -191,6 +198,14 @@ body {
   height: 3px;
   border-radius: 2px;
   background: #409eff;
+}
+
+.nav-msg-link { position: relative; }
+.nav-badge {
+  position: absolute; top: -4px; right: -4px;
+  background: #ef4444; color: #fff; font-size: 10px; font-weight: 700;
+  min-width: 16px; height: 16px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; padding: 0 4px;
 }
 
 .header-right {
