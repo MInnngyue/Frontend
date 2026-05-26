@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { getPendingPosts, approvePost, rejectPost, getUsers, freezeUser, adjustCredit, getDict, addDict, updateDict, deleteDict, getStats } from '@/api/admin'
+import { getPendingPosts, approvePost, rejectPost, getUsers, freezeUser, adjustCredit, getDict, addDict, updateDict, deleteDict, getStats, getAllPosts, archivePost } from '@/api/admin'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const router = useRouter()
@@ -12,6 +12,8 @@ const dictType = ref('item_category')
 const dictItems = ref([])
 const stats = ref({})
 const loading = ref(false)
+const archPosts = ref([])
+const archLoading = ref(false)
 
 onMounted(() => {
   loadStats()
@@ -92,11 +94,31 @@ async function loadStats() {
   stats.value = (await getStats()).data
 }
 
+async function loadArchPosts() {
+  archLoading.value = true
+  try {
+    const res = await getAllPosts({ page: 1, size: 100 })
+    archPosts.value = res.data.records
+  } finally { archLoading.value = false }
+}
+
+async function handleArchive(id) {
+  await archivePost(id)
+  ElMessage.success('已归档')
+  loadArchPosts()
+}
+
 function onTabChange(tab) {
   if (tab === 'review') loadPendingPosts()
   else if (tab === 'users') loadUsers()
   else if (tab === 'dict') loadDict()
   else if (tab === 'stats') loadStats()
+  else if (tab === 'archive') loadArchPosts()
+}
+
+function statusLabel(s) {
+  const map = { 0: '进行中', 1: '已匹配', 2: '认领中', 3: '已完结', 4: '已归档', 5: '已下架' }
+  return map[s] || '未知'
 }
 </script>
 
@@ -181,6 +203,30 @@ function onTabChange(tab) {
             <template #default="{ row }">
               <el-button size="small" @click="handleUpdateDict(row)">编辑</el-button>
               <el-button size="small" type="danger" @click="handleDeleteDict(row.id)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+
+      <!-- 归档 -->
+      <el-tab-pane label="归档管理" name="archive">
+        <el-table :data="archPosts" v-loading="archLoading" border stripe max-height="500">
+          <el-table-column prop="id" label="ID" width="60" />
+          <el-table-column label="类型" width="80">
+            <template #default="{ row }">
+              <el-tag :type="row.type === 0 ? 'danger' : 'success'" size="small">{{ row.type === 0 ? '寻物' : '招领' }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="title" label="标题" />
+          <el-table-column label="状态" width="90">
+            <template #default="{ row }">
+              <el-tag size="small" :type="row.status === 3 ? 'success' : row.status >= 4 ? 'info' : 'warning'">{{ statusLabel(row.status) }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="90">
+            <template #default="{ row }">
+              <el-button v-if="row.status !== 4 && row.status !== 5" size="small" type="warning" @click="handleArchive(row.id)">归档</el-button>
+              <span v-else style="color:#c0c4cc;font-size:12px">已归档</span>
             </template>
           </el-table-column>
         </el-table>
