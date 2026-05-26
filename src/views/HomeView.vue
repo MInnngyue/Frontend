@@ -1,12 +1,6 @@
 <template>
   <div class="profile-page">
-    <!-- Hero -->
-    <div class="hero-section">
-      <div class="hero-left">
-        <h1 class="hero-title">个人中心</h1>
-        <p class="hero-sub">管理你的失物招领信息和账号</p>
-      </div>
-    </div>
+    <h1 class="page-title">个人中心</h1>
 
     <div class="content-area">
       <!-- 用户信息卡 -->
@@ -19,6 +13,7 @@
           </div>
           <div class="profile-right">
             <el-button v-if="isAdmin" class="admin-entry-btn" @click="$router.push('/admin')">管理后台</el-button>
+            <el-button class="logout-btn" @click="handleLogout">退出登录</el-button>
           </div>
         </div>
 
@@ -85,7 +80,10 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { getUserInfo } from '../api/user'
+
+const router = useRouter()
 
 const loading = ref(false)
 const userInfo = ref(null)
@@ -123,6 +121,12 @@ const formatRole = (role) => {
   return '普通用户'
 }
 
+const handleLogout = () => {
+  localStorage.removeItem('token')
+  localStorage.removeItem('userInfo')
+  router.push('/login')
+}
+
 onMounted(() => {
   userInfo.value = getLocalUserInfo()
   loadUserInfo()
@@ -132,32 +136,18 @@ onMounted(() => {
 .profile-page {
   max-width: 720px;
   margin: 0 auto;
-  padding: 32px 20px;
+  padding: 20px 20px 32px;
 }
 
-/* Hero */
-.hero-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 28px 32px;
-  margin-bottom: 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px;
-  color: #fff;
+.page-title {
+  font-size: 56px; font-weight: 800; color: #111827; margin: 0 0 24px; text-align: center;
 }
 
-.hero-title {
-  font-size: 26px;
-  font-weight: 700;
-  margin: 0 0 6px;
+.logout-btn {
+  background: none; border: 1px solid #dcdfe6; color: #909399;
+  font-size: 13px; border-radius: 8px; padding: 6px 16px; transition: all 0.15s;
 }
-
-.hero-sub {
-  margin: 0;
-  opacity: 0.85;
-  font-size: 14px;
-}
+.logout-btn:hover { border-color: #f56c6c; color: #f56c6c; }
 
 /* Content */
 .content-area {

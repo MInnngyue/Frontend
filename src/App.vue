@@ -7,18 +7,13 @@ const route = useRoute()
 const router = useRouter()
 
 const showNav = computed(() => route.path !== '/login')
+const isPublishPage = computed(() => route.path === '/publish')
 const unreadCount = ref(0)
 const messages = ref([])
 const showNotifications = ref(false)
 
 function isActive(path) {
   return route.path === path || (path === '/' && route.path.startsWith('/'))
-}
-
-function logout() {
-  localStorage.removeItem('token')
-  localStorage.removeItem('userInfo')
-  router.push('/login')
 }
 
 async function loadUnreadCount() {
@@ -97,7 +92,8 @@ onMounted(() => {
             <div v-else class="notify-empty">暂无消息</div>
           </div>
 
-          <el-button text @click="logout">退出登录</el-button>
+          <el-button v-if="isPublishPage" class="header-back-btn" @click="router.push('/')">&larr; 返回广场</el-button>
+          <el-button v-else class="header-publish-btn" @click="router.push('/publish')">+ 发布帖子</el-button>
         </div>
 
         <!-- 通知下拉遮罩 -->
@@ -117,9 +113,13 @@ onMounted(() => {
   box-sizing: border-box;
 }
 
+html {
+  overflow-y: scroll;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #f5f7fa;
+  background: #f5f3f1;
   color: #303133;
 }
 
@@ -140,7 +140,7 @@ body {
   margin: 0 auto;
   height: 100%;
   display: grid;
-  grid-template-columns: 160px 1fr 160px;
+  grid-template-columns: 180px 1fr 200px;
   align-items: center;
   padding: 0 24px;
 }
@@ -167,6 +167,7 @@ body {
   font-size: 14px;
   font-weight: 500;
   transition: all 0.2s;
+  position: relative;
 }
 
 .nav-links a:hover {
@@ -179,11 +180,36 @@ body {
   background: #ecf5ff;
 }
 
+.nav-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 3px;
+  border-radius: 2px;
+  background: #409eff;
+}
+
 .header-right {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  gap: 8px;
 }
+
+.header-publish-btn {
+  background: #3b82f6; border: none; color: #fff; font-size: 13px; font-weight: 600;
+  border-radius: 8px; padding: 7px 18px; transition: background 0.15s; white-space: nowrap;
+}
+.header-publish-btn:hover { background: #2563eb; color: #fff; }
+
+.header-back-btn {
+  background: #3b82f6; border: none; color: #fff; font-size: 13px; font-weight: 600;
+  border-radius: 8px; padding: 7px 18px; transition: background 0.15s; white-space: nowrap;
+}
+.header-back-btn:hover { background: #2563eb; color: #fff; }
 
 main.has-header {
   padding-top: 56px;

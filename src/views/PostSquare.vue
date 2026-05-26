@@ -58,7 +58,6 @@ function statusLabel(status) {
     <!-- 标题栏 -->
     <div class="title-bar">
       <h1 class="page-title">失物广场</h1>
-      <el-button class="publish-btn" @click="goPublish">+ 发布帖子</el-button>
     </div>
 
     <div class="main-layout">
@@ -142,16 +141,11 @@ function statusLabel(status) {
 </template>
 
 <style scoped>
-.post-square { max-width: 1280px; margin: 0 auto; padding: 32px 24px; }
+.post-square { max-width: 1280px; margin: 0 auto; padding: 20px 24px 32px; }
 
 /* Title Bar */
-.title-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-.page-title { font-size: 28px; font-weight: 800; color: #111827; margin: 0; }
-.publish-btn {
-  background: #3b82f6; border: none; color: #fff; font-size: 14px; font-weight: 600;
-  border-radius: 8px; padding: 10px 22px; transition: background 0.15s;
-}
-.publish-btn:hover { background: #2563eb; }
+.title-bar { margin-bottom: 24px; }
+.page-title { font-size: 56px; font-weight: 800; color: #111827; margin: 0 0 12px; text-align: center; }
 
 /* Layout */
 .main-layout { display: flex; gap: 24px; align-items: flex-start; }
@@ -181,7 +175,7 @@ function statusLabel(status) {
 .content-area { flex: 1; min-height: 400px; }
 
 /* Cards */
-.card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
 
 .card {
   background: #fff; border-radius: 10px; overflow: hidden; cursor: pointer;
@@ -190,14 +184,14 @@ function statusLabel(status) {
 }
 .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-1px); }
 
-.card-cover { width: 100%; height: 160px; background: #f9fafb; overflow: hidden; }
+.card-cover { width: 100%; height: 240px; background: #f9fafb; overflow: hidden; }
 .card-cover :deep(.el-image) { width: 100%; height: 100%; }
 .card-cover :deep(.el-image img) { object-fit: cover; width: 100%; height: 100%; }
-.cover-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 36px; }
+.cover-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 48px; }
 
-.card-body { padding: 14px 16px; }
+.card-body { padding: 16px 18px; }
 .card-type-tag {
-  display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px;
+  display: inline-block; font-size: 12px; padding: 2px 10px; border-radius: 4px;
   font-weight: 600; color: #fff; margin-right: 6px;
 }
 .card-type-tag.lost { background: #ef4444; }
@@ -213,9 +207,9 @@ function statusLabel(status) {
 .s-4, .s-5 { background: #6b7280; }
 
 .card-title {
-  font-size: 14px; font-weight: 600; color: #111827; margin: 8px 0 6px;
+  font-size: 15px; font-weight: 600; color: #111827; margin: 8px 0 8px;
   line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-  overflow: hidden; min-height: 36px;
+  overflow: hidden; min-height: 40px;
 }
 
 .card-meta { display: flex; align-items: center; gap: 4px; font-size: 12px; color: #9ca3af; }
