@@ -119,7 +119,7 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
         <h3 class="section-heading">评论 ({{ comments.length }})</h3>
         <div class="comment-input">
           <el-input v-model="commentText" placeholder="发表评论..." maxlength="500" show-word-limit :rows="2" type="textarea" />
-          <el-button class="send-comment-btn" size="small" :loading="commentSending" @click="sendComment">发送</el-button>
+          <el-button class="send-comment-btn" :loading="commentSending" @click="sendComment">发送</el-button>
         </div>
         <div class="comment-list" v-if="comments.length > 0">
           <div v-for="c in comments" :key="c.id" class="comment-item">
@@ -215,8 +215,8 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
 
 /* ===== Comments ===== */
 .section-heading { font-size: 17px; font-weight: 700; color: #1e293b; margin: 0 0 16px; }
-.comment-input { margin-bottom: 20px; }
-.send-comment-btn { margin-top: 8px; background: #4f46e5; border-color: #4f46e5; color: #fff; }
+.comment-input { margin-bottom: 20px; display: flex; flex-direction: column; align-items: flex-end; }
+.send-comment-btn { margin-top: 10px; background: #4f46e5; border-color: #4f46e5; color: #fff; font-size: 16px; padding: 10px 24px; border-radius: 8px; font-weight: 600; }
 .send-comment-btn:hover { background: #4338ca; border-color: #4338ca; }
 
 .comment-list { display: flex; flex-direction: column; gap: 16px; }
