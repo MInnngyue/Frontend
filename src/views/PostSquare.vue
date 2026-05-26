@@ -62,14 +62,11 @@ function statusLabel(status) {
 
 <template>
   <div class="post-square">
-    <!-- Hero -->
-    <div class="hero-section">
-      <div class="hero-left">
-        <h1 class="hero-title">失物广场</h1>
-        <p class="hero-sub">找到你遗失的物品，或帮助他人找回失物</p>
-      </div>
+    <!-- 标题栏 -->
+    <div class="title-bar">
+      <h1 class="page-title">失物广场</h1>
       <el-button class="publish-btn" @click="goPublish">
-        <span style="font-size:18px;margin-right:4px">+</span> 发布帖子
+        <span style="font-size:16px;margin-right:3px">+</span> 发布帖子
       </el-button>
     </div>
 
@@ -173,20 +170,17 @@ function statusLabel(status) {
 <style scoped>
 .post-square { max-width: 1400px; margin: 0 auto; padding: 24px 24px 32px; }
 
-/* Hero */
-.hero-section {
+/* Title Bar */
+.title-bar {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 28px 32px; margin-bottom: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px; color: #fff;
+  margin-bottom: 20px;
 }
-.hero-title { font-size: 26px; font-weight: 700; margin: 0 0 6px; letter-spacing: 0.5px; }
-.hero-sub { margin: 0; opacity: 0.85; font-size: 14px; }
+.page-title { font-size: 24px; font-weight: 800; color: #1a1a1a; margin: 0; }
 .publish-btn {
-  background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
-  color: #fff; font-size: 15px; border-radius: 8px; padding: 10px 24px; transition: all 0.2s;
+  background: #409eff; border: none; color: #fff; font-size: 14px;
+  border-radius: 8px; padding: 9px 20px; transition: opacity 0.2s;
 }
-.publish-btn:hover { background: rgba(255,255,255,0.35); border-color: rgba(255,255,255,0.5); color: #fff; }
+.publish-btn:hover { opacity: 0.85; color: #fff; }
 
 /* Layout */
 .main-layout { display: flex; gap: 20px; align-items: flex-start; }
@@ -219,10 +213,11 @@ function statusLabel(status) {
 .grid-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
 
 .card-img {
-  position: relative; width: 100%; height: 220px; overflow: hidden;
+  position: relative; width: 100%; height: 180px; overflow: hidden;
   background: #f0f2f5;
 }
-.card-img .el-image { width: 100%; height: 100%; }
+.card-img :deep(.el-image) { width: 100%; height: 100%; }
+.card-img :deep(.el-image img) { object-fit: cover; width: 100%; height: 100%; }
 .card-img-placeholder {
   width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
   font-size: 40px; color: #dcdfe6;
@@ -249,7 +244,7 @@ function statusLabel(status) {
 .status-4 { background: #909399; }
 .status-5 { background: #f56c6c; }
 
-.card-info { padding: 14px 16px; }
+.card-info { padding: 12px 14px; }
 .card-title {
   font-size: 15px; font-weight: 600; color: #303133; margin-bottom: 6px;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
