@@ -19,8 +19,6 @@ const queryParams = ref({ type: null, itemCategory: '', keyword: '' })
 const itemCategories = ref([])
 const colors = ref([])
 const campuses = ref([])
-const sidebarOpen = ref(true)
-
 onMounted(async () => {
   itemCategories.value = (await getCategories('item_category')).data
   colors.value = (await getCategories('color')).data
@@ -77,11 +75,8 @@ function statusLabel(status) {
 
     <div class="main-layout">
       <!-- 左侧筛选栏 -->
-      <aside class="sidebar" :class="{ collapsed: !sidebarOpen }">
-        <div class="sidebar-toggle" @click="sidebarOpen = !sidebarOpen">
-          {{ sidebarOpen ? '◀ 收起' : '▶' }}
-        </div>
-        <div v-if="sidebarOpen" class="sidebar-content">
+      <aside class="sidebar">
+        <div class="sidebar-content">
           <!-- 搜索 -->
           <div class="filter-group">
             <div class="filter-label">关键词搜索</div>
@@ -198,12 +193,10 @@ function statusLabel(status) {
 
 /* Sidebar */
 .sidebar {
-  width: 240px; flex-shrink: 0; background: #fff; border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04); padding: 12px;
-  position: sticky; top: 72px; transition: width 0.2s;
+  width: 280px; flex-shrink: 0; background: #fff; border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04); padding: 16px;
+  position: sticky; top: 72px;
 }
-.sidebar.collapsed { width: 40px; padding: 8px; }
-.sidebar-toggle { font-size: 12px; color: #909399; cursor: pointer; text-align: right; margin-bottom: 8px; }
 .sidebar-content { display: flex; flex-direction: column; gap: 4px; }
 .filter-group { margin-bottom: 12px; }
 .filter-label { font-size: 13px; font-weight: 600; color: #303133; margin-bottom: 6px; }
