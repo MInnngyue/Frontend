@@ -125,6 +125,7 @@ function switchNav(key) {
 }
 
 function onPostFilterChange(val) { postFilter.value = val }
+function goPost(id) { router.push(`/post/${id}`) }
 const filteredPosts = () => postFilter.value === 'pending' ? posts.value : allPosts.value
 
 const getPostType = (type) => type === 0 ? '寻物' : '招领'
@@ -193,6 +194,7 @@ const getStatusClass = (s) => {
                 <td v-if="postFilter === 'all'"><span class="status-badge" :class="getStatusClass(row.status)">{{ statusLabel(row.status) }}</span></td>
                 <td class="td-actions">
                   <template v-if="postFilter === 'pending'">
+                    <a class="view-link" @click="goPost(row.id)">查看</a>
                     <button class="btn btn-approve" @click="handleApprove(row.id)">通过</button>
                     <button class="btn btn-reject" @click="handleReject(row.id)">拒绝</button>
                   </template>
@@ -231,9 +233,9 @@ const getStatusClass = (s) => {
                 <td><span class="credit-badge" :class="row.creditScore >= 80 ? 'credit-ok' : 'credit-low'">{{ row.creditScore }}</span></td>
                 <td><span :class="['status-dot', row.status === 0 ? 'dot-ok' : 'dot-bad']">{{ row.status === 0 ? '正常' : '冻结' }}</span></td>
                 <td class="td-actions">
-                  <button class="btn btn-ghost" @click="handleCredit(row.id)">信用</button>
-                  <button class="btn btn-ghost" @click="handleFreeze(row.id)">{{ row.status === 0 ? '冻结' : '解冻' }}</button>
-                  <button class="btn btn-ghost" @click="handleBlacklist(row.id)">{{ row.blacklisted ? '取消拉黑' : '拉黑' }}</button>
+                  <button class="btn btn-credit" @click="handleCredit(row.id)">信用</button>
+                  <button class="btn btn-freeze" @click="handleFreeze(row.id)">{{ row.status === 0 ? '冻结' : '解冻' }}</button>
+                  <button class="btn btn-ban" @click="handleBlacklist(row.id)">{{ row.blacklisted ? '取消拉黑' : '拉黑' }}</button>
                 </td>
               </tr>
             </tbody>
@@ -336,19 +338,20 @@ const getStatusClass = (s) => {
 .sb-nav { flex: 1; padding: 4px 10px; display: flex; flex-direction: column; gap: 2px; }
 .sb-item {
   display: flex; align-items: center; gap: 10px;
-  width: 100%; padding: 10px 14px; border: none; border-radius: 8px;
-  background: transparent; color: #64748b; font-size: 14px; font-weight: 500;
+  width: 100%; padding: 11px 14px; border: none; border-radius: 8px;
+  background: transparent; color: #475569; font-size: 14px; font-weight: 500;
   cursor: pointer; transition: all 0.15s; text-align: left;
 }
-.sb-item:hover { background: #f1f5f9; color: #334155; }
+.sb-item:hover { background: #e2e8f0; color: #1e293b; }
 .sb-item.active { background: #eef2ff; color: #4f46e5; font-weight: 600; }
-.sb-icon { font-size: 16px; width: 22px; text-align: center; }
-.sb-footer { padding: 16px 20px; border-top: 1px solid #f1f5f9; }
+.sb-icon { font-size: 17px; width: 22px; text-align: center; }
+.sb-footer { padding: 16px 20px; border-top: 1px solid #e2e8f0; }
 .sb-back {
-  width: 100%; padding: 8px 0; border: 1px solid #e2e8f0; border-radius: 8px;
-  background: #fff; color: #64748b; font-size: 13px; cursor: pointer; transition: all 0.15s;
+  width: 100%; padding: 10px 0; border: none; border-radius: 8px;
+  background: #f1f5f9; color: #475569; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s;
 }
-.sb-back:hover { background: #f8fafc; color: #334155; }
+.sb-back:hover { background: #e2e8f0; color: #1e293b; }
 
 /* === Main === */
 .main-content {
@@ -369,33 +372,33 @@ const getStatusClass = (s) => {
 /* === Filter pills === */
 .filter-pills { display: flex; gap: 6px; }
 .pill {
-  padding: 6px 14px; border-radius: 20px; border: 1px solid #e2e8f0; background: #fff;
-  font-size: 13px; font-weight: 500; color: #64748b; cursor: pointer; transition: all 0.15s;
+  padding: 7px 16px; border-radius: 20px; border: 1px solid #cbd5e1; background: #fff;
+  font-size: 13px; font-weight: 600; color: #475569; cursor: pointer; transition: all 0.15s;
   display: flex; align-items: center; gap: 6px;
 }
-.pill:hover { border-color: #cbd5e1; color: #334155; }
+.pill:hover { border-color: #94a3b8; color: #1e293b; }
 .pill.active { background: #4f46e5; border-color: #4f46e5; color: #fff; }
-.badge { background: rgba(255,255,255,0.25); padding: 1px 7px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.badge { background: rgba(255,255,255,0.3); padding: 1px 7px; border-radius: 10px; font-size: 11px; font-weight: 700; }
 
 /* === Table === */
 .table-wrap {
-  background: #fff; border-radius: 12px; border: 1px solid #e2e8f0;
+  background: #fff; border-radius: 12px; border: 1px solid #cbd5e1;
   overflow: hidden;
 }
 .data-table { width: 100%; border-collapse: collapse; table-layout: auto; }
 .data-table th {
-  padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 600;
-  color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;
-  background: #f8fafc; border-bottom: 1px solid #e2e8f0; white-space: nowrap;
+  padding: 13px 16px; text-align: left; font-size: 11px; font-weight: 700;
+  color: #64748b; text-transform: uppercase; letter-spacing: 0.6px;
+  background: #f1f5f9; border-bottom: 2px solid #e2e8f0; white-space: nowrap;
 }
 .data-table td {
-  padding: 14px 16px; font-size: 14px; color: #334155;
-  border-bottom: 1px solid #f1f5f9; vertical-align: middle;
+  padding: 15px 16px; font-size: 14px; color: #1e293b;
+  border-bottom: 1px solid #e2e8f0; vertical-align: middle;
 }
 .data-table tr:last-child td { border-bottom: none; }
 .data-table tbody tr { transition: background 0.12s; }
-.data-table tbody tr:hover { background: #f8fafc; }
-.td-id { font-family: 'SF Mono', 'JetBrains Mono', monospace; color: #94a3b8; font-size: 13px; }
+.data-table tbody tr:hover { background: #f1f5f9; }
+.td-id { font-family: 'SF Mono', 'JetBrains Mono', monospace; color: #64748b; font-size: 13px; font-weight: 500; }
 .td-title { font-weight: 500; max-width: 480px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .td-actions { display: flex; gap: 6px; flex-wrap: nowrap; }
 .text-muted { color: #cbd5e1; font-size: 13px; }
@@ -423,20 +426,33 @@ const getStatusClass = (s) => {
 
 /* === Buttons === */
 .btn {
-  padding: 6px 14px; border: none; border-radius: 7px; font-size: 13px; font-weight: 500;
+  padding: 6px 14px; border: none; border-radius: 7px; font-size: 13px; font-weight: 600;
   cursor: pointer; transition: all 0.15s; white-space: nowrap;
 }
-.btn-approve { background: #ecfdf5; color: #059669; }
-.btn-approve:hover { background: #d1fae5; }
-.btn-reject { background: #fef2f2; color: #dc2626; }
-.btn-reject:hover { background: #fee2e2; }
-.btn-archive { background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; }
-.btn-archive:hover { background: #f1f5f9; color: #334155; }
-.btn-ghost { background: transparent; color: #64748b; padding: 6px 12px; }
-.btn-ghost:hover { background: #f1f5f9; color: #334155; }
-.btn-ghost-danger:hover { background: #fef2f2; color: #dc2626; }
+.btn-approve { background: #dcfce7; color: #15803d; }
+.btn-approve:hover { background: #bbf7d0; }
+.btn-reject { background: #fee2e2; color: #b91c1c; }
+.btn-reject:hover { background: #fecaca; }
+.btn-archive { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+.btn-archive:hover { background: #e2e8f0; color: #1e293b; }
+.btn-credit { background: #dcfce7; color: #15803d; }
+.btn-credit:hover { background: #bbf7d0; }
+.btn-freeze { background: #fef3c7; color: #b45309; }
+.btn-freeze:hover { background: #fde68a; }
+.btn-ban { background: #fee2e2; color: #b91c1c; }
+.btn-ban:hover { background: #fecaca; }
+.btn-ghost { background: transparent; color: #475569; padding: 6px 12px; }
+.btn-ghost:hover { background: #f1f5f9; }
+.btn-ghost-danger:hover { background: #fee2e2; color: #b91c1c; }
 .btn-primary { background: #4f46e5; color: #fff; padding: 7px 16px; font-weight: 600; }
 .btn-primary:hover { background: #4338ca; }
+
+/* View link */
+.view-link {
+  color: #4f46e5; font-size: 13px; font-weight: 600; cursor: pointer;
+  padding: 6px 10px; border-radius: 6px; text-decoration: none; transition: all 0.12s;
+}
+.view-link:hover { background: #eef2ff; }
 
 /* === Select === */
 .dict-select { width: 130px; }
