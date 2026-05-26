@@ -128,7 +128,7 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  height: 56px;
+  height: 72px;
   background: #fff;
   border-bottom: 1px solid #e4e7ed;
   z-index: 100;
@@ -136,17 +136,17 @@ body {
 }
 
 .header-inner {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   height: 100%;
   display: grid;
-  grid-template-columns: 180px 1fr 200px;
+  grid-template-columns: 240px 1fr 240px;
   align-items: center;
-  padding: 0 24px;
+  padding: 0 36px;
 }
 
 .brand {
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 700;
   color: #409eff;
   cursor: pointer;
@@ -156,15 +156,15 @@ body {
 .nav-links {
   display: flex;
   justify-content: center;
-  gap: 4px;
+  gap: 16px;
 }
 
 .nav-links a {
   text-decoration: none;
   color: #606266;
-  padding: 6px 18px;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: 8px 22px;
+  border-radius: 8px;
+  font-size: 16px;
   font-weight: 500;
   transition: all 0.2s;
   position: relative;
@@ -212,7 +212,7 @@ body {
 .header-back-btn:hover { background: #2563eb; color: #fff; }
 
 main.has-header {
-  padding-top: 56px;
+  padding-top: 72px;
   min-height: 100vh;
 }
 
