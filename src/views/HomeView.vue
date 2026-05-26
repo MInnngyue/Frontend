@@ -17,6 +17,9 @@
             <div class="profile-name">{{ userInfo?.nickname || userInfo?.username || '-' }}</div>
             <div class="profile-role">{{ formatRole(userInfo?.role) }}</div>
           </div>
+          <div class="profile-right">
+            <el-button v-if="isAdmin" class="admin-entry-btn" @click="$router.push('/admin')">管理后台</el-button>
+          </div>
         </div>
 
         <el-skeleton :loading="loading" animated :rows="3">
@@ -89,10 +92,6 @@
           </div>
         </div>
       </div>
-      <div class="info-card" v-if="isAdmin" style="text-align:center">
-        <el-button @click="router.push('/admin')">进入管理后台 →</el-button>
-      </div>
-
       <!-- 详细信息 -->
       <div class="info-card" v-if="userInfo">
         <div class="info-title">账号信息</div>
@@ -271,6 +270,27 @@ function statusLabel(s) {
   font-size: 13px;
   color: #909399;
   margin-top: 2px;
+}
+
+.profile-main { flex: 1; }
+
+.profile-right {
+  display: flex;
+  align-items: center;
+  padding-right: 4px;
+}
+
+.admin-entry-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  border-radius: 8px;
+  padding: 8px 18px;
+}
+.admin-entry-btn:hover {
+  opacity: 0.9;
+  color: #fff;
 }
 
 /* Stats */
