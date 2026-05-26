@@ -142,8 +142,19 @@ function statusLabel(status) {
 .post-square { max-width: 1280px; margin: 0 auto; padding: 20px 24px 32px; }
 
 /* Title Bar */
-.title-bar { margin-bottom: 24px; }
-.page-title { font-size: 56px; font-weight: 800; color: #111827; margin: 0 0 12px; text-align: center; }
+.title-bar { margin-bottom: 16px; }
+.page-title { font-size: 56px; font-weight: 800; color: #111827; margin: 0; text-align: center; position: relative; padding-bottom: 20px; }
+.page-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 5px;
+  border-radius: 3px;
+  background: #111827;
+}
 
 /* Layout */
 .main-layout { display: flex; gap: 24px; align-items: flex-start; }

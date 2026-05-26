@@ -182,7 +182,7 @@ const handleSubmit = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #e0f2fe 0%, #f8fafc 45%, #eef2ff 100%);
+  background: #f0f4f8;
 }
 
 .login-card {

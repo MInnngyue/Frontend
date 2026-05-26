@@ -228,7 +228,7 @@ async function handleDelete() {
 
 /* Header */
 .header-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #5a67d8;
   border-radius: 16px; padding: 28px 32px; margin-bottom: 16px; color: #fff;
 }
 .header-tags { display: flex; gap: 10px; margin-bottom: 14px; }
@@ -267,7 +267,7 @@ async function handleDelete() {
 .publisher-card { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
 .publisher-avatar {
   width: 44px; height: 44px; border-radius: 50%;
-  background: linear-gradient(135deg, #409eff, #66b1ff);
+  background: #409eff;
   color: #fff; font-size: 18px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
 }

@@ -258,7 +258,7 @@ function statusLabel(s) {
 
 <style scoped>
 .admin-page { max-width: 1000px; margin: 0 auto; padding: 32px 20px; }
-.hero-section { display: flex; justify-content: space-between; align-items: center; padding: 28px 32px; margin-bottom: 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; color: #fff; }
+.hero-section { display: flex; justify-content: space-between; align-items: center; padding: 28px 32px; margin-bottom: 24px; background: #5a67d8; border-radius: 16px; color: #fff; }
 .hero-title { font-size: 26px; font-weight: 700; margin: 0 0 6px; }
 .hero-sub { margin: 0; opacity: 0.85; font-size: 14px; }
 .back-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: #fff; font-size: 14px; border-radius: 8px; padding: 8px 18px; }
@@ -272,7 +272,7 @@ function statusLabel(s) {
 .cat-bar-item { display: flex; align-items: center; gap: 10px; }
 .cat-name { width: 80px; font-size: 13px; color: #606266; text-align: right; }
 .cat-bar { flex: 1; height: 20px; background: #f0f2f5; border-radius: 10px; overflow: hidden; }
-.cat-fill { height: 100%; background: linear-gradient(90deg, #409eff, #66b1ff); border-radius: 10px; transition: width 0.5s; }
+.cat-fill { height: 100%; background: #409eff; border-radius: 10px; transition: width 0.5s; }
 .cat-count { width: 30px; font-size: 13px; color: #909399; }
 .filter-row { display: flex; gap: 8px; }
 </style>

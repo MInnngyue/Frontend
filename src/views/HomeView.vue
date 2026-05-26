@@ -175,7 +175,7 @@ onMounted(() => {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #409eff, #66b1ff);
+  background: #409eff;
   color: #fff;
   font-size: 24px;
   font-weight: 700;
@@ -205,7 +205,7 @@ onMounted(() => {
 }
 
 .admin-entry-btn {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: #5a67d8;
   border: none;
   color: #fff;
   font-size: 13px;
