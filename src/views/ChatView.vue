@@ -67,6 +67,7 @@ function isMe(msg) { const info = localStorage.getItem('userInfo'); if (!info) r
 .chat-empty { text-align: center; color: #94a3b8; padding: 60px 0; font-size: 14px; }
 .chat-msg { display: flex; flex-direction: column; max-width: 70%; }
 .chat-msg.mine { align-self: flex-end; }
+.chat-msg:not(.mine) { width: fit-content; }
 .chat-msg.mine .chat-bubble { background: #4f46e5; color: #fff; border-radius: 16px 16px 4px 16px; border: none; }
 .chat-bubble {
   background: #fff; color: #1e293b; padding: 10px 16px; border-radius: 16px 16px 16px 4px;

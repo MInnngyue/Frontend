@@ -182,7 +182,9 @@ body {
 }
 .header-logout-btn { background: none; border: 1px solid #e2e8f0; color: #64748b; font-size: 13px; border-radius: 8px; padding: 5px 14px; transition: all 0.15s; }
 .header-logout-btn:hover { border-color: #ef4444; color: #ef4444; }
-.header-logout-btn:focus { border-color: #e2e8f0; color: #64748b; }
+.header-logout-btn:focus,
+.header-logout-btn:focus-visible { border-color: #e2e8f0; color: #64748b; outline: none; box-shadow: none; }
+.header-logout-btn:active { border-color: #e2e8f0; color: #64748b; }
 .header-publish-btn:hover { background: #4338ca; color: #fff; }
 
 .header-back-btn {

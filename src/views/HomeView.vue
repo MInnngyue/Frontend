@@ -245,16 +245,16 @@ onMounted(() => {
 <style scoped>
 .profile-page { max-width: 720px; margin: 0 auto; padding: 20px 20px 32px; background: #f8fafc; min-height: 100vh; }
 .page-title { font-size: 32px; font-weight: 700; color: #1e293b; margin: 0 0 24px; text-align: left; }
-.more-btn { background: #f3f4f6; border: 1px solid #e5e7eb; color: #4b5563; font-size: 13px; border-radius: 8px; padding: 6px 14px; }
-.more-btn:hover { background: #1a1a1a; border-color: #1a1a1a; color: #fff; }
-.content-area { display: flex; flex-direction: column; gap: 12px; }
-.profile-card { background: #fff; border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.more-btn { background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; font-size: 13px; border-radius: 8px; padding: 6px 14px; }
+.more-btn:hover { background: #eef2ff; border-color: #4f46e5; color: #4f46e5; }
+.content-area { display: flex; flex-direction: column; gap: 14px; }
 .profile-card { background: #fff; border-radius: 12px; padding: 18px 20px; border: 1px solid #e2e8f0; }
-.profile-avatar { width: 46px; height: 46px; border-radius: 50%; background: #4f46e5; color: #fff; font-size: 20px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.profile-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.profile-avatar { width: 46px; height: 46px; border-radius: 50%; background: #4f46e5; color: #fff; font-size: 20px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .profile-name { font-size: 20px; font-weight: 700; color: #1e293b; }
 .profile-main { flex: 1; }
 .profile-sign { font-size: 12px; color: #64748b; margin-top: 2px; }
-.profile-right { display: flex; align-items: center; gap: 10px; }
+.profile-right { display: flex; align-items: center; gap: 10px; margin-left: auto; flex-shrink: 0; }
 .admin-entry-btn { background: #4f46e5; border: none; color: #fff; font-size: 13px; border-radius: 8px; padding: 8px 18px; }
 .admin-entry-btn:hover { opacity: 0.9; color: #fff; }
 .stats-row { display: flex; align-items: center; padding: 12px 0; }
@@ -262,7 +262,7 @@ onMounted(() => {
 .stat-value { font-size: 24px; font-weight: 700; color: #4f46e5; }
 .stat-label { font-size: 12px; color: #64748b; margin-top: 4px; }
 .stat-divider { width: 1px; height: 32px; background: #e2e8f0; }
-.empty-info { text-align: center; color: #c0c4cc; padding: 20px 0; }
+.empty-info { text-align: center; color: #94a3b8; padding: 20px 0; }
 .quick-links { display: flex; gap: 12px; }
 .quick-link { flex: 1; background: #fff; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; border: 1px solid #e2e8f0; transition: all 0.2s; }
 .quick-link:hover { border-color: #4f46e5; box-shadow: 0 2px 8px rgba(79,70,229,0.08); }
@@ -271,16 +271,16 @@ onMounted(() => {
 .info-card { background: #fff; border-radius: 12px; padding: 24px; border: 1px solid #e2e8f0; }
 .info-title { font-size: 16px; font-weight: 600; color: #1e293b; margin-bottom: 16px; }
 .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+.info-row:last-child { border-bottom: none; }
 .info-label { color: #64748b; font-size: 14px; }
 .info-value { color: #1e293b; font-size: 14px; font-weight: 500; }
-.info-value { color: #303133; font-size: 14px; font-weight: 500; }
 .archive-list { display: flex; flex-direction: column; gap: 6px; }
-.archive-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f5f6f8; }
+.archive-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-radius: 6px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: background 0.15s; }
 .archive-row:last-child { border-bottom: none; }
-.archive-row:hover { background: #f9fafb; border-radius: 6px; padding-left: 8px; padding-right: 8px; }
+.archive-row:hover { background: #f1f5f9; }
 .archive-info { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
-.archive-title { font-size: 14px; color: #303133; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
-.archive-status { font-size: 12px; color: #909399; white-space: nowrap; }
+.archive-title { font-size: 14px; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.archive-status { font-size: 12px; color: #64748b; white-space: nowrap; }
 .s-capsule { padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #fff; }
 .sc-lost { background: #ef4444; }
 .sc-found { background: #4f46e5; }

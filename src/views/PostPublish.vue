@@ -346,22 +346,22 @@ async function onSubmit() {
   font-weight: 500;
 }
 
-/* Submit (publish) button — green mask */
+/* Submit (publish) button — indigo紫色 */
 .form-card :deep(.el-form-item:last-child .el-button--primary) {
-  background: #dcfce7;
-  border-color: #bbf7d0;
-  color: #15803d;
+  background: #4f46e5;
+  border-color: #4f46e5;
+  color: #fff;
   font-weight: 600;
 }
 .form-card :deep(.el-form-item:last-child .el-button--primary:hover) {
-  background: #bbf7d0;
-  border-color: #86efac;
-  color: #15803d;
+  background: #4338ca;
+  border-color: #4338ca;
+  color: #fff;
 }
 .form-card :deep(.el-form-item:last-child .el-button--primary:active) {
-  background: #86efac;
-  border-color: #4ade80;
-  color: #15803d;
+  background: #3730a3;
+  border-color: #3730a3;
+  color: #fff;
 }
 
 /* Cancel button — slate style */
@@ -378,6 +378,14 @@ async function onSubmit() {
 /* ── Upload ── */
 :deep(.el-upload) {
   display: inline-flex;
+}
+:deep(.el-button--primary.is-plain) {
+  --el-button-bg-color: #eef2ff;
+  --el-button-border-color: #c7d2fe;
+  --el-button-text-color: #4f46e5;
+  --el-button-hover-bg-color: #4f46e5;
+  --el-button-hover-border-color: #4f46e5;
+  --el-button-hover-text-color: #fff;
 }
 .upload-tip {
   margin-left: 12px;
