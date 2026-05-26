@@ -187,7 +187,7 @@ function statusLabel(status) {
 .card-cover :deep(.el-image img) { object-fit: cover; width: 100%; height: 100%; }
 .cover-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 48px; }
 
-.card-body { padding: 16px 18px; }
+.card-body { padding: 12px 16px; }
 .card-type-tag {
   display: inline-block; font-size: 12px; padding: 3px 12px; border-radius: 20px;
   font-weight: 600; color: #fff; margin-right: 6px;
@@ -205,9 +205,9 @@ function statusLabel(status) {
 .s-4, .s-5 { background: #6b7280; }
 
 .card-title {
-  font-size: 15px; font-weight: 600; color: #111827; margin: 6px 0 6px;
+  font-size: 15px; font-weight: 600; color: #111827; margin: 4px 0 0;
   line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-  overflow: hidden; min-height: 38px;
+  overflow: hidden;
 }
 
 .card-meta { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
