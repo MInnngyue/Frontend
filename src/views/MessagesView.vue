@@ -32,7 +32,7 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
       <div v-if="sysExpanded" v-for="m in systemMsgs" :key="m.id" class="msg-item" :class="{ unread: m.isRead === 0 }" @click="markRead(m.id); if(m.relatedPostId) goPost(m.relatedPostId)">
         <div class="msg-title">{{ m.title }}</div>
         <div class="msg-content">{{ m.content }}</div>
-        <div class="msg-time">{{ m.createTime?.substring(0, 16) }}</div>
+        <div class="msg-time">{{ m.createTime?.substring(0, 16).replace('T', ' ') }}</div>
       </div>
     </div>
 

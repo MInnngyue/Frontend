@@ -64,7 +64,7 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
         <div class="capsule-row">
           <span class="capsule c-cat">{{ post.itemCategory }}</span>
           <span class="capsule c-loc">{{ post.locationCampus }}</span>
-          <span class="capsule c-time">{{ post.lostTime }}</span>
+          <span class="capsule c-time">{{ post.lostTime?.replace('T', ' ') }}</span>
         </div>
       </div>
 
@@ -87,7 +87,7 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
             <div class="pub-avatar">{{ post.nickname?.charAt(0) || 'U' }}</div>
             <div>
               <div class="pub-name">{{ post.nickname }}</div>
-              <div class="pub-meta">信用分 {{ post.creditScore }} · {{ post.createTime?.substring(0, 16) }}</div>
+              <div class="pub-meta">信用分 {{ post.creditScore }} · {{ post.createTime?.substring(0, 16).replace('T', ' ') }}</div>
             </div>
           </div>
           <div class="pub-right">
@@ -125,7 +125,7 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
           <div v-for="c in comments" :key="c.id" class="comment-item">
             <span class="cmt-avatar">{{ c.nickname?.charAt(0) || 'U' }}</span>
             <div class="cmt-body">
-              <div class="cmt-header"><span class="cmt-name">{{ c.nickname }}</span><span class="cmt-time">{{ c.createTime?.substring(0, 16) }}</span></div>
+              <div class="cmt-header"><span class="cmt-name">{{ c.nickname }}</span><span class="cmt-time">{{ c.createTime?.substring(0, 16).replace('T', ' ') }}</span></div>
               <div class="cmt-content">{{ c.content }}</div>
             </div>
           </div>

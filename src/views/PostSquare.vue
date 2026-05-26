@@ -112,7 +112,7 @@ function statusLabel(status) {
               <div class="card-meta">
                 <span class="meta-capsule mc-cat">{{ post.itemCategory }}</span>
                 <span class="meta-capsule mc-loc">{{ post.locationCampus }}</span>
-                <span class="meta-capsule mc-time">{{ post.lostTime }}</span>
+                <span class="meta-capsule mc-time">{{ post.lostTime?.replace('T', ' ') }}</span>
               </div>
             </div>
           </div>
