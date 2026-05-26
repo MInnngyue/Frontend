@@ -193,16 +193,16 @@ function statusLabel(status) {
 
 /* Sidebar */
 .sidebar {
-  width: 260px; flex-shrink: 0; background: #fff; border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04); padding: 16px;
+  width: 320px; flex-shrink: 0; background: #fff; border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04); padding: 20px;
   position: sticky; top: 72px;
 }
 .sidebar-content { display: flex; flex-direction: column; gap: 4px; }
 .filter-group { margin-bottom: 12px; }
-.filter-label { font-size: 13px; font-weight: 600; color: #303133; margin-bottom: 6px; }
-.filter-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.filter-label { font-size: 14px; font-weight: 600; color: #303133; margin-bottom: 8px; }
+.filter-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .filter-tag {
-  font-size: 12px; padding: 3px 10px; border-radius: 12px; cursor: pointer;
+  font-size: 13px; padding: 5px 12px; border-radius: 14px; cursor: pointer;
   background: #f5f7fa; color: #606266; transition: all 0.15s; white-space: nowrap;
 }
 .filter-tag:hover { background: #ecf5ff; color: #409eff; }
