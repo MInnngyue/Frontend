@@ -171,7 +171,7 @@ function statusLabel(status) {
 </template>
 
 <style scoped>
-.post-square { max-width: 1100px; margin: 0 auto; padding: 24px 20px 32px; }
+.post-square { max-width: 1400px; margin: 0 auto; padding: 24px 24px 32px; }
 
 /* Hero */
 .hero-section {
@@ -193,7 +193,7 @@ function statusLabel(status) {
 
 /* Sidebar */
 .sidebar {
-  width: 280px; flex-shrink: 0; background: #fff; border-radius: 12px;
+  width: 260px; flex-shrink: 0; background: #fff; border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.04); padding: 16px;
   position: sticky; top: 72px;
 }
@@ -219,7 +219,7 @@ function statusLabel(status) {
 .grid-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
 
 .card-img {
-  position: relative; width: 100%; height: 200px; overflow: hidden;
+  position: relative; width: 100%; height: 220px; overflow: hidden;
   background: #f0f2f5;
 }
 .card-img .el-image { width: 100%; height: 100%; }
