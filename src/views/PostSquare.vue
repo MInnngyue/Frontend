@@ -143,16 +143,16 @@ function statusLabel(status) {
 
 /* Title Bar */
 .title-bar { margin-bottom: 16px; }
-.page-title { font-size: 56px; font-weight: 800; color: #111827; margin: 0; text-align: center; position: relative; padding-bottom: 20px; }
+.page-title { font-size: 56px; font-weight: 800; color: #111827; margin: 0 0 6px; text-align: center; position: relative; padding-bottom: 10px; }
 .page-title::after {
   content: '';
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 180px;
-  height: 5px;
-  border-radius: 3px;
+  width: 200px;
+  height: 4px;
+  border-radius: 2px;
   background: #111827;
 }
 
