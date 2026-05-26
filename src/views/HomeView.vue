@@ -284,4 +284,17 @@ onMounted(() => {
 .s-capsule { padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #fff; }
 .sc-lost { background: #ef4444; }
 .sc-found { background: #4f46e5; }
+
+/* Dialog overrides */
+:deep(.el-dialog) { border-radius: 14px; overflow: hidden; }
+:deep(.el-dialog__header) { padding: 20px 24px 0; margin: 0; }
+:deep(.el-dialog__title) { font-size: 17px; font-weight: 700; color: #1e293b; }
+:deep(.el-dialog__body) { padding: 20px 24px; }
+:deep(.el-dialog__footer) { padding: 12px 24px 20px; }
+:deep(.el-dialog .el-input__wrapper) { border-radius: 8px; box-shadow: 0 0 0 1px #e2e8f0 inset; }
+:deep(.el-dialog .el-input__wrapper:hover) { box-shadow: 0 0 0 1px #cbd5e1 inset; }
+:deep(.el-dialog .el-input.is-focus .el-input__wrapper) { box-shadow: 0 0 0 1px #4f46e5 inset; }
+:deep(.el-dialog .el-button--primary) { background: #4f46e5; border-color: #4f46e5; border-radius: 8px; font-weight: 600; }
+:deep(.el-dialog .el-button--primary:hover) { background: #4338ca; border-color: #4338ca; }
+:deep(.el-dialog .el-button) { border-radius: 8px; }
 </style>
