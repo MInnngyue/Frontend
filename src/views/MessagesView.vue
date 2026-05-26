@@ -24,7 +24,7 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
 
     <!-- 系统通知 -->
     <div class="section-card">
-      <div class="section-header" style="display:flex;justify-content:space-between;align-items:center">
+      <div class="section-header">
         <span>系统通知</span>
         <el-button size="small" class="expand-btn" @click="sysExpanded = !sysExpanded">{{ sysExpanded ? '收起 ▲' : '展开 ▼' }}</el-button>
       </div>
@@ -55,24 +55,25 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
 </template>
 
 <style scoped>
-.msg-page { max-width: 700px; margin: 0 auto; padding: 24px 20px 32px; }
-.page-title { font-size: 56px; font-weight: 800; color: #111827; margin: 0 0 24px; text-align: center; }
-.section-card { background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-.section-header { font-size: 16px; font-weight: 700; color: #303133; margin-bottom: 12px; }
-.empty-hint { text-align: center; color: #c0c4cc; padding: 30px 0; font-size: 13px; }
-.msg-item { padding: 10px 12px; border-radius: 8px; cursor: pointer; border-bottom: 1px solid #f5f6f8; }
+.msg-page { max-width: 700px; margin: 0 auto; padding: 24px 20px 32px; background: #f8fafc; min-height: 100vh; }
+.page-title { font-size: 32px; font-weight: 700; color: #1e293b; margin: 0 0 28px; }
+.section-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+.section-header { display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: 600; color: #1e293b; margin-bottom: 14px; }
+.empty-hint { text-align: center; color: #94a3b8; padding: 36px 0; font-size: 14px; }
+.msg-item { padding: 12px 14px; border-radius: 10px; cursor: pointer; border-bottom: 1px solid #f1f5f9; transition: background 0.15s; }
 .msg-item:last-child { border-bottom: none; }
-.msg-item:hover { background: #f9fafb; }
-.msg-item.unread { background: #ecf5ff; }
-.msg-title { font-size: 14px; font-weight: 600; color: #303133; margin-bottom: 4px; }
-.msg-content { font-size: 13px; color: #909399; white-space: pre-line; }
-.msg-time { font-size: 11px; color: #c0c4cc; margin-top: 4px; }
-.conv-row { display: flex; align-items: center; gap: 10px; }
-.conv-avatar { width: 40px; height: 40px; border-radius: 50%; background: #409eff; color: #fff; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.msg-item:hover { background: #f1f5f9; }
+.msg-item.unread { background: #eef2ff; }
+.msg-item.unread:hover { background: #e0e7ff; }
+.msg-title { font-size: 14px; font-weight: 600; color: #1e293b; margin-bottom: 4px; }
+.msg-content { font-size: 13px; color: #64748b; white-space: pre-line; line-height: 1.5; }
+.msg-time { font-size: 12px; color: #94a3b8; margin-top: 6px; }
+.conv-row { display: flex; align-items: center; gap: 12px; }
+.conv-avatar { width: 42px; height: 42px; border-radius: 50%; background: #4f46e5; color: #fff; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .conv-info { flex: 1; min-width: 0; }
-.conv-name { font-size: 14px; font-weight: 600; color: #303133; display: flex; align-items: center; }
-.conv-last { font-size: 12px; color: #909399; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.conv-time { font-size: 11px; color: #c0c4cc; flex-shrink: 0; }
-.expand-btn { background: #3b82f6; border: none; color: #fff; border-radius: 6px; font-size: 14px; padding: 7px 18px; }
-.expand-btn:hover { background: #2563eb; color: #fff; }
+.conv-name { font-size: 14px; font-weight: 600; color: #1e293b; display: flex; align-items: center; }
+.conv-last { font-size: 13px; color: #64748b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 3px; }
+.conv-time { font-size: 12px; color: #94a3b8; flex-shrink: 0; }
+.expand-btn { background: #eef2ff; border: 1px solid #e0e7ff; color: #4338ca; border-radius: 7px; font-size: 13px; padding: 6px 14px; height: auto; }
+.expand-btn:hover { background: #e0e7ff; color: #3730a3; border-color: #c7d2fe; }
 </style>

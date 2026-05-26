@@ -177,41 +177,102 @@ const handleSubmit = () => {
 </script>
 
 <style scoped>
+/* ── Page ── */
 .login-page {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #f0f4f8;
+  background: #f8fafc;
 }
 
+/* ── Card ── */
 .login-card {
   width: 430px;
-  padding: 18px 20px 10px;
-  border-radius: 14px;
+  padding: 32px 28px 24px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
+/* ── Typography ── */
 .title {
   text-align: center;
-  margin: 8px 0 6px;
-  color: #1f2937;
+  margin: 0 0 4px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
 }
 
 .subtitle {
   text-align: center;
   margin: 0 0 24px;
-  color: #6b7280;
+  font-size: 14px;
+  color: #64748b;
 }
 
+/* ── Form label & input overrides ── */
+:deep(.el-form-item__label) {
+  color: #475569 !important;
+  font-weight: 500;
+}
+
+:deep(.el-input__wrapper) {
+  border-radius: 8px;
+  border-color: #e2e8f0;
+  box-shadow: 0 0 0 1px #e2e8f0 inset;
+}
+:deep(.el-input__wrapper:hover) {
+  box-shadow: 0 0 0 1px #cbd5e1 inset;
+}
+:deep(.el-input.is-focus .el-input__wrapper) {
+  box-shadow: 0 0 0 1px #4f46e5 inset;
+}
+:deep(.el-input__inner) {
+  color: #1e293b;
+}
+:deep(.el-input__inner::placeholder) {
+  color: #94a3b8;
+}
+
+/* ── Submit button ── */
 .submit-btn {
   width: 100%;
-  margin-top: 6px;
+  margin-top: 4px;
+  border-radius: 8px;
+}
+.submit-btn:deep(.el-button) {
+  background: #4f46e5;
+  border-color: #4f46e5;
+}
+.submit-btn:deep(.el-button:hover) {
+  background: #4338ca;
+  border-color: #4338ca;
 }
 
+:deep(.el-button--primary) {
+  --el-button-bg-color: #4f46e5;
+  --el-button-border-color: #4f46e5;
+  --el-button-hover-bg-color: #4338ca;
+  --el-button-hover-border-color: #4338ca;
+  --el-button-active-bg-color: #3730a3;
+  --el-button-active-border-color: #3730a3;
+  border-radius: 8px;
+}
+
+/* ── Switch link ── */
 .switch-box {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6b7280;
+  gap: 4px;
+  color: #64748b;
+  font-size: 13px;
+}
+.switch-box :deep(.el-button) {
+  color: #4f46e5;
+}
+.switch-box :deep(.el-button:hover) {
+  color: #4338ca;
 }
 </style>

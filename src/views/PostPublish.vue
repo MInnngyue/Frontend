@@ -248,36 +248,160 @@ async function onSubmit() {
 </template>
 
 <style scoped>
+/* ── Page ── */
 .publish-page {
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px 20px 32px;
+  padding: 28px 20px 40px;
+  background: #f8fafc;
+  min-height: 100vh;
 }
 
-.page-title { font-size: 56px; font-weight: 800; color: #111827; margin: 0 0 24px; text-align: center; }
+/* ── Title ── */
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 28px;
+  text-align: center;
+}
 
-/* Form */
+/* ── Card ── */
 .form-card {
   border-radius: 12px;
-  border: none;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
+/* ── Form label overrides ── */
+:deep(.el-form-item__label) {
+  color: #475569 !important;
+  font-weight: 500;
+}
+
+/* ── Input / Select / DatePicker shared styles ── */
+:deep(.el-input__wrapper),
+:deep(.el-select .el-input__wrapper) {
+  border-radius: 8px;
+  border-color: #e2e8f0;
+  box-shadow: 0 0 0 1px #e2e8f0 inset;
+}
+:deep(.el-input__wrapper:hover),
+:deep(.el-select .el-input__wrapper:hover) {
+  box-shadow: 0 0 0 1px #cbd5e1 inset;
+}
+:deep(.el-input.is-focus .el-input__wrapper),
+:deep(.el-select.is-focus .el-input__wrapper) {
+  box-shadow: 0 0 0 1px #4f46e5 inset;
+}
+:deep(.el-input__inner) {
+  color: #1e293b;
+}
+:deep(.el-input__inner::placeholder),
+:deep(.el-select .el-input__inner::placeholder) {
+  color: #94a3b8;
+}
+:deep(.el-textarea__inner) {
+  border-radius: 8px;
+  border-color: #e2e8f0;
+  box-shadow: 0 0 0 1px #e2e8f0 inset;
+  color: #1e293b;
+}
+:deep(.el-textarea__inner:hover) {
+  box-shadow: 0 0 0 1px #cbd5e1 inset;
+}
+:deep(.el-textarea__inner:focus) {
+  box-shadow: 0 0 0 1px #4f46e5 inset;
+}
+:deep(.el-textarea__inner::placeholder) {
+  color: #94a3b8;
+}
+
+/* ── Radio group ── */
+:deep(.el-radio__label) {
+  color: #475569;
+}
+:deep(.el-radio__input.is-checked + .el-radio__label) {
+  color: #4f46e5;
+}
+:deep(.el-radio__input.is-checked .el-radio__inner) {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+}
+
+/* ── DatePicker ── */
+:deep(.el-date-editor) {
+  --el-date-editor-width: 100%;
+}
+
+/* ── Buttons ── */
+:deep(.el-button--primary) {
+  --el-button-bg-color: #4f46e5;
+  --el-button-border-color: #4f46e5;
+  --el-button-hover-bg-color: #4338ca;
+  --el-button-hover-border-color: #4338ca;
+  --el-button-active-bg-color: #3730a3;
+  --el-button-active-border-color: #3730a3;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+/* Submit (publish) button — green mask */
+.form-card :deep(.el-form-item:last-child .el-button--primary) {
+  background: #dcfce7;
+  border-color: #bbf7d0;
+  color: #15803d;
+  font-weight: 600;
+}
+.form-card :deep(.el-form-item:last-child .el-button--primary:hover) {
+  background: #bbf7d0;
+  border-color: #86efac;
+  color: #15803d;
+}
+.form-card :deep(.el-form-item:last-child .el-button--primary:active) {
+  background: #86efac;
+  border-color: #4ade80;
+  color: #15803d;
+}
+
+/* Cancel button — slate style */
+.form-card :deep(.el-button--default) {
+  --el-button-bg-color: #f8fafc;
+  --el-button-border-color: #e2e8f0;
+  --el-button-text-color: #475569;
+  --el-button-hover-bg-color: #f1f5f9;
+  --el-button-hover-border-color: #cbd5e1;
+  --el-button-hover-text-color: #1e293b;
+  border-radius: 8px;
+}
+
+/* ── Upload ── */
+:deep(.el-upload) {
+  display: inline-flex;
+}
+.upload-tip {
+  margin-left: 12px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* ── Preview list ── */
 .preview-list {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .preview-item {
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: #f5f7fa;
-  padding: 4px 10px;
-  border-radius: 6px;
+  gap: 8px;
+  background: #f1f5f9;
+  padding: 5px 12px;
+  border-radius: 8px;
   font-size: 13px;
+  color: #334155;
+  border: 1px solid #e2e8f0;
 }
-.upload-tip { margin-left: 12px; font-size: 12px; color: #909399; }
 </style>
