@@ -122,11 +122,9 @@ function statusLabel(status) {
               <span class="card-status-tag" :class="'s-' + post.status">{{ statusLabel(post.status) }}</span>
               <h3 class="card-title">{{ post.title || '无标题' }}</h3>
               <div class="card-meta">
-                <span>{{ post.itemCategory }}</span>
-                <span class="sep">·</span>
-                <span>{{ post.locationCampus }}</span>
-                <span class="sep">·</span>
-                <span class="date">{{ post.lostTime }}</span>
+                <span class="meta-capsule mc-cat">{{ post.itemCategory }}</span>
+                <span class="meta-capsule mc-loc">{{ post.locationCampus }}</span>
+                <span class="meta-capsule mc-time">{{ post.lostTime }}</span>
               </div>
             </div>
           </div>
@@ -179,7 +177,7 @@ function statusLabel(status) {
 
 .card {
   background: #fff; border-radius: 10px; overflow: hidden; cursor: pointer;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04); border: 1px solid #f3f4f6;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e8e4e0;
   transition: box-shadow 0.15s, transform 0.15s;
 }
 .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-1px); }
@@ -212,9 +210,14 @@ function statusLabel(status) {
   overflow: hidden; min-height: 40px;
 }
 
-.card-meta { display: flex; align-items: center; gap: 4px; font-size: 12px; color: #9ca3af; }
-.sep { color: #d1d5db; }
-.date { color: #3b82f6; font-weight: 500; }
+.card-meta { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
+
+.meta-capsule {
+  padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; color: #fff;
+}
+.mc-cat { background: #6366f1; }
+.mc-loc { background: #8b5cf6; }
+.mc-time { background: #f59e0b; }
 
 /* Empty */
 .empty-state { text-align: center; padding: 120px 0; }
