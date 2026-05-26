@@ -3,7 +3,7 @@ import { ref, onMounted, nextTick, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import * as echarts from 'echarts'
 import { getPendingPosts, approvePost, rejectPost, getUsers, freezeUser, adjustCredit, blacklistUser, getDict, addDict, updateDict, deleteDict, getStats, getAllPosts, archivePost } from '@/api/admin'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 
@@ -31,6 +31,28 @@ let statusChart = null
 
 onMounted(() => { loadAllPosts(); loadStats() })
 
+// === Dialog system ===
+const dialog = ref({ show: false, title: '', desc: '', inputValue: '', action: null, type: 'input' })
+const currentItemId = ref(null)
+
+function openDialog(title, desc, defaultValue, action) {
+  dialog.value = { show: true, title, desc, inputValue: defaultValue || '', action, type: 'input' }
+}
+function openConfirm(title, desc, action) {
+  dialog.value = { show: true, title, desc, inputValue: '', action, type: 'confirm' }
+}
+function closeDialog() { dialog.value.show = false }
+async function submitDialog() {
+  if (dialog.value.type === 'confirm') {
+    await dialog.value.action()
+  } else {
+    const val = dialog.value.inputValue
+    if (!val && dialog.value.type === 'input') { ElMessage.warning('请输入内容'); return }
+    await dialog.value.action(val)
+  }
+  closeDialog()
+}
+
 // === Posts ===
 async function loadAllPosts() {
   loading.value = true
@@ -41,8 +63,10 @@ async function loadAllPosts() {
 }
 async function handleApprove(id) { await approvePost(id); ElMessage.success('审核通过'); loadAllPosts() }
 async function handleReject(id) {
-  const { value } = await ElMessageBox.prompt('拒绝原因', '审核拒绝', { inputValue: '违规内容' }).catch(() => {})
-  if (!value) return; await rejectPost(id, value); ElMessage.success('已拒绝'); loadAllPosts()
+  currentItemId.value = id
+  openDialog('审核拒绝', '请输入拒绝原因', '违规内容', async (value) => {
+    await rejectPost(currentItemId.value, value); ElMessage.success('已拒绝'); loadAllPosts()
+  })
 }
 async function handleArchivePost(id) { await archivePost(id); ElMessage.success('已归档'); loadAllPosts() }
 function statusLabel(s) { const m = { 0: '进行中', 1: '已匹配', 2: '认领中', 3: '已完结', 4: '已归档', 5: '已下架' }; return m[s] || '未知' }
@@ -50,29 +74,42 @@ function statusLabel(s) { const m = { 0: '进行中', 1: '已匹配', 2: '认领
 // === Users ===
 async function loadUsers() { loading.value = true; const res = await getUsers({ page: 1, size: 50 }); users.value = res.data.records; loading.value = false }
 async function handleFreeze(id) {
-  const { value } = await ElMessageBox.prompt('冻结天数（0=永久/切换）', '冻结用户', { inputValue: '0' }).catch(() => {})
-  if (value === undefined) return; await freezeUser(id, parseInt(value)); ElMessage.success('已操作'); loadUsers()
+  currentItemId.value = id
+  openDialog('冻结用户', '冻结天数（0=永久/切换）', '0', async (value) => {
+    if (value === undefined) return; await freezeUser(currentItemId.value, parseInt(value)); ElMessage.success('已操作'); loadUsers()
+  })
 }
 async function handleBlacklist(id) {
-  const { value } = await ElMessageBox.prompt('拉黑天数（0=永久/切换）', '拉黑用户', { inputValue: '0' }).catch(() => {})
-  if (value === undefined) return; await blacklistUser(id, parseInt(value)); ElMessage.success('已操作'); loadUsers()
+  currentItemId.value = id
+  openDialog('拉黑用户', '拉黑天数（0=永久/切换）', '0', async (value) => {
+    if (value === undefined) return; await blacklistUser(currentItemId.value, parseInt(value)); ElMessage.success('已操作'); loadUsers()
+  })
 }
 async function handleCredit(id) {
-  const { value } = await ElMessageBox.prompt('增减分数', '调整信用分', { inputValue: '5' }).catch(() => {})
-  if (!value) return; await adjustCredit(id, parseInt(value)); ElMessage.success('已调整'); loadUsers()
+  currentItemId.value = id
+  openDialog('调整信用分', '请输入增减分数（正数增加，负数减少）', '5', async (value) => {
+    if (!value) return; await adjustCredit(currentItemId.value, parseInt(value)); ElMessage.success('已调整'); loadUsers()
+  })
 }
 
 // === Dict ===
 async function loadDict() { const res = await getDict(dictType.value); dictItems.value = res.data }
 async function handleAddDict() {
-  const { value } = await ElMessageBox.prompt('名称', '新增').catch(() => {})
-  if (!value) return; await addDict({ type: dictType.value, name: value, parentId: 0, sortOrder: 0, status: 1 }); ElMessage.success('已添加'); loadDict()
+  openDialog('新增', '请输入名称', '', async (value) => {
+    if (!value) return; await addDict({ type: dictType.value, name: value, parentId: 0, sortOrder: 0, status: 1 }); ElMessage.success('已添加'); loadDict()
+  })
 }
 async function handleUpdateDict(item) {
-  const { value } = await ElMessageBox.prompt('新名称', '修改', { inputValue: item.name }).catch(() => {})
-  if (!value) return; await updateDict(item.id, { name: value }); ElMessage.success('已更新'); loadDict()
+  openDialog('修改', '请输入新名称', item.name, async (value) => {
+    if (!value) return; await updateDict(item.id, { name: value }); ElMessage.success('已更新'); loadDict()
+  })
 }
-async function handleDeleteDict(id) { await ElMessageBox.confirm('确定删除？', '确认', { type: 'warning' }); await deleteDict(id); ElMessage.success('已删除'); loadDict() }
+async function handleDeleteDict(id) {
+  currentItemId.value = id
+  openConfirm('确认删除', '确定要删除该项吗？此操作不可撤销。', async () => {
+    await deleteDict(currentItemId.value); ElMessage.success('已删除'); loadDict()
+  })
+}
 
 // === Stats ===
 async function loadStats() { stats.value = (await getStats()).data }
@@ -311,6 +348,16 @@ const getStatusClass = (s) => {
         </div>
       </section>
     </main>
+
+    <!-- Unified Dialog -->
+    <el-dialog v-model="dialog.show" :title="dialog.title" width="400px" :close-on-click-modal="false">
+      <p class="dialog-desc" v-if="dialog.desc">{{ dialog.desc }}</p>
+      <el-input v-if="dialog.type === 'input'" v-model="dialog.inputValue" :placeholder="dialog.desc" maxlength="50" @keyup.enter="submitDialog" />
+      <template #footer>
+        <el-button @click="closeDialog">取消</el-button>
+        <el-button type="primary" @click="submitDialog">确定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -487,4 +534,7 @@ const getStatusClass = (s) => {
 
 /* === Empty === */
 .empty-state { text-align: center; padding: 48px 0; color: #cbd5e1; font-size: 14px; }
+
+/* === Dialog === */
+.dialog-desc { margin: 0 0 12px; color: #64748b; font-size: 14px; line-height: 1.5; }
 </style>
