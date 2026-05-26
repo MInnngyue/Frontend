@@ -70,27 +70,27 @@ function statusLabel(status) {
         <div class="filter-card">
           <div class="section-title">类型</div>
           <div class="row-list">
-            <div class="row-chip" :class="{ active: activeTab === null }" @click="onTabChange(null)">全部 <span v-if="activeTab === null" class="check">☑️</span></div>
-            <div class="row-chip" :class="{ active: activeTab === 0 }" @click="onTabChange(0)">寻物 <span v-if="activeTab === 0" class="check">☑️</span></div>
-            <div class="row-chip" :class="{ active: activeTab === 1 }" @click="onTabChange(1)">招领 <span v-if="activeTab === 1" class="check">☑️</span></div>
+            <div class="row-chip" :class="{ active: activeTab === null }" @click="onTabChange(null)">全部 <span v-if="activeTab === null" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
+            <div class="row-chip" :class="{ active: activeTab === 0 }" @click="onTabChange(0)">寻物 <span v-if="activeTab === 0" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
+            <div class="row-chip" :class="{ active: activeTab === 1 }" @click="onTabChange(1)">招领 <span v-if="activeTab === 1" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
           </div>
         </div>
 
         <div class="filter-card">
           <div class="section-title">状态</div>
           <div class="row-list">
-            <div class="row-chip" :class="{ active: queryParams.status === undefined }" @click="delete queryParams.status; page=1; fetchPosts()">全部 <span v-if="queryParams.status === undefined" class="check">☑️</span></div>
-            <div class="row-chip" :class="{ active: queryParams.status === 0 }" @click="onFilterClick('status', 0)">进行中 <span v-if="queryParams.status === 0" class="check">☑️</span></div>
-            <div class="row-chip" :class="{ active: queryParams.status === 1 }" @click="onFilterClick('status', 1)">已匹配 <span v-if="queryParams.status === 1" class="check">☑️</span></div>
-            <div class="row-chip" :class="{ active: queryParams.status === 2 }" @click="onFilterClick('status', 2)">认领中 <span v-if="queryParams.status === 2" class="check">☑️</span></div>
-            <div class="row-chip" :class="{ active: queryParams.status === 3 }" @click="onFilterClick('status', 3)">已完结 <span v-if="queryParams.status === 3" class="check">☑️</span></div>
+            <div class="row-chip" :class="{ active: queryParams.status === undefined }" @click="delete queryParams.status; page=1; fetchPosts()">全部 <span v-if="queryParams.status === undefined" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
+            <div class="row-chip" :class="{ active: queryParams.status === 0 }" @click="onFilterClick('status', 0)">进行中 <span v-if="queryParams.status === 0" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
+            <div class="row-chip" :class="{ active: queryParams.status === 1 }" @click="onFilterClick('status', 1)">已匹配 <span v-if="queryParams.status === 1" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
+            <div class="row-chip" :class="{ active: queryParams.status === 2 }" @click="onFilterClick('status', 2)">认领中 <span v-if="queryParams.status === 2" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
+            <div class="row-chip" :class="{ active: queryParams.status === 3 }" @click="onFilterClick('status', 3)">已完结 <span v-if="queryParams.status === 3" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
           </div>
         </div>
 
         <div class="filter-card">
           <div class="section-title">分类</div>
           <div class="row-list">
-            <div v-for="c in itemCategories" :key="c.id" class="row-chip" :class="{ active: queryParams.itemCategory === c.name }" @click="onFilterClick('itemCategory', c.name)">{{ c.name }} <span v-if="queryParams.itemCategory === c.name" class="check">☑️</span></div>
+            <div v-for="c in itemCategories" :key="c.id" class="row-chip" :class="{ active: queryParams.itemCategory === c.name }" @click="onFilterClick('itemCategory', c.name)">{{ c.name }} <span v-if="queryParams.itemCategory === c.name" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
           </div>
         </div>
       </aside>

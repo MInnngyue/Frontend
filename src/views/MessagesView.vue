@@ -26,7 +26,7 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
     <div class="section-card">
       <div class="section-header" style="display:flex;justify-content:space-between;align-items:center">
         <span>系统通知</span>
-        <el-button size="small" @click="sysExpanded = !sysExpanded">{{ sysExpanded ? '收起 ▲' : '展开 ▼' }}</el-button>
+        <el-button size="small" class="expand-btn" @click="sysExpanded = !sysExpanded">{{ sysExpanded ? '收起 ▲' : '展开 ▼' }}</el-button>
       </div>
       <div v-if="systemMsgs.length === 0" class="empty-hint">暂无系统通知</div>
       <div v-if="sysExpanded" v-for="m in systemMsgs" :key="m.id" class="msg-item" :class="{ unread: m.isRead === 0 }" @click="markRead(m.id); if(m.relatedPostId) goPost(m.relatedPostId)">
@@ -74,4 +74,6 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
 .conv-name { font-size: 14px; font-weight: 600; color: #303133; display: flex; align-items: center; }
 .conv-last { font-size: 12px; color: #909399; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .conv-time { font-size: 11px; color: #c0c4cc; flex-shrink: 0; }
+.expand-btn { background: #3b82f6; border: none; color: #fff; border-radius: 6px; font-size: 13px; padding: 5px 14px; }
+.expand-btn:hover { background: #2563eb; color: #fff; }
 </style>

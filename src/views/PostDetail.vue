@@ -171,7 +171,8 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
 .pub-avatar { width: 44px; height: 44px; border-radius: 50%; background: #409eff; color: #fff; font-size: 18px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 .pub-name { font-size: 16px; font-weight: 600; color: #303133; }
 .pub-meta { font-size: 13px; color: #909399; }
-.dm-btn { background: #f3f4f6; border: 1px solid #e5e7eb; color: #4b5563; border-radius: 8px; font-size: 13px; padding: 6px 16px; }
+.dm-btn { background: #f3f4f6; border: 1px solid #e5e7eb; color: #4b5563; border-radius: 8px; font-size: 15px; padding: 9px 24px; font-weight: 600; }
+.dm-btn:hover { background: #e5e7eb; }
 
 /* Actions */
 .action-area { display: flex; flex-direction: column; gap: 8px; }

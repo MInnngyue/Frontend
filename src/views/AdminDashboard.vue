@@ -172,6 +172,16 @@ async function loadStats() { stats.value = (await getStats()).data }
 .back-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: #fff; font-size: 14px; border-radius: 8px; padding: 8px 18px; }
 .back-btn:hover { background: rgba(255,255,255,0.35); }
 .admin-tabs :deep(.el-tabs__header) { background: #fff; border-radius: 10px; padding: 0 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-bottom: 12px; }
+
+/* Modern table */
+.admin-tabs :deep(.el-table) { border-radius: 10px; overflow: hidden; }
+.admin-tabs :deep(.el-table th) { background: #f9fafb; color: #6b7280; font-weight: 600; font-size: 13px; border: none; padding: 12px 16px; }
+.admin-tabs :deep(.el-table td) { border-bottom: 1px solid #f3f4f6; padding: 10px 16px; font-size: 14px; }
+.admin-tabs :deep(.el-table tr:last-child td) { border-bottom: none; }
+.admin-tabs :deep(.el-table--striped .el-table__body tr.el-table__row--striped td) { background: #fafafa; }
+.admin-tabs :deep(.el-table__body tr:hover td) { background: #f5f7fa; }
+.admin-tabs :deep(.el-tabs__nav-wrap::after) { display: none; }
+
 .s-capsule { padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; color: #fff; }
 .sc-lost { background: #ef4444; }
 .sc-found { background: #0891b2; }
