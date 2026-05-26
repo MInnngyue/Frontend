@@ -177,7 +177,7 @@ function statusLabel(status) {
 
 .card {
   background: #fff; border-radius: 10px; overflow: hidden; cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e8e4e0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #d6d0ca;
   transition: box-shadow 0.15s, transform 0.15s;
 }
 .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-1px); }
@@ -189,14 +189,14 @@ function statusLabel(status) {
 
 .card-body { padding: 16px 18px; }
 .card-type-tag {
-  display: inline-block; font-size: 12px; padding: 2px 10px; border-radius: 4px;
+  display: inline-block; font-size: 12px; padding: 3px 12px; border-radius: 20px;
   font-weight: 600; color: #fff; margin-right: 6px;
 }
 .card-type-tag.lost { background: #ef4444; }
 .card-type-tag.found { background: #22c55e; }
 
 .card-status-tag {
-  display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px;
+  display: inline-block; font-size: 11px; padding: 3px 10px; border-radius: 20px;
   font-weight: 500; color: #fff;
 }
 .s-0 { background: #3b82f6; }
@@ -205,9 +205,9 @@ function statusLabel(status) {
 .s-4, .s-5 { background: #6b7280; }
 
 .card-title {
-  font-size: 15px; font-weight: 600; color: #111827; margin: 8px 0 8px;
-  line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-  overflow: hidden; min-height: 40px;
+  font-size: 15px; font-weight: 600; color: #111827; margin: 6px 0 6px;
+  line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; min-height: 38px;
 }
 
 .card-meta { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
