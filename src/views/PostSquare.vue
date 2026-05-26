@@ -213,11 +213,11 @@ function statusLabel(status) {
 .card-meta { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
 
 .meta-capsule {
-  padding: 5px 14px; border-radius: 20px; font-size: 14px; font-weight: 600; color: #fff;
+  padding: 5px 14px; border-radius: 20px; font-size: 14px; font-weight: 600;
 }
-.mc-cat { background: #6366f1; }
-.mc-loc { background: #8b5cf6; }
-.mc-time { background: #f59e0b; }
+.mc-cat { background: rgba(20, 184, 166, 0.12); color: #0d9488; }
+.mc-loc { background: rgba(236, 72, 153, 0.12); color: #db2777; }
+.mc-time { background: rgba(14, 165, 233, 0.12); color: #0284c7; }
 
 /* Empty */
 .empty-state { text-align: center; padding: 120px 0; }
