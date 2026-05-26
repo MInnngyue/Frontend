@@ -168,14 +168,14 @@ function statusLabel(status) {
 </template>
 
 <style scoped>
-.post-square { max-width: 1400px; margin: 0 auto; padding: 24px 24px 32px; }
+.post-square { max-width: 1200px; margin: 0 auto; padding: 24px 24px 32px; }
 
 /* Title Bar */
 .title-bar {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 20px;
 }
-.page-title { font-size: 24px; font-weight: 800; color: #1a1a1a; margin: 0; }
+.page-title { font-size: 32px; font-weight: 800; color: #1a1a1a; margin: 0; text-align: center; flex: 1; }
 .publish-btn {
   background: #409eff; border: none; color: #fff; font-size: 14px;
   border-radius: 8px; padding: 9px 20px; transition: opacity 0.2s;
