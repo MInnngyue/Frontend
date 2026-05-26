@@ -76,16 +76,56 @@
           <span class="info-value">{{ userInfo.email || '未设置' }}</span>
         </div>
       </div>
+
+      <!-- 管理员：帖子归档 -->
+      <div class="info-card" v-if="isAdmin">
+        <div class="info-title" style="display:flex;justify-content:space-between;align-items:center">
+          <span>帖子归档管理</span>
+          <el-button size="small" @click="loadAdminPosts" :loading="adminPostsLoading">刷新</el-button>
+        </div>
+        <div v-if="adminPosts.length === 0" style="color:#c0c4cc;text-align:center;padding:20px 0">
+          暂无帖子
+        </div>
+        <div v-else class="archive-list">
+          <div v-for="p in adminPosts" :key="p.id" class="archive-row">
+            <div class="archive-info" style="cursor:pointer" @click="router.push('/post/' + p.id)">
+              <el-tag size="small" :type="p.type === 0 ? 'danger' : 'success'">{{ p.type === 0 ? '寻物' : '招领' }}</el-tag>
+              <span class="archive-title">{{ p.title || '无标题' }}</span>
+              <el-tag size="small" type="info">{{ statusLabel(p.status) }}</el-tag>
+            </div>
+            <el-button
+              v-if="p.status !== 4 && p.status !== 5"
+              size="small"
+              type="warning"
+              @click="handleArchive(p.id)"
+            >归档</el-button>
+            <span v-else style="color:#c0c4cc;font-size:12px">已归档</span>
+          </div>
+        </div>
+      </div>
+      <div class="info-card" v-if="isAdmin" style="text-align:center">
+        <el-button @click="router.push('/admin')">进入管理后台 →</el-button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { getUserInfo } from '../api/user'
+import { getAllPosts, archivePost } from '../api/admin'
+import { ElMessage } from 'element-plus'
 
+const router = useRouter()
 const loading = ref(false)
 const userInfo = ref(null)
+const adminPosts = ref([])
+const adminPostsLoading = ref(false)
+
+const isAdmin = computed(() => {
+  return userInfo.value && (userInfo.value.role === 1 || userInfo.value.role === '1' || userInfo.value.role === 'ADMIN')
+})
 
 const getLocalUserInfo = () => {
   const localUser = localStorage.getItem('userInfo')
@@ -116,10 +156,35 @@ const formatRole = (role) => {
   return '普通用户'
 }
 
+async function loadAdminPosts() {
+  adminPostsLoading.value = true
+  try {
+    const res = await getAllPosts({ page: 1, size: 50 })
+    adminPosts.value = res.data.records
+  } catch { /* ignore */ }
+  finally { adminPostsLoading.value = false }
+}
+
+async function handleArchive(id) {
+  try {
+    await archivePost(id)
+    ElMessage.success('已归档')
+    loadAdminPosts()
+  } catch { /* ignore */ }
+}
+
 onMounted(() => {
   userInfo.value = getLocalUserInfo()
   loadUserInfo()
+  setTimeout(() => {
+    if (isAdmin.value) loadAdminPosts()
+  }, 500)
 })
+
+function statusLabel(s) {
+  const map = { 0: '进行中', 1: '已匹配', 2: '认领中', 3: '已完结', 4: '已归档', 5: '已下架' }
+  return map[s] || '未知'
+}
 </script>
 
 <style scoped>
@@ -307,4 +372,10 @@ onMounted(() => {
   font-size: 14px;
   font-weight: 500;
 }
+
+.archive-list { display: flex; flex-direction: column; gap: 6px; }
+.archive-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f5f6f8; }
+.archive-row:last-child { border-bottom: none; }
+.archive-info { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.archive-title { font-size: 14px; color: #303133; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
 </style>

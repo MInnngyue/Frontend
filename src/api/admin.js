@@ -33,3 +33,9 @@ export function deleteDict(id) {
 export function getStats() {
   return request.get('/api/admin/stats')
 }
+export function getAllPosts(params) {
+  return request.get('/api/admin/posts/all', { params })
+}
+export function archivePost(id) {
+  return request.put(`/api/admin/posts/${id}/archive`)
+}
