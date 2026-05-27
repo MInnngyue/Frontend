@@ -1,13 +1,14 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { getMyClaims, confirmClaim } from '@/api/claim'
+import { getMyClaims, confirmClaim, cancelClaim } from '@/api/claim'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const claims = ref([])
 const loading = ref(true)
 const confirming = ref(null)
+const canceling = ref(null)
 
 // Search & filter
 const searchText = ref('')
@@ -111,6 +112,16 @@ async function handleConfirm(c) {
   finally { confirming.value = null }
 }
 
+async function handleCancel(c) {
+  canceling.value = c.claimId
+  try {
+    await cancelClaim(c.claimId)
+    ElMessage.success('已取消认领')
+    claims.value = (await getMyClaims()).data
+  } catch { }
+  finally { canceling.value = null }
+}
+
 function goPost(id) { router.push(`/post/${id}`) }
 </script>
 
@@ -182,9 +193,14 @@ function goPost(id) { router.push(`/post/${id}`) }
         <!-- Action -->
         <div class="claim-action" v-if="c.claimStatus < 2">
           <span class="action-hint">{{ actionLabel(c) }}</span>
-          <button v-if="canConfirm(c)" class="btn-confirm" :disabled="confirming === c.claimId" @click="handleConfirm(c)">
-            {{ confirming === c.claimId ? '确认中...' : '确认认领' }}
-          </button>
+          <div class="action-btns">
+            <button v-if="canConfirm(c)" class="btn-confirm" :disabled="confirming === c.claimId" @click="handleConfirm(c)">
+              {{ confirming === c.claimId ? '确认中...' : '确认认领' }}
+            </button>
+            <button class="btn-cancel" :disabled="canceling === c.claimId" @click="handleCancel(c)">
+              {{ canceling === c.claimId ? '取消中...' : '取消认领' }}
+            </button>
+          </div>
         </div>
         <div class="claim-action" v-else>
           <span class="action-hint done">🎉 认领已完成</span>
@@ -267,10 +283,14 @@ function goPost(id) { router.push(`/post/${id}`) }
 .claim-time { font-size: 12px; color: #94a3b8; margin-bottom: 12px; }
 
 /* Action */
-.claim-action { display: flex; align-items: center; justify-content: flex-end; gap: 12px; padding-top: 12px; border-top: 1px solid #f1f5f9; }
+.claim-action { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid #f1f5f9; flex-wrap: wrap; }
 .action-hint { font-size: 13px; color: #64748b; }
 .action-hint.done { color: #22c55e; font-weight: 600; }
+.action-btns { display: flex; gap: 8px; }
 .btn-confirm { padding: 8px 20px; background: #4f46e5; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
 .btn-confirm:hover { background: #4338ca; }
 .btn-confirm:disabled { background: #cbd5e1; cursor: not-allowed; }
+.btn-cancel { padding: 8px 20px; background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.btn-cancel:hover { background: #fecaca; }
+.btn-cancel:disabled { background: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
 </style>

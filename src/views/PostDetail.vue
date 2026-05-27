@@ -2,7 +2,7 @@
 import { ref, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getPostDetail, deletePost } from '@/api/post'
-import { createClaim, confirmClaim, getClaimsByPost, completePost } from '@/api/claim'
+import { createClaim, getClaimsByPost, completePost } from '@/api/claim'
 import { getComments, addComment } from '@/api/comment'
 import { imageUrl } from '@/utils/url'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -42,11 +42,11 @@ async function handleClaim() {
   try {
     await createClaim(post.value.id, null)
     ElMessage.success('认领申请已发起！可在「认领进度」页面跟踪状态')
+    post.value = (await getPostDetail(route.params.id)).data
     loadClaims()
   } catch { }
   finally { claimLoading.value = false }
 }
-async function handleConfirm(claimId) { try { await confirmClaim(claimId); ElMessage.success('确认成功'); post.value = (await getPostDetail(route.params.id)).data; loadClaims() } catch { } }
 async function handleComplete() { try { await ElMessageBox.confirm('确定标记为已找回/已归还？', '完结帖子', { type: 'info' }); await completePost(post.value.id); ElMessage.success('已标记为完结'); post.value.status = 3 } catch { } }
 async function handleDelete() { try { await ElMessageBox.confirm('确定要删除这个帖子吗？', '确认删除', { type: 'warning' }); await deletePost(post.value.id); ElMessage.success('删除成功'); router.push('/') } catch { } }
 
@@ -105,15 +105,7 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
 
         <div class="action-area">
           <el-button v-if="canClaim() && !findMyClaim()" class="action-btn claim-btn" :loading="claimLoading" @click="handleClaim">{{ claimLabel() }}</el-button>
-          <el-tag v-if="findMyClaim()" type="warning" class="claim-status-tag">已发起认领 · {{ findMyClaim().status === 2 ? '已完结' : findMyClaim().status === 1 ? '部分确认' : '待确认' }}</el-tag>
-
-          <div v-if="claims.length > 0" class="confirm-row">
-            <div v-for="c in claims" :key="c.id" class="confirm-item">
-              <span class="confirm-hint">认领者 ID {{ c.claimUserId }}</span>
-              <el-button class="action-btn confirm-btn" v-if="(currentUserId() === c.postOwnerId && c.ownerConfirmed === 0) || (currentUserId() === c.claimUserId && c.claimerConfirmed === 0)" @click="handleConfirm(c.id)">确认</el-button>
-              <el-tag v-else size="small" type="success">已确认</el-tag>
-            </div>
-          </div>
+          <el-button v-if="findMyClaim()" class="action-btn goto-claim-btn" @click="router.push('/claims')">前往认领进度</el-button>
 
           <div v-if="isOwner()" class="owner-actions">
             <el-button v-if="post.status === 0 || post.status === 1" class="action-btn complete-btn" @click="handleComplete">标记已找回/已归还</el-button>
@@ -209,12 +201,8 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
 .action-btn { height: 42px; border-radius: 8px; font-size: 15px; padding: 0 24px; font-weight: 600; border: none; }
 .claim-btn { width: 100%; background: #4f46e5; color: #fff; }
 .claim-btn:hover { background: #4338ca; }
-.claim-status-tag { height: 36px; font-size: 14px; }
-.confirm-row { display: flex; gap: 8px; flex-wrap: wrap; }
-.confirm-item { display: flex; align-items: center; gap: 8px; }
-.confirm-hint { font-size: 12px; color: #94a3b8; }
-.confirm-btn { background: #eef2ff; color: #4338ca; }
-.confirm-btn:hover { background: #e0e7ff; }
+.goto-claim-btn { width: 100%; background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; }
+.goto-claim-btn:hover { background: #e0e7ff; border-color: #a5b4fc; color: #3730a3; }
 .owner-actions { display: flex; gap: 10px; justify-content: flex-end; }
 .complete-btn { background: #dcfce7; color: #15803d; }
 .complete-btn:hover { background: #bbf7d0; }

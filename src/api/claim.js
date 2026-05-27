@@ -8,6 +8,10 @@ export function confirmClaim(id) {
   return request.put(`/api/claims/${id}/confirm`)
 }
 
+export function cancelClaim(id) {
+  return request.put(`/api/claims/${id}/cancel`)
+}
+
 export function getClaimsByPost(postId) {
   return request.get(`/api/claims/post/${postId}`)
 }
