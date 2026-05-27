@@ -163,7 +163,8 @@ const handleSubmit = () => {
       })
 
       localStorage.setItem('token', res.data.token)
-      localStorage.setItem('userInfo', JSON.stringify(res.data))
+      const { token, ...userInfo } = res.data
+      localStorage.setItem('userInfo', JSON.stringify(userInfo))
 
       ElMessage.success('登录成功')
       router.push('/')

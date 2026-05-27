@@ -44,13 +44,15 @@ function goHome() { router.push('/') }
 .nf-title {
   font-size: 22px;
   font-weight: 700;
-  color: #303133;
+  color: #1e293b;
   margin: 0 0 10px;
 }
 .nf-desc {
   font-size: 14px;
-  color: #909399;
+  color: #64748b;
   margin: 0 0 28px;
   line-height: 1.6;
 }
+.nf-container :deep(.el-button--primary) { background: #4f46e5; border-color: #4f46e5; border-radius: 8px; }
+.nf-container :deep(.el-button--primary:hover) { background: #4338ca; border-color: #4338ca; }
 </style>

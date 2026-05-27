@@ -153,7 +153,7 @@ function initStatusChart() {
       avoidLabelOverlap: true, itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 3 },
       label: { show: true, formatter: '{b}\n{d}%', fontSize: 10, color: '#475569' },
       data: [
-        { value: s.activePosts || 0, name: '进行中', itemStyle: { color: '#3b82f6' } },
+        { value: s.activePosts || 0, name: '进行中', itemStyle: { color: '#6366f1' } },
         { value: s.matchedPosts || 0, name: '已匹配', itemStyle: { color: '#f59e0b' } },
         { value: s.completedPosts || 0, name: '已完结', itemStyle: { color: '#22c55e' } },
         { value: s.pendingReviews || 0, name: '待审核', itemStyle: { color: '#ef4444' } }
@@ -488,7 +488,7 @@ const getStatusClass = (s) => {
 .status-badge {
   display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;
 }
-.s-active { background: #eff6ff; color: #2563eb; }
+.s-active { background: #eef2ff; color: #4f46e5; }
 .s-matched { background: #fffbeb; color: #d97706; }
 .s-claiming { background: #fefce8; color: #ca8a04; }
 .s-done { background: #f0fdf4; color: #16a34a; }

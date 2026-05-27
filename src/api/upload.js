@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { ElMessage } from 'element-plus'
 
 const uploadClient = axios.create({
   baseURL: 'http://localhost:8080',
@@ -12,6 +13,28 @@ uploadClient.interceptors.request.use((config) => {
   }
   return config
 })
+
+uploadClient.interceptors.response.use(
+  (res) => {
+    if (res.data.code && res.data.code !== 200) {
+      ElMessage.error(res.data.message || '上传失败')
+      return Promise.reject(new Error(res.data.message))
+    }
+    return res.data
+  },
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token')
+      localStorage.removeItem('userInfo')
+      window.location.href = '/login'
+    } else if (error.response) {
+      ElMessage.error(error.response.data?.message || '上传失败')
+    } else {
+      ElMessage.error('网络错误，无法连接服务器')
+    }
+    return Promise.reject(error)
+  },
+)
 
 export function uploadImage(file) {
   const formData = new FormData()

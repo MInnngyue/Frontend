@@ -187,10 +187,8 @@ async function handleAvatarChange(e) {
   if (!file) return
   avatarUploading.value = true
   try {
-    const formData = new FormData()
-    formData.append('file', file)
-    const res = await uploadImage(formData)
-    const url = res.data
+    const res = await uploadImage(file)
+    const url = res.data?.url || res.data
     await updateProfile({ avatar: url })
     userInfo.value.avatar = url
     ElMessage.success('头像已更新')
@@ -203,10 +201,12 @@ function openSignDialog() {
   showSignDialog.value = true
 }
 async function saveSign() {
-  await updateProfile({ signature: signForm.value.signature })
-  userInfo.value.signature = signForm.value.signature
-  showSignDialog.value = false
-  ElMessage.success('签名已更新')
+  try {
+    await updateProfile({ signature: signForm.value.signature })
+    userInfo.value.signature = signForm.value.signature
+    showSignDialog.value = false
+    ElMessage.success('签名已更新')
+  } catch { /* 拦截器已处理错误 */ }
 }
 
 function openInfoDialog() {
@@ -216,10 +216,12 @@ function openInfoDialog() {
   showInfoDialog.value = true
 }
 async function saveInfo() {
-  await updateProfile(infoForm.value)
-  Object.assign(userInfo.value, infoForm.value)
-  showInfoDialog.value = false
-  ElMessage.success('资料已更新')
+  try {
+    await updateProfile(infoForm.value)
+    Object.assign(userInfo.value, infoForm.value)
+    showInfoDialog.value = false
+    ElMessage.success('资料已更新')
+  } catch { /* 拦截器已处理错误 */ }
 }
 
 function handleMore(cmd) {

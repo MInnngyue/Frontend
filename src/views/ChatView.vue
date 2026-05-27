@@ -6,6 +6,9 @@ import { getChatWith, sendMessage } from '@/api/pm'
 const route = useRoute()
 const router = useRouter()
 const otherId = ref(parseInt(route.query.userId))
+if (!otherId.value || isNaN(otherId.value)) {
+  router.push('/messages')
+}
 const messages = ref([])
 const text = ref('')
 const sending = ref(false)
