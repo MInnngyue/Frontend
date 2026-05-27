@@ -68,17 +68,23 @@
       <div class="info-card">
         <div class="info-title">我的帖子</div>
         <el-skeleton :loading="postsLoading" animated :rows="3">
-          <div v-if="myPosts.length > 0" class="archive-list">
-            <div v-for="p in myPosts" :key="p.id" class="archive-row" @click="goPost(p.id)" style="cursor:pointer">
-              <div class="archive-info">
-                <span class="s-capsule" :class="p.type === 0 ? 'sc-lost' : 'sc-found'">{{ p.type === 0 ? '寻物' : '招领' }}</span>
-                <span class="archive-title">{{ p.title }}</span>
+          <div v-if="myPosts.length > 0" class="posts-list-wrap" :class="{ collapsed: !postsExpanded && myPosts.length > 3 }">
+            <div class="archive-list">
+              <div v-for="p in (postsExpanded ? myPosts : myPosts.slice(0, 3))" :key="p.id" class="archive-row" @click="goPost(p.id)" style="cursor:pointer">
+                <div class="archive-info">
+                  <span class="s-capsule" :class="p.type === 0 ? 'sc-lost' : 'sc-found'">{{ p.type === 0 ? '寻物' : '招领' }}</span>
+                  <span class="archive-title">{{ p.title }}</span>
+                </div>
+                <span class="archive-status">{{ statusLabel(p.status) }}</span>
               </div>
-              <span class="archive-status">{{ statusLabel(p.status) }}</span>
             </div>
+            <div v-if="!postsExpanded && myPosts.length > 3" class="gradient-fade"></div>
           </div>
           <div v-else class="empty-info">还没有发布过帖子</div>
         </el-skeleton>
+        <button v-if="myPosts.length > 3" class="toggle-more-btn" @click="postsExpanded = !postsExpanded">
+          {{ postsExpanded ? '收起 ▲' : `更多 (${myPosts.length - 3}) ▼` }}
+        </button>
       </div>
 
       <!-- Sign dialog -->
@@ -139,6 +145,7 @@ const loading = ref(false)
 const userInfo = ref(null)
 const myPosts = ref([])
 const postsLoading = ref(false)
+const postsExpanded = ref(false)
 
 const showSignDialog = ref(false)
 const showInfoDialog = ref(false)
@@ -290,6 +297,21 @@ onMounted(() => {
 .s-capsule { padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #fff; }
 .sc-lost { background: #ef4444; }
 .sc-found { background: #4f46e5; }
+
+/* 我的帖子折叠展开 */
+.posts-list-wrap { position: relative; overflow: hidden; }
+.posts-list-wrap.collapsed { max-height: 180px; }
+.gradient-fade {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 50px;
+  background: linear-gradient(to bottom, transparent, #fff);
+  pointer-events: none;
+}
+.toggle-more-btn {
+  display: block; width: 100%; margin-top: 12px; padding: 8px 0;
+  border: none; background: transparent; color: #4f46e5; font-size: 13px;
+  font-weight: 600; cursor: pointer; transition: color 0.15s;
+}
+.toggle-more-btn:hover { color: #4338ca; }
 
 /* Dialog overrides */
 :deep(.el-dialog) { border-radius: 14px; overflow: hidden; }
