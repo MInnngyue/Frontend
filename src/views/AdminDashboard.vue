@@ -2,7 +2,7 @@
 import { ref, onMounted, nextTick, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import * as echarts from 'echarts'
-import { getPendingPosts, approvePost, rejectPost, getUsers, freezeUser, adjustCredit, blacklistUser, getDict, addDict, updateDict, deleteDict, getStats, getAllPosts, archivePost } from '@/api/admin'
+import { getPendingPosts, approvePost, rejectPost, getUsers, freezeUser, adjustCredit, blacklistUser, getDict, addDict, updateDict, deleteDict, getStats, getAllPosts, archivePost, deletePost } from '@/api/admin'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
@@ -23,6 +23,7 @@ const dictItems = ref([])
 const stats = ref({})
 const loading = ref(false)
 const postFilter = ref('pending')
+const postKeyword = ref('')
 
 const categoryChartRef = ref(null)
 const statusChartRef = ref(null)
@@ -56,7 +57,9 @@ async function submitDialog() {
 // === Posts ===
 async function loadAllPosts() {
   loading.value = true
-  const res = await getAllPosts({ page: 1, size: 100 })
+  const params = { page: 1, size: 100 }
+  if (postKeyword.value.trim()) params.keyword = postKeyword.value.trim()
+  const res = await getAllPosts(params)
   allPosts.value = res.data.records
   posts.value = allPosts.value.filter(p => p.reviewStatus === 0)
   loading.value = false
@@ -69,6 +72,12 @@ async function handleReject(id) {
   })
 }
 async function handleArchivePost(id) { await archivePost(id); ElMessage.success('已归档'); loadAllPosts() }
+async function handleDeletePost(id) {
+  currentItemId.value = id
+  openConfirm('确认删除', '确定要删除该帖子吗？此操作不可撤销。', async () => {
+    await deletePost(currentItemId.value); ElMessage.success('已删除'); loadAllPosts()
+  })
+}
 function statusLabel(s) { const m = { 0: '进行中', 1: '已匹配', 2: '认领中', 3: '已完结', 4: '已归档', 5: '已下架' }; return m[s] || '未知' }
 
 // === Users ===
@@ -209,6 +218,10 @@ const getStatusClass = (s) => {
               <button :class="['pill', { active: postFilter === 'pending' }]" @click="onPostFilterChange('pending')">待审核 <span class="badge">{{ posts.length }}</span></button>
               <button :class="['pill', { active: postFilter === 'all' }]" @click="onPostFilterChange('all')">全部</button>
             </div>
+            <div class="post-search-wrap">
+              <input v-model="postKeyword" placeholder="搜索标题/内容..." class="post-search-input" @keyup.enter="loadAllPosts()" />
+              <button class="btn-search-icon" @click="loadAllPosts()">🔍</button>
+            </div>
           </div>
         </header>
 
@@ -237,7 +250,7 @@ const getStatusClass = (s) => {
                   </template>
                   <template v-else>
                     <button v-if="row.status !== 4 && row.status !== 5" class="btn btn-archive" @click="handleArchivePost(row.id)">归档</button>
-                    <span v-else class="text-muted">—</span>
+                    <button class="btn btn-del" @click="handleDeletePost(row.id)">删除</button>
                   </template>
                 </td>
               </tr>
@@ -417,7 +430,21 @@ const getStatusClass = (s) => {
   margin-bottom: 20px;
 }
 .panel-header h2 { font-size: 22px; font-weight: 700; color: #0f172a; margin: 0; letter-spacing: -0.4px; }
-.panel-actions { display: flex; align-items: center; gap: 12px; }
+.panel-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+/* === Search === */
+.post-search-wrap { display: flex; align-items: center; margin-left: auto; }
+.post-search-input {
+  width: 200px; padding: 7px 12px; border: 1px solid #cbd5e1; border-radius: 8px 0 0 8px;
+  font-size: 13px; color: #1e293b; outline: none; transition: border 0.15s; background: #fff;
+}
+.post-search-input:focus { border-color: #4f46e5; }
+.post-search-input::placeholder { color: #94a3b8; }
+.btn-search-icon {
+  padding: 7px 12px; border: 1px solid #cbd5e1; border-left: none; border-radius: 0 8px 8px 0;
+  background: #f8fafc; cursor: pointer; font-size: 14px; transition: background 0.15s;
+}
+.btn-search-icon:hover { background: #e2e8f0; }
 
 /* === Filter pills === */
 .filter-pills { display: flex; gap: 6px; }

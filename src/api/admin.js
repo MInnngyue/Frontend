@@ -42,3 +42,6 @@ export function getAllPosts(params) {
 export function archivePost(id) {
   return request.put(`/api/admin/posts/${id}/archive`)
 }
+export function deletePost(id) {
+  return request.delete(`/api/admin/posts/${id}`)
+}
