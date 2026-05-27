@@ -58,7 +58,7 @@ async function handleMsgClick(m) {
             <div class="conv-name">{{ c.nickname }} <el-badge v-if="c.unread" :value="c.unread" style="margin-left:6px" /></div>
             <div class="conv-last">{{ c.lastMsg?.substring(0, 50) }}</div>
           </div>
-          <span class="conv-time">{{ c.lastTime?.substring(0, 16) }}</span>
+          <span class="conv-time">{{ c.lastTime?.substring(0, 16).replace('T', ' ') }}</span>
         </div>
       </div>
     </div>
