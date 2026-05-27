@@ -15,3 +15,7 @@ export function publishPost(data) {
 export function deletePost(id) {
   return request.delete(`/api/posts/${id}`)
 }
+
+export function updatePost(id, data) {
+  return request.put(`/api/posts/${id}`, data)
+}

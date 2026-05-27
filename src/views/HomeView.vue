@@ -58,6 +58,10 @@
           <span class="ql-icon">💬</span>
           <span class="ql-text">消息中心</span>
         </div>
+        <div class="quick-link" @click="$router.push('/my-posts')">
+          <span class="ql-icon">📋</span>
+          <span class="ql-text">我的帖子</span>
+        </div>
       </div>
 
       <!-- 我的帖子 -->
