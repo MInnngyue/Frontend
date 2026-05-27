@@ -1,9 +1,9 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getMyPosts } from '@/api/user'
 import { deletePost, updatePost } from '@/api/post'
-import { getCategories } from '@/api/category'
+import { getCategories, getCategoryChildren } from '@/api/category'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const router = useRouter()
@@ -12,9 +12,13 @@ const loading = ref(false)
 const saving = ref(false)
 
 // 字典数据
-const categories = ref([])    // item_category
-const colors = ref([])        // color
-const locations = ref([])     // location
+const categories = ref([])
+const colors = ref([])
+const campuses = ref([])
+const areas = ref([])
+const details = ref([])
+let selectedCampusId = null
+let selectedAreaId = null
 
 const showEditDialog = ref(false)
 const editForm = ref({
@@ -24,7 +28,6 @@ const editForm = ref({
 
 onMounted(async () => {
   await loadPosts()
-  // 加载字典数据
   try {
     const [cats, cols, locs] = await Promise.all([
       getCategories('item_category'),
@@ -33,31 +36,67 @@ onMounted(async () => {
     ])
     categories.value = cats.data || []
     colors.value = cols.data || []
-    locations.value = locs.data || []
+    campuses.value = locs.data || []
   } catch { /* ignore */ }
 })
 
-async function loadPosts() {
-  loading.value = true
-  try { posts.value = (await getMyPosts({ page: 1, size: 100 })).data || [] }
-  catch { posts.value = [] }
-  finally { loading.value = false }
+// 校区变化 → 加载区域
+async function onCampusChange(name) {
+  editForm.value.locationArea = ''
+  editForm.value.locationDetail = ''
+  areas.value = []
+  details.value = []
+  const campus = campuses.value.find(c => c.name === name)
+  if (campus) {
+    selectedCampusId = campus.id
+    const res = await getCategoryChildren('location', campus.id)
+    areas.value = res.data || []
+  }
 }
 
-function typeLabel(t) { return t === 0 ? '寻物' : '招领' }
-function statusLabel(s) {
-  const map = { 0: '进行中', 1: '已匹配', 2: '认领中', 3: '已完结', 4: '已归档', 5: '已下架' }
-  return map[s] || '未知'
+// 区域变化 → 加载具体地点
+async function onAreaChange(name) {
+  editForm.value.locationDetail = ''
+  details.value = []
+  const area = areas.value.find(c => c.name === name)
+  if (area) {
+    selectedAreaId = area.id
+    const res = await getCategoryChildren('location', area.id)
+    details.value = res.data || []
+  }
 }
 
-function openEdit(p) {
-  editForm.value = {
+// 打开编辑时，如果已有校区信息，预加载下属数据
+async function openEdit(p) {
+    editForm.value = {
     id: p.id, type: p.type, itemCategory: p.itemCategory || '', color: p.color || '',
     title: p.title || '', description: p.description || '',
     locationCampus: p.locationCampus || '', locationArea: p.locationArea || '',
-    locationDetail: p.locationDetail || '', lostTime: p.lostTime || '', images: []
+    locationDetail: p.locationDetail || '',
+    lostTime: (p.lostTime || '').substring(0, 10),
+    images: []
   }
   showEditDialog.value = true
+
+  // 预加载已有的校区下属区域
+  areas.value = []
+  details.value = []
+  if (p.locationCampus) {
+    const campus = campuses.value.find(c => c.name === p.locationCampus)
+    if (campus) {
+      selectedCampusId = campus.id
+      const res = await getCategoryChildren('location', campus.id)
+      areas.value = res.data || []
+    }
+    if (p.locationArea) {
+      const area = areas.value.find(c => c.name === p.locationArea)
+      if (area) {
+        selectedAreaId = area.id
+        const res = await getCategoryChildren('location', area.id)
+        details.value = res.data || []
+      }
+    }
+  }
 }
 
 async function saveEdit() {
@@ -80,7 +119,19 @@ async function handleDelete(id) {
   } catch { /* 取消或失败 */ }
 }
 
+function typeLabel(t) { return t === 0 ? '寻物' : '招领' }
+function statusLabel(s) {
+  const map = { 0: '进行中', 1: '已匹配', 2: '认领中', 3: '已完结', 4: '已归档', 5: '已下架' }
+  return map[s] || '未知'
+}
 function goPost(id) { router.push(`/post/${id}`) }
+
+async function loadPosts() {
+  loading.value = true
+  try { posts.value = (await getMyPosts({ page: 1, size: 100 })).data || [] }
+  catch { posts.value = [] }
+  finally { loading.value = false }
+}
 </script>
 
 <template>
@@ -106,9 +157,7 @@ function goPost(id) { router.push(`/post/${id}`) }
           <tr v-for="row in posts" :key="row.id">
             <td class="td-id">{{ row.id }}</td>
             <td><span class="type-badge" :class="row.type === 0 ? 't-lost' : 't-found'">{{ typeLabel(row.type) }}</span></td>
-            <td>
-              <div class="td-title">{{ row.title }}</div>
-            </td>
+            <td><div class="td-title">{{ row.title }}</div></td>
             <td><span class="status-badge" :class="'s-' + row.status">{{ statusLabel(row.status) }}</span></td>
             <td class="td-time">{{ (row.lostTime || '').replace('T', ' ')?.substring(0, 10) }}</td>
             <td class="td-actions">
@@ -148,20 +197,34 @@ function goPost(id) { router.push(`/post/${id}`) }
             <el-option v-for="c in colors" :key="c.id" :label="c.name" :value="c.name" />
           </el-select>
         </el-form-item>
-        <el-form-item label="校区">
-          <el-select v-model="editForm.locationCampus" placeholder="选择校区" style="width:100%">
-            <el-option v-for="l in locations" :key="l.id" :label="l.name" :value="l.name" />
-          </el-select>
+
+        <!-- 地点三级联动 -->
+        <el-form-item label="地点" required>
+          <div style="display:flex;gap:8px;width:100%">
+            <el-select v-model="editForm.locationCampus" placeholder="校区" style="flex:1" @change="onCampusChange">
+              <el-option v-for="c in campuses" :key="c.id" :label="c.name" :value="c.name" />
+            </el-select>
+            <el-select v-model="editForm.locationArea" placeholder="区域" style="flex:1" :disabled="!editForm.locationCampus" @change="onAreaChange">
+              <el-option v-for="c in areas" :key="c.id" :label="c.name" :value="c.name" />
+            </el-select>
+            <el-select v-if="details.length > 0" v-model="editForm.locationDetail" placeholder="具体地点" style="flex:1">
+              <el-option v-for="c in details" :key="c.id" :label="c.name" :value="c.name" />
+            </el-select>
+            <el-input v-else v-model="editForm.locationDetail" placeholder="具体地点" style="flex:1" :disabled="!editForm.locationArea" />
+          </div>
         </el-form-item>
-        <el-form-item label="区域">
-          <el-input v-model="editForm.locationArea" maxlength="100" placeholder="如：教学楼A区" />
-        </el-form-item>
-        <el-form-item label="详细位置">
-          <el-input v-model="editForm.locationDetail" maxlength="200" placeholder="如：一楼大厅" />
-        </el-form-item>
+
+        <!-- 时间选择器 -->
         <el-form-item label="时间">
-          <el-input v-model="editForm.lostTime" placeholder="如：2026-05-27 14:30" />
+          <el-date-picker
+            v-model="editForm.lostTime"
+            type="date"
+            placeholder="选择日期"
+            value-format="YYYY-MM-DD"
+            style="width:100%"
+          />
         </el-form-item>
+
         <el-form-item label="描述">
           <el-input v-model="editForm.description" type="textarea" :rows="4" maxlength="2000" show-word-limit placeholder="请详细描述物品特征..." />
         </el-form-item>
@@ -227,11 +290,12 @@ function goPost(id) { router.push(`/post/${id}`) }
 .empty-btn:hover { background: #4338ca; }
 
 /* Dialog */
-.edit-form { padding: 8px 0; max-height: 60vh; overflow-y: auto; }
+.edit-form { padding: 8px 0; max-height: 65vh; overflow-y: auto; }
 :deep(.el-dialog) { border-radius: 14px; overflow: hidden; }
 :deep(.el-dialog__title) { font-size: 17px; font-weight: 700; color: #1e293b; }
 :deep(.el-dialog .el-input__wrapper) { border-radius: 8px; box-shadow: 0 0 0 1px #e2e8f0 inset; }
 :deep(.el-dialog .el-select .el-input__wrapper) { border-radius: 8px; box-shadow: 0 0 0 1px #e2e8f0 inset; }
+:deep(.el-dialog .el-date-editor .el-input__wrapper) { border-radius: 8px; box-shadow: 0 0 0 1px #e2e8f0 inset; }
 :deep(.el-dialog .el-button--primary) { background: #4f46e5; border-color: #4f46e5; border-radius: 8px; font-weight: 600; }
 :deep(.el-dialog .el-button--primary:hover) { background: #4338ca; border-color: #4338ca; }
 :deep(.el-dialog .el-button) { border-radius: 8px; }
