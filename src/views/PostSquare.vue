@@ -17,6 +17,7 @@ const activeTab = ref(null)
 const queryParams = ref({ type: null, itemCategory: '', keyword: '' })
 
 const itemCategories = ref([])
+const catExpanded = ref(false)
 
 onMounted(async () => {
   itemCategories.value = (await getCategories('item_category')).data
@@ -86,9 +87,15 @@ function statusLabel(status) {
 
         <div class="filter-card">
           <div class="section-title">分类</div>
-          <div class="row-list">
-            <div v-for="c in itemCategories" :key="c.id" class="row-chip" :class="{ active: queryParams.itemCategory === c.name }" @click="onFilterClick('itemCategory', c.name)">{{ c.name }} <span v-if="queryParams.itemCategory === c.name" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
+          <div class="cat-list-wrap" :class="{ collapsed: !catExpanded && itemCategories.length > 5 }">
+            <div class="row-list">
+              <div v-for="c in (catExpanded ? itemCategories : itemCategories.slice(0, 5))" :key="c.id" class="row-chip" :class="{ active: queryParams.itemCategory === c.name }" @click="onFilterClick('itemCategory', c.name)">{{ c.name }} <span v-if="queryParams.itemCategory === c.name" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
+            </div>
+            <div v-if="!catExpanded && itemCategories.length > 5" class="gradient-fade"></div>
           </div>
+          <button v-if="itemCategories.length > 5" class="toggle-more-btn" @click="catExpanded = !catExpanded">
+            {{ catExpanded ? '收起 ▲' : '更多 ▼' }}
+          </button>
         </div>
       </aside>
 
@@ -144,7 +151,7 @@ function statusLabel(status) {
   border: 1px solid #e2e8f0;
 }
 .section-title {
-  font-size: 14px; font-weight: 600; color: #64748b; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;
+  font-size: 21px; font-weight: 700; color: #1e293b; margin-bottom: 10px;
 }
 .row-list { display: flex; flex-direction: column; gap: 2px; }
 .row-chip {
@@ -156,6 +163,21 @@ function statusLabel(status) {
 .row-chip:hover { background: #eef2ff; color: #4f46e5; }
 .row-chip.active { background: #eef2ff; color: #4f46e5; font-weight: 600; }
 .row-chip .check { font-size: 14px; color: #4f46e5; }
+
+/* 分类折叠 */
+.cat-list-wrap { position: relative; overflow: hidden; }
+.cat-list-wrap.collapsed { max-height: 240px; }
+.gradient-fade {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 40px;
+  background: linear-gradient(to bottom, transparent, #fff);
+  pointer-events: none;
+}
+.toggle-more-btn {
+  display: block; width: 100%; margin-top: 8px; padding: 6px 0;
+  border: none; background: transparent; color: #4f46e5; font-size: 13px;
+  font-weight: 600; cursor: pointer; transition: color 0.15s;
+}
+.toggle-more-btn:hover { color: #4338ca; }
 
 /* Content */
 .content-area { flex: 1; min-height: 400px; }

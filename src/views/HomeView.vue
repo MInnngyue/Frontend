@@ -83,7 +83,7 @@
           <div v-else class="empty-info">还没有发布过帖子</div>
         </el-skeleton>
         <button v-if="myPosts.length > 3" class="toggle-more-btn" @click="postsExpanded = !postsExpanded">
-          {{ postsExpanded ? '收起 ▲' : `更多 (${myPosts.length - 3}) ▼` }}
+          {{ postsExpanded ? '收起 ▲' : '更多 ▼' }}
         </button>
       </div>
 
