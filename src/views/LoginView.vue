@@ -187,8 +187,8 @@ const handleSubmit = () => {
   align-items: center;
   background: #f8fafc;
   /* subtle dot pattern — breaks AI "flat background" cliché */
-  background-image: radial-gradient(circle, #e2e8f0 0.8px, transparent 0.8px);
-  background-size: 22px 22px;
+  background-image: radial-gradient(circle, #cbd5e1 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
 }
 
 .login-card {
