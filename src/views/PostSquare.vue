@@ -105,7 +105,7 @@ function statusLabel(status) {
         </div>
 
         <div class="card-grid">
-          <div v-for="post in posts" :key="post.id" class="card" @click="goDetail(post.id)">
+          <div v-for="(post, idx) in posts" :key="post.id" class="card" :class="{ 'card-featured': idx === 0 }" @click="goDetail(post.id)">
             <div class="card-cover">
               <el-image v-if="post.coverImage" :src="imageUrl(post.coverImage)" fit="cover" />
               <div v-else class="cover-placeholder">📷</div>
@@ -178,6 +178,28 @@ function statusLabel(status) {
 .content-area { flex: 1; min-height: 400px; }
 
 .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+
+/* featured first card — breaks the "every card same size" AI pattern */
+.card-featured {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: row;
+}
+.card-featured .card-cover {
+  width: 45%;
+  height: 220px;
+  flex-shrink: 0;
+}
+.card-featured .card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.card-featured .card-title {
+  font-size: 20px;
+  -webkit-line-clamp: 3;
+}
 
 .card {
   background: #fff; border-radius: 12px; overflow: hidden; cursor: pointer;

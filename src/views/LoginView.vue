@@ -67,6 +67,8 @@
         </el-button>
       </div>
     </el-card>
+
+    <p class="login-slogan">校园失物招领 · 让每件物品找到回家的路</p>
   </div>
 </template>
 
@@ -184,6 +186,9 @@ const handleSubmit = () => {
   justify-content: center;
   align-items: center;
   background: #f8fafc;
+  /* subtle dot pattern — breaks AI "flat background" cliché */
+  background-image: radial-gradient(circle, #e2e8f0 0.8px, transparent 0.8px);
+  background-size: 22px 22px;
 }
 
 .login-card {
@@ -193,8 +198,12 @@ const handleSubmit = () => {
   border: 1px solid #e2e8f0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
   transition: box-shadow 0.2s, transform 0.2s;
+  /* shift card slightly up — visual center ≠ geometric center */
+  margin-top: -32px;
 }
 .login-card:hover { box-shadow: 0 4px 12px rgba(79,70,229,0.06); transform: translateY(-1px); }
+
+/* .login-card { margin-top: calc(-1 * var(--card-offset, 32px)); } — dynamic offset, not used yet */
 
 .title {
   text-align: center;
@@ -274,5 +283,16 @@ const handleSubmit = () => {
 }
 .switch-box :deep(.el-button:hover) {
   color: #4338ca;
+}
+
+.login-slogan {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+  color: #94a3b8;
+  letter-spacing: 1px;
+  white-space: nowrap;
 }
 </style>
