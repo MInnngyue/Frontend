@@ -175,7 +175,6 @@ async function loadPosts() {
       </div>
     </div>
 
-    <!-- Edit Dialog -->
     <el-dialog v-model="showEditDialog" title="编辑帖子" width="580px" :close-on-click-modal="false">
       <el-form label-width="80px" class="edit-form">
         <el-form-item label="类型">
@@ -198,7 +197,6 @@ async function loadPosts() {
           </el-select>
         </el-form-item>
 
-        <!-- 地点三级联动 -->
         <el-form-item label="地点" required>
           <div style="display:flex;gap:8px;width:100%">
             <el-select v-model="editForm.locationCampus" placeholder="校区" style="flex:1" @change="onCampusChange">
@@ -214,7 +212,6 @@ async function loadPosts() {
           </div>
         </el-form-item>
 
-        <!-- 时间选择器 -->
         <el-form-item label="时间">
           <el-date-picker
             v-model="editForm.lostTime"

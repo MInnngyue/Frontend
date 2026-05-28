@@ -30,7 +30,6 @@ async function handleMsgClick(m) {
   <div class="msg-page">
     <h1 class="page-title">消息</h1>
 
-    <!-- 系统通知 -->
     <div class="section-card">
       <div class="section-header">
         <span>系统通知 <span v-if="systemUnread > 0" class="sys-badge">{{ systemUnread }}</span></span>
@@ -47,7 +46,6 @@ async function handleMsgClick(m) {
       </div>
     </div>
 
-    <!-- 私信会话 -->
     <div class="section-card">
       <div class="section-header">私信</div>
       <div v-if="conversations.length === 0" class="empty-hint">暂无私信</div>

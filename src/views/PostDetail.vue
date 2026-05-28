@@ -22,7 +22,7 @@ onMounted(async () => {
     post.value = (await getPostDetail(route.params.id)).data
     if (post.value) { loadClaims(); loadComments() }
   } finally { loading.value = false }
-  // 如果URL hash是 #comments，滚动到评论区
+  // scroll to #comments if hash present
   if (route.hash === '#comments') nextTick(() => document.getElementById('comments-section')?.scrollIntoView({ behavior: 'smooth' }))
 })
 
@@ -62,7 +62,6 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
         <el-button class="back-btn" @click="router.push('/')">&larr; 返回广场</el-button>
       </div>
 
-      <!-- 标题卡片 -->
       <div class="detail-card header-card">
         <div class="capsule-row">
           <span class="capsule" :class="post.type === 0 ? 'c-lost' : 'c-found'">{{ typeLabel(post.type) }}</span>
@@ -76,19 +75,16 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
         </div>
       </div>
 
-      <!-- 正文 -->
       <div class="detail-card" v-if="post.description">
         <p class="desc-text">{{ post.description }}</p>
       </div>
 
-      <!-- 图片 -->
       <div class="detail-card" v-if="post.images && post.images.length > 0">
         <div class="image-grid">
           <el-image v-for="(img, idx) in post.images" :key="idx" :src="imageUrl(img)" fit="cover" :preview-src-list="post.images.map(i => imageUrl(i))" class="detail-image" />
         </div>
       </div>
 
-      <!-- 发布者 + 操作 -->
       <div class="detail-card bottom-section">
         <div class="publisher-row">
           <div class="pub-left">
@@ -114,7 +110,6 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
         </div>
       </div>
 
-      <!-- 评论区 -->
       <div class="detail-card" id="comments-section">
         <h3 class="section-heading">评论 ({{ comments.length }})</h3>
         <div class="comment-input">
@@ -137,52 +132,44 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
 </template>
 
 <style scoped>
-/* ===== Page Layout ===== */
-.detail-page { max-width: 800px; margin: 0 auto; padding: 24px 20px 48px; background: #f8fafc; min-height: 100vh; }
+.detail-page { max-width: 800px; margin: 0 auto; padding: 22px 20px 48px; background: #f8fafc; min-height: 100vh; }
 
-/* ===== Back Navigation ===== */
-.back-nav { margin-bottom: 20px; }
+.back-nav { margin-bottom: 22px; }
+/* .back-btn { background: #f8fafc; } -- old bg, too washed out */
 .back-btn { background: #fff; border: 1px solid #e2e8f0; color: #475569; font-size: 14px; border-radius: 8px; padding: 8px 18px; transition: all 0.15s; }
 .back-btn:hover { background: #f8fafc; border-color: #cbd5e1; color: #1e293b; }
+.back-btn:active { transform: scale(0.97); }
 
-/* ===== Detail Card Base ===== */
 .detail-card {
   background: #fff;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 24px 28px;
-  margin-bottom: 12px;
+  margin-bottom: 11px;
 }
 
-/* ===== Header Card ===== */
-.header-card { padding: 28px 32px; }
+.header-card { padding: 26px 32px; }
 .header-title { font-size: 22px; font-weight: 700; color: #1e293b; margin: 14px 0 12px; line-height: 1.4; }
 
-/* ===== Capsules (type, status, category, location, time) ===== */
 .capsule-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .capsule { padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; }
-/* Type */
 .c-lost { background: #fee2e2; color: #b91c1c; }
 .c-found { background: #dcfce7; color: #15803d; }
-/* Status */
 .cs-0 { background: #eef2ff; color: #4338ca; }
 .cs-1, .cs-2 { background: #fef3c7; color: #b45309; }
 .cs-3 { background: #dcfce7; color: #15803d; }
 .cs-4, .cs-5 { background: #f1f5f9; color: #64748b; }
-/* Meta */
 .c-cat { background: #eef2ff; color: #4f46e5; }
 .c-loc { background: #f1f5f9; color: #475569; }
 .c-time { background: #f8fafc; color: #64748b; }
 
-/* ===== Description ===== */
 .desc-text { color: #475569; line-height: 1.8; white-space: pre-wrap; margin: 0; font-size: 15px; }
 
-/* ===== Images ===== */
-.image-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+.image-grid { display: flex; flex-wrap: wrap; gap: 10px; }
 .detail-image { width: 100%; max-width: 560px; height: 420px; border-radius: 10px; border: 1px solid #e2e8f0; }
+/* .detail-image:hover { transform: scale(1.01); } -- kinda heavy for images */
 
-/* ===== Publisher ===== */
-.bottom-section { padding: 24px 28px; }
+.bottom-section { padding: 22px 28px; }
 .publisher-row { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9; margin-bottom: 16px; }
 .pub-left { display: flex; align-items: center; gap: 12px; }
 .pub-avatar {
@@ -193,12 +180,13 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
 }
 .pub-name { font-size: 16px; font-weight: 600; color: #1e293b; }
 .pub-meta { font-size: 13px; color: #64748b; margin-top: 2px; }
-.dm-btn { background: #eef2ff; border: 1px solid #c7d2fe; color: #4338ca; border-radius: 8px; font-size: 14px; padding: 8px 20px; font-weight: 600; }
-.dm-btn:hover { background: #e0e7ff; border-color: #a5b4fc; }
+.dm-btn { background: #eef2ff; border: 1px solid #c7d2fe; color: #4338ca; border-radius: 8px; font-size: 14px; padding: 8px 20px; font-weight: 600; transition: transform 0.15s; }
+.dm-btn:hover { background: #e0e7ff; border-color: #a5b4fc; transform: translateY(-1px); }
+.dm-btn:active { transform: scale(0.97); }
 
-/* ===== Actions ===== */
 .action-area { display: flex; flex-direction: column; gap: 10px; }
-.action-btn { height: 42px; border-radius: 8px; font-size: 15px; padding: 0 24px; font-weight: 600; border: none; }
+.action-btn { height: 42px; border-radius: 8px; font-size: 15px; padding: 0 24px; font-weight: 600; border: none; transition: transform 0.15s; }
+.action-btn:active { transform: scale(0.98); }
 .claim-btn { width: 100%; background: #4f46e5; color: #fff; }
 .claim-btn:hover { background: #4338ca; }
 .goto-claim-btn { width: 100%; background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; }
@@ -209,14 +197,15 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
 .delete-btn { background: #fee2e2; color: #b91c1c; }
 .delete-btn:hover { background: #fecaca; }
 
-/* ===== Comments ===== */
 .section-heading { font-size: 17px; font-weight: 700; color: #1e293b; margin: 0 0 16px; }
-.comment-input { margin-bottom: 20px; display: flex; flex-direction: column; align-items: flex-end; }
-.send-comment-btn { margin-top: 10px; background: #4f46e5; border-color: #4f46e5; color: #fff; font-size: 16px; padding: 10px 24px; border-radius: 8px; font-weight: 600; }
+.comment-input { margin-bottom: 18px; display: flex; flex-direction: column; align-items: flex-end; }
+.send-comment-btn { margin-top: 10px; background: #4f46e5; border-color: #4f46e5; color: #fff; font-size: 16px; padding: 10px 24px; border-radius: 8px; font-weight: 600; transition: transform 0.15s; }
 .send-comment-btn:hover { background: #4338ca; border-color: #4338ca; }
+.send-comment-btn:active { transform: scale(0.97); }
 
-.comment-list { display: flex; flex-direction: column; gap: 16px; }
-.comment-item { display: flex; gap: 12px; padding: 12px; background: #f8fafc; border-radius: 8px; }
+.comment-list { display: flex; flex-direction: column; gap: 14px; }
+.comment-item { display: flex; gap: 12px; padding: 12px; background: #f8fafc; border-radius: 8px; transition: background 0.15s; }
+.comment-item:hover { background: #eef2ff; }
 .cmt-avatar {
   width: 36px; height: 36px; border-radius: 50%;
   background: #4f46e5; color: #fff;

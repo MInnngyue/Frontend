@@ -184,7 +184,6 @@ const getStatusClass = (s) => {
 
 <template>
   <div class="admin-layout">
-    <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sb-brand">
         <span class="sb-logo">🔍</span>
@@ -206,10 +205,8 @@ const getStatusClass = (s) => {
       </div>
     </aside>
 
-    <!-- Main Content -->
     <main class="main-content">
 
-      <!-- ====== 帖子管理 ====== -->
       <section v-if="activeNav === 'posts'" class="panel">
         <header class="panel-header">
           <h2>帖子管理</h2>
@@ -260,7 +257,6 @@ const getStatusClass = (s) => {
         </div>
       </section>
 
-      <!-- ====== 用户管理 ====== -->
       <section v-if="activeNav === 'users'" class="panel">
         <header class="panel-header"><h2>用户管理</h2></header>
         <div class="table-wrap" v-loading="loading">
@@ -293,7 +289,6 @@ const getStatusClass = (s) => {
         </div>
       </section>
 
-      <!-- ====== 数据字典 ====== -->
       <section v-if="activeNav === 'dict'" class="panel">
         <header class="panel-header">
           <h2>数据字典</h2>
@@ -334,7 +329,6 @@ const getStatusClass = (s) => {
         </div>
       </section>
 
-      <!-- ====== 数据统计 ====== -->
       <section v-if="activeNav === 'stats'" class="panel">
         <header class="panel-header"><h2>数据统计</h2></header>
         <div class="stats-grid">
@@ -362,7 +356,6 @@ const getStatusClass = (s) => {
       </section>
     </main>
 
-    <!-- Unified Dialog -->
     <el-dialog v-model="dialog.show" :title="dialog.title" width="400px" :close-on-click-modal="false">
       <p class="dialog-desc" v-if="dialog.desc">{{ dialog.desc }}</p>
       <el-input v-if="dialog.type === 'input'" v-model="dialog.inputValue" :placeholder="dialog.desc" maxlength="50" @keyup.enter="submitDialog" />

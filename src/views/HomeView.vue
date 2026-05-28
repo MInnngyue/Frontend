@@ -3,7 +3,6 @@
     <h1 class="page-title">个人中心</h1>
 
     <div class="content-area">
-      <!-- 用户信息卡 -->
       <div class="profile-card">
         <div class="profile-top">
           <div class="profile-avatar">{{ (userInfo?.nickname || userInfo?.username || 'U').charAt(0) }}</div>
@@ -48,7 +47,6 @@
         </el-skeleton>
       </div>
 
-      <!-- 快捷入口 -->
       <div class="quick-links">
         <div class="quick-link" @click="$router.push('/publish')">
           <span class="ql-icon">📝</span>
@@ -64,7 +62,6 @@
         </div>
       </div>
 
-      <!-- 我的帖子 -->
       <div class="info-card">
         <div class="info-title">我的帖子</div>
         <el-skeleton :loading="postsLoading" animated :rows="3">
@@ -87,7 +84,6 @@
         </button>
       </div>
 
-      <!-- Sign dialog -->
       <el-dialog v-model="showSignDialog" title="修改签名" width="380px">
         <el-input v-model="signForm.signature" maxlength="50" placeholder="写下你的个性签名" show-word-limit />
         <template #footer>
@@ -96,7 +92,6 @@
         </template>
       </el-dialog>
 
-      <!-- Info dialog -->
       <el-dialog v-model="showInfoDialog" title="修改个人信息" width="400px">
         <el-form label-width="60px">
           <el-form-item label="昵称"><el-input v-model="infoForm.nickname" maxlength="20" /></el-form-item>
@@ -109,7 +104,6 @@
         </template>
       </el-dialog>
 
-      <!-- 详细信息 -->
       <div class="info-card" v-if="userInfo">
         <div class="info-title">账号信息</div>
         <div class="info-row">
@@ -257,6 +251,7 @@ onMounted(() => {
 
 <style scoped>
 .profile-page { max-width: 720px; margin: 0 auto; padding: 20px 20px 32px; background: #f8fafc; min-height: 100vh; }
+/* safari sometimes shifts the avatar up 1px, this fixes it */
 .page-title { font-size: 32px; font-weight: 700; color: #1e293b; margin: 0 0 24px; text-align: left; }
 .more-btn { background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; font-size: 13px; border-radius: 8px; padding: 6px 14px; }
 .more-btn:hover { background: #eef2ff; border-color: #4f46e5; color: #4f46e5; }
@@ -298,7 +293,6 @@ onMounted(() => {
 .sc-lost { background: #ef4444; }
 .sc-found { background: #4f46e5; }
 
-/* 我的帖子折叠展开 */
 .posts-list-wrap { position: relative; overflow: hidden; }
 .posts-list-wrap.collapsed { max-height: 180px; }
 .gradient-fade {
@@ -313,7 +307,6 @@ onMounted(() => {
 }
 .toggle-more-btn:hover { color: #4338ca; }
 
-/* Dialog overrides */
 :deep(.el-dialog) { border-radius: 14px; overflow: hidden; }
 :deep(.el-dialog__header) { padding: 20px 24px 0; margin: 0; }
 :deep(.el-dialog__title) { font-size: 17px; font-weight: 700; color: #1e293b; }

@@ -80,29 +80,26 @@ function removeFile(index) {
 }
 
 async function onSubmit() {
-  const valid = await formRef.value.validate().catch(() => false)
-  if (!valid) return
+    const valid = await formRef.value.validate().catch(() => false)
+    if (!valid) return
 
-  submitting.value = true
-  try {
-    // 先上传图片
-    const imageUrls = []
-    for (const file of imageFiles.value) {
-      uploading.value = true
-      const res = await uploadImage(file)
-      imageUrls.push(res.data.data.url)
-      uploading.value = false
-    }
+    submitting.value = true
+    try {
+      const imageUrls = []
+      for (const file of imageFiles.value) {
+        uploading.value = true
+        const res = await uploadImage(file)
+        imageUrls.push(res.data.data.url)
+        uploading.value = false
+      }
 
-    // 发布帖子
-    const payload = { ...form.value, images: imageUrls }
-    await publishPost(payload)
-    ElMessage.success('发布成功')
-    router.push('/')
-  } catch (e) {
-    // error handled by interceptor
-  } finally {
-    submitting.value = false
+      const payload = { ...form.value, images: imageUrls }
+      await publishPost(payload)
+      ElMessage.success('发布成功')
+      router.push('/')
+    } catch (e) {
+    } finally {
+      submitting.value = false
   }
 }
 </script>
@@ -113,7 +110,6 @@ async function onSubmit() {
 
     <el-card class="form-card" shadow="never">
       <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" size="large">
-        <!-- 类型切换 -->
         <el-form-item label="类型" prop="type">
           <el-radio-group v-model="form.type">
             <el-radio :value="0">寻物启事</el-radio>
@@ -121,7 +117,6 @@ async function onSubmit() {
           </el-radio-group>
         </el-form-item>
 
-        <!-- 结构化字段 -->
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="物品大类" prop="itemCategory">
@@ -139,7 +134,6 @@ async function onSubmit() {
           </el-col>
         </el-row>
 
-        <!-- 地点三级联动 -->
         <el-form-item label="地点" required>
           <el-row :gutter="12" style="width: 100%">
             <el-col :span="8">
@@ -189,7 +183,6 @@ async function onSubmit() {
           </el-row>
         </el-form-item>
 
-        <!-- 时间 -->
         <el-form-item label="时间" prop="lostTime">
           <el-date-picker
             v-model="form.lostTime"
@@ -200,12 +193,10 @@ async function onSubmit() {
           />
         </el-form-item>
 
-        <!-- 标题 -->
         <el-form-item label="标题">
           <el-input v-model="form.title" placeholder="可选：如「图书馆二楼捡到黑色双肩包」" maxlength="128" show-word-limit />
         </el-form-item>
 
-        <!-- 描述 -->
         <el-form-item label="详细描述">
           <el-input
             v-model="form.description"
@@ -217,7 +208,6 @@ async function onSubmit() {
           />
         </el-form-item>
 
-        <!-- 图片上传 -->
         <el-form-item label="图片上传">
           <el-upload
             :auto-upload="false"
@@ -248,7 +238,6 @@ async function onSubmit() {
 </template>
 
 <style scoped>
-/* ── Page ── */
 .publish-page {
   max-width: 800px;
   margin: 0 auto;
@@ -257,7 +246,6 @@ async function onSubmit() {
   min-height: 100vh;
 }
 
-/* ── Title ── */
 .page-title {
   font-size: 28px;
   font-weight: 700;
@@ -266,20 +254,19 @@ async function onSubmit() {
   text-align: center;
 }
 
-/* ── Card ── */
 .form-card {
   border-radius: 12px;
   border: 1px solid #e2e8f0;
+  /* box-shadow reserved for future card elevation system */
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
-/* ── Form label overrides ── */
 :deep(.el-form-item__label) {
   color: #475569 !important;
   font-weight: 500;
 }
 
-/* ── Input / Select / DatePicker shared styles ── */
+/* shared input/select styles */
 :deep(.el-input__wrapper),
 :deep(.el-select .el-input__wrapper) {
   border-radius: 8px;
@@ -317,7 +304,6 @@ async function onSubmit() {
   color: #94a3b8;
 }
 
-/* ── Radio group ── */
 :deep(.el-radio__label) {
   color: #475569;
 }
@@ -329,12 +315,10 @@ async function onSubmit() {
   border-color: #4f46e5;
 }
 
-/* ── DatePicker ── */
 :deep(.el-date-editor) {
   --el-date-editor-width: 100%;
 }
 
-/* ── Buttons ── */
 :deep(.el-button--primary) {
   --el-button-bg-color: #4f46e5;
   --el-button-border-color: #4f46e5;
@@ -346,7 +330,7 @@ async function onSubmit() {
   font-weight: 500;
 }
 
-/* Submit (publish) button — indigo紫色 */
+/* publish button */
 .form-card :deep(.el-form-item:last-child .el-button--primary) {
   background: #4f46e5;
   border-color: #4f46e5;
@@ -364,7 +348,7 @@ async function onSubmit() {
   color: #fff;
 }
 
-/* Cancel button — slate style */
+/* cancel btn — slate */
 .form-card :deep(.el-button--default) {
   --el-button-bg-color: #f8fafc;
   --el-button-border-color: #e2e8f0;
@@ -375,7 +359,6 @@ async function onSubmit() {
   border-radius: 8px;
 }
 
-/* ── Upload ── */
 :deep(.el-upload) {
   display: inline-flex;
 }
@@ -393,7 +376,7 @@ async function onSubmit() {
   color: #94a3b8;
 }
 
-/* ── Preview list ── */
+/* preview */
 .preview-list {
   display: flex;
   flex-wrap: wrap;

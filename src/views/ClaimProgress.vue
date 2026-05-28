@@ -129,7 +129,6 @@ function goPost(id) { router.push(`/post/${id}`) }
   <div class="claims-page">
     <h1 class="page-title">认领进度</h1>
 
-    <!-- Search Bar -->
     <div class="search-bar">
       <div class="search-input-wrap">
         <span class="search-icon">🔍</span>
@@ -152,14 +151,12 @@ function goPost(id) { router.push(`/post/${id}`) }
       </div>
 
       <div v-for="c in filteredClaims" :key="c.claimId" class="claim-card" :class="'status-' + c.claimStatus">
-        <!-- Top bar: type + title + status -->
         <div class="claim-header" @click="goPost(c.postId)">
           <span class="claim-type" :class="c.postType === 0 ? 't-lost' : 't-found'">{{ typeLabel(c.postType) }}</span>
           <span class="claim-title">{{ c.postTitle }}</span>
           <span class="claim-badge" :class="'cs-' + c.claimStatus">{{ statusCn(c.claimStatus) }}</span>
         </div>
 
-        <!-- Role + Party Info -->
         <div class="party-row">
           <div class="party-card" :class="c.myRole === 'owner' ? 'pc-owner' : 'pc-claimer'">
             <span class="party-label">{{ c.myRole === 'owner' ? '我(发布者)' : '我(认领人)' }}</span>
@@ -175,7 +172,6 @@ function goPost(id) { router.push(`/post/${id}`) }
           </div>
         </div>
 
-        <!-- Progress bar -->
         <div class="progress-bar">
           <div class="progress-track">
             <div class="progress-fill" :style="{ width: progressStep(c) === 2 ? '100%' : progressStep(c) === 1 ? '50%' : '0%' }"></div>
@@ -187,10 +183,8 @@ function goPost(id) { router.push(`/post/${id}`) }
           </div>
         </div>
 
-        <!-- Time -->
         <div class="claim-time">更新于 {{ c.updateTime?.substring(0, 16).replace('T', ' ') }}</div>
 
-        <!-- Action -->
         <div class="claim-action" v-if="c.claimStatus < 2">
           <span class="action-hint">{{ actionLabel(c) }}</span>
           <div class="action-btns">

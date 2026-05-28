@@ -178,7 +178,6 @@ const handleSubmit = () => {
 </script>
 
 <style scoped>
-/* ── Page ── */
 .login-page {
   min-height: 100vh;
   display: flex;
@@ -187,16 +186,16 @@ const handleSubmit = () => {
   background: #f8fafc;
 }
 
-/* ── Card ── */
 .login-card {
   width: 430px;
-  padding: 32px 28px 24px;
+  padding: 28px 28px 22px;
   border-radius: 12px;
   border: 1px solid #e2e8f0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.2s, transform 0.2s;
 }
+.login-card:hover { box-shadow: 0 4px 12px rgba(79,70,229,0.06); transform: translateY(-1px); }
 
-/* ── Typography ── */
 .title {
   text-align: center;
   margin: 0 0 4px;
@@ -207,12 +206,11 @@ const handleSubmit = () => {
 
 .subtitle {
   text-align: center;
-  margin: 0 0 24px;
+  margin: 0 0 22px;
   font-size: 14px;
   color: #64748b;
 }
 
-/* ── Form label & input overrides ── */
 :deep(.el-form-item__label) {
   color: #475569 !important;
   font-weight: 500;
@@ -236,12 +234,13 @@ const handleSubmit = () => {
   color: #94a3b8;
 }
 
-/* ── Submit button ── */
 .submit-btn {
   width: 100%;
   margin-top: 4px;
   border-radius: 8px;
+  transition: transform 0.15s;
 }
+.submit-btn:active { transform: scale(0.98); }
 .submit-btn:deep(.el-button) {
   background: #4f46e5;
   border-color: #4f46e5;
@@ -261,12 +260,12 @@ const handleSubmit = () => {
   border-radius: 8px;
 }
 
-/* ── Switch link ── */
 .switch-box {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 4px;
+  margin-top: 18px;
   color: #64748b;
   font-size: 13px;
 }

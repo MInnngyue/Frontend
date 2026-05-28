@@ -59,7 +59,6 @@ function statusLabel(status) {
     <h1 class="page-title">失物广场</h1>
 
     <div class="main-layout">
-      <!-- 左侧筛选栏 -->
       <aside class="sidebar">
         <div class="filter-card">
           <el-input v-model="queryParams.keyword" placeholder="搜索..." clearable :prefix-icon="Search" @keyup.enter="onSearch" @clear="onSearch" />
@@ -99,7 +98,6 @@ function statusLabel(status) {
         </div>
       </aside>
 
-      <!-- 右侧卡片区 -->
       <section class="content-area" v-loading="loading">
         <div v-if="posts.length === 0 && !loading" class="empty-state">
           <p class="empty-text">还没有帖子</p>
@@ -134,17 +132,14 @@ function statusLabel(status) {
 </template>
 
 <style scoped>
-.post-square { max-width: 1280px; margin: 0 auto; padding: 20px 24px 32px; background: #f8fafc; min-height: 100vh; }
+.post-square { max-width: 1280px; margin: 0 auto; padding: 22px 24px 36px; background: #f8fafc; min-height: 100vh; }
 
-/* Title Bar */
-.page-title { font-size: 32px; font-weight: 700; color: #1e293b; margin: 0 0 24px; text-align: center; }
+.page-title { font-size: 32px; font-weight: 700; color: #1e293b; margin: 0 0 22px; text-align: center; }
 
-/* Layout */
-.main-layout { display: flex; gap: 24px; align-items: flex-start; }
+.main-layout { display: flex; gap: 22px; align-items: flex-start; }
 
-/* Sidebar */
 .sidebar {
-  width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px;
+  width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 11px;
 }
 .filter-card {
   background: #fff; border-radius: 12px; padding: 16px;
@@ -162,9 +157,10 @@ function statusLabel(status) {
 }
 .row-chip:hover { background: #eef2ff; color: #4f46e5; }
 .row-chip.active { background: #eef2ff; color: #4f46e5; font-weight: 600; }
+.row-chip:active { transform: scale(0.98); }
 .row-chip .check { font-size: 14px; color: #4f46e5; }
 
-/* 分类折叠 */
+/* cat fold */
 .cat-list-wrap { position: relative; overflow: hidden; }
 .cat-list-wrap.collapsed { max-height: 240px; }
 .gradient-fade {
@@ -179,18 +175,22 @@ function statusLabel(status) {
 }
 .toggle-more-btn:hover { color: #4338ca; }
 
-/* Content */
 .content-area { flex: 1; min-height: 400px; }
 
-/* Cards */
-.card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
 
 .card {
   background: #fff; border-radius: 12px; overflow: hidden; cursor: pointer;
   border: 1px solid #e2e8f0;
   transition: box-shadow 0.2s, transform 0.2s;
 }
-.card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); transform: translateY(-2px); border-color: #cbd5e1; }
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  /* box-shadow: 0 2px 8px rgba(79,70,229,0.1); alt purple tried — too strong */
+}
+.card:active { transform: scale(0.99); }
 
 .card-cover { width: 100%; height: 240px; background: #f1f5f9; overflow: hidden; }
 .card-cover :deep(.el-image) { width: 100%; height: 100%; }
@@ -229,11 +229,9 @@ function statusLabel(status) {
 .mc-loc { background: #f1f5f9; color: #475569; }
 .mc-time { background: #f8fafc; color: #64748b; }
 
-/* Empty */
-.empty-state { text-align: center; padding: 120px 0; }
+.empty-state { text-align: center; padding: 110px 0; }
 .empty-text { font-size: 16px; color: #64748b; margin: 0 0 6px; }
 .empty-hint { font-size: 13px; color: #94a3b8; margin: 0; }
 
-/* Pagination */
-.pagination { display: flex; justify-content: center; margin-top: 28px; }
+.pagination { display: flex; justify-content: center; margin-top: 26px; }
 </style>

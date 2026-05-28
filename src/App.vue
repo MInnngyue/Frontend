@@ -39,7 +39,7 @@ async function loadUnreadCount() {
     unreadCount.value = res.data
     const cres = await getConversations()
     pmUnread.value = cres.data.reduce((s, c) => s + (c.unread || 0), 0)
-  } catch { /* ignore */ }
+  } catch { }
 }
 
 provide('refreshUnread', loadUnreadCount)
@@ -128,7 +128,7 @@ body {
 .nav-links {
   display: flex;
   justify-content: center;
-  gap: 16px;
+  gap: 18px;
 }
 
 .nav-links a {
@@ -145,6 +145,7 @@ body {
 .nav-links a:hover {
   color: #4f46e5;
   background: #eef2ff;
+  transform: translateY(-1px);
 }
 
 .nav-links a.active {
@@ -176,19 +177,20 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 7px;
 }
 
 .header-publish-btn {
   background: #4f46e5; border: none; color: #fff; font-size: 13px; font-weight: 600;
-  border-radius: 8px; padding: 7px 18px; transition: background 0.15s; white-space: nowrap;
+  border-radius: 8px; padding: 7px 18px; transition: all 0.15s; white-space: nowrap;
 }
 .header-logout-btn { background: none; border: 1px solid #e2e8f0; color: #ef4444; font-size: 13px; border-radius: 8px; padding: 5px 14px; transition: all 0.15s; font-weight: 500; }
-.header-logout-btn:hover { background: #ef4444; border-color: #ef4444; color: #fff; }
+.header-logout-btn:hover { background: #ef4444; border-color: #ef4444; color: #fff; transform: scale(1.03); }
 .header-logout-btn:focus,
 .header-logout-btn:focus-visible { border-color: #e2e8f0; color: #ef4444; outline: none; box-shadow: none; }
-.header-logout-btn:active { border-color: #e2e8f0; color: #ef4444; }
-.header-publish-btn:hover { background: #4338ca; color: #fff; }
+.header-logout-btn:active { border-color: #e2e8f0; color: #ef4444; transform: scale(0.97); }
+.header-publish-btn:hover { background: #4338ca; color: #fff; transform: scale(1.03); }
+.header-publish-btn:active { transform: scale(0.97); }
 
 .header-back-btn {
   background: #4f46e5; border: none; color: #fff; font-size: 13px; font-weight: 600;
@@ -201,7 +203,6 @@ main.has-header {
   min-height: 100vh;
 }
 
-/* Notification */
 .notify-bell {
   position: relative;
   margin-right: 16px;
@@ -250,6 +251,7 @@ main.has-header {
 
 .notify-item:hover {
   background: #f5f7fa;
+  /* margin-left: 2px; old bounce idea — reverted */
 }
 
 .notify-item.unread {
@@ -284,12 +286,12 @@ main.has-header {
 </style>
 
 <style>
-/* Global dialog overrides */
+/* global dialog overrides — fought el-plus to get rounded corners. 2024-06 */
 .el-dialog { border-radius: 14px !important; overflow: hidden; }
-.el-dialog__header { padding: 20px 24px 0 !important; margin: 0 !important; }
+.el-dialog__header { padding: 18px 24px 0 !important; margin: 0 !important; }
 .el-dialog__title { font-size: 17px !important; font-weight: 700 !important; color: #1e293b !important; }
-.el-dialog__body { padding: 20px 24px !important; }
-.el-dialog__footer { padding: 12px 24px 20px !important; }
+.el-dialog__body { padding: 22px 24px !important; }
+.el-dialog__footer { padding: 10px 24px 18px !important; }
 .el-dialog .el-input__wrapper { border-radius: 8px; box-shadow: 0 0 0 1px #e2e8f0 inset; }
 .el-dialog .el-input__wrapper:hover { box-shadow: 0 0 0 1px #cbd5e1 inset; }
 .el-dialog .el-input.is-focus .el-input__wrapper { box-shadow: 0 0 0 1px #4f46e5 inset; }
@@ -297,9 +299,9 @@ main.has-header {
 .el-dialog .el-button--primary:hover { background: #4338ca !important; border-color: #4338ca !important; }
 .el-dialog .el-button { border-radius: 8px !important; }
 .el-message-box { border-radius: 14px !important; padding: 0 !important; }
-.el-message-box__header { padding: 22px 24px 6px !important; }
+.el-message-box__header { padding: 18px 24px 6px !important; }
 .el-message-box__title { font-size: 17px !important; font-weight: 700 !important; color: #1e293b !important; }
-.el-message-box__body { padding: 6px 24px 20px !important; }
+.el-message-box__body { padding: 6px 24px 22px !important; }
 .el-message-box__message { color: #64748b !important; font-size: 14px !important; margin: 0 !important; }
 .el-message-box__input { padding-top: 8px !important; }
 .el-message-box__input .el-input__wrapper { border-radius: 8px; box-shadow: 0 0 0 1px #e2e8f0 inset; }
