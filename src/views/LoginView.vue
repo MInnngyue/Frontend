@@ -129,18 +129,14 @@ const rules = computed(() => ({
     : [],
 }))
 
-const resetForm = () => {
+const switchMode = () => {
+  isRegister.value = !isRegister.value
   form.username = ''
   form.email = ''
   form.password = ''
   form.confirmPassword = ''
-  formRef.value?.clearValidate()
-}
-
-const switchMode = () => {
-  isRegister.value = !isRegister.value
-  // 等新字段渲染完再清校验
-  nextTick(() => formRef.value?.clearValidate())
+  // 双层 nextTick：等 v-if 渲染 + Element 内部校验都跑完后再清除
+  nextTick(() => nextTick(() => formRef.value?.clearValidate()))
 }
 
 // 用户开始输入时清除该字段的校验提示
