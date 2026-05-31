@@ -187,8 +187,8 @@ function goChat(otherId) { router.push({ path: '/chat', query: { userId: otherId
 .action-area { display: flex; flex-direction: column; gap: 10px; }
 .action-btn { height: 42px; border-radius: 8px; font-size: 15px; padding: 0 24px; font-weight: 600; border: none; transition: transform 0.15s; }
 .action-btn:active { transform: scale(0.98); }
-.claim-btn { width: 100%; background: #4f46e5; color: #fff; }
-.claim-btn:hover { background: #4338ca; }
+.claim-btn { width: 100%; background: #f59e0b; color: #fff; }
+.claim-btn:hover { background: #d97706; }
 .goto-claim-btn { width: 100%; background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; }
 .goto-claim-btn:hover { background: #e0e7ff; border-color: #a5b4fc; color: #3730a3; }
 .owner-actions { display: flex; gap: 10px; justify-content: flex-end; }

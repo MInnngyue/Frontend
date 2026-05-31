@@ -237,7 +237,7 @@ function goPost(id) { router.push(`/post/${id}`) }
 /* Cards */
 .claims-list { display: flex; flex-direction: column; gap: 16px; }
 .claim-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 24px; }
-.claim-card.status-2 { border-color: #bbf7d0; }
+.claim-card.status-2 { border-color: #fde68a; }
 .claim-card.status-3 { opacity: 0.5; }
 
 /* Header */
@@ -271,7 +271,7 @@ function goPost(id) { router.push(`/post/${id}`) }
 .progress-fill { height: 100%; background: #4f46e5; border-radius: 2px; transition: width 0.5s; }
 .progress-labels { display: flex; justify-content: space-between; font-size: 11px; color: #cbd5e1; }
 .pl-active { color: #4f46e5; font-weight: 600; }
-.pl-done { color: #22c55e; font-weight: 600; }
+.pl-done { color: #f59e0b; font-weight: 600; }
 
 /* Time */
 .claim-time { font-size: 12px; color: #94a3b8; margin-bottom: 12px; }
@@ -279,10 +279,10 @@ function goPost(id) { router.push(`/post/${id}`) }
 /* Action */
 .claim-action { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid #f1f5f9; flex-wrap: wrap; }
 .action-hint { font-size: 13px; color: #64748b; }
-.action-hint.done { color: #22c55e; font-weight: 600; }
+.action-hint.done { color: #f59e0b; font-weight: 600; }
 .action-btns { display: flex; gap: 8px; }
-.btn-confirm { padding: 8px 20px; background: #4f46e5; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
-.btn-confirm:hover { background: #4338ca; }
+.btn-confirm { padding: 8px 20px; background: #f59e0b; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.btn-confirm:hover { background: #d97706; }
 .btn-confirm:disabled { background: #cbd5e1; cursor: not-allowed; }
 .btn-cancel { padding: 8px 20px; background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
 .btn-cancel:hover { background: #fecaca; }
