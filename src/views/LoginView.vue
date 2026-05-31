@@ -134,13 +134,12 @@ const resetForm = () => {
   form.email = ''
   form.password = ''
   form.confirmPassword = ''
-  formRef.value?.resetFields()
+  formRef.value?.clearValidate()
 }
 
 const switchMode = () => {
   isRegister.value = !isRegister.value
-  resetForm()
-  // 新字段出现后再清一次，防止动态 rules 导致残留提示
+  // 等新字段渲染完再清校验
   nextTick(() => formRef.value?.clearValidate())
 }
 
