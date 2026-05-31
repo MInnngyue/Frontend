@@ -237,7 +237,7 @@ function goPost(id) { router.push(`/post/${id}`) }
 /* Cards */
 .claims-list { display: flex; flex-direction: column; gap: 16px; }
 .claim-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 24px; }
-.claim-card.status-2 { border-color: #fde68a; }
+.claim-card.status-2 { border-color: #e2e8f0; }
 .claim-card.status-3 { opacity: 0.5; }
 
 /* Header */
