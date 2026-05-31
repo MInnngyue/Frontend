@@ -8,10 +8,10 @@ import { ElMessage } from 'element-plus'
 const router = useRouter()
 
 const navItems = [
-  { key: 'posts', label: '帖子管理', icon: '📋' },
-  { key: 'users', label: '用户管理', icon: '👥' },
-  { key: 'dict', label: '数据字典', icon: '📚' },
-  { key: 'stats', label: '数据统计', icon: '📊' },
+  { key: 'posts', label: '帖子管理', icon: '' },
+  { key: 'users', label: '用户管理', icon: '' },
+  { key: 'dict', label: '数据字典', icon: '' },
+  { key: 'stats', label: '数据统计', icon: '' },
 ]
 
 const activeNav = ref('posts')
@@ -186,7 +186,7 @@ const getStatusClass = (s) => {
   <div class="admin-layout">
     <aside class="sidebar">
       <div class="sb-brand">
-        <span class="sb-logo">🔍</span>
+        <span class="sb-logo">LF</span>
         <span class="sb-name">管理后台</span>
       </div>
       <nav class="sb-nav">
@@ -217,7 +217,7 @@ const getStatusClass = (s) => {
             </div>
             <div class="post-search-wrap">
               <input v-model="postKeyword" placeholder="搜索标题/内容..." class="post-search-input" @keyup.enter="loadAllPosts()" />
-              <button class="btn-search-icon" @click="loadAllPosts()">🔍</button>
+              <button class="btn-search-icon" @click="loadAllPosts()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
             </div>
           </div>
         </header>
@@ -253,7 +253,7 @@ const getStatusClass = (s) => {
               </tr>
             </tbody>
           </table>
-          <div v-if="filteredPosts().length === 0 && !loading" class="empty-state">暂无数据</div>
+          <div v-if="filteredPosts().length === 0 && !loading" class="empty-state">当前没有待处理的内容</div>
         </div>
       </section>
 
@@ -333,19 +333,19 @@ const getStatusClass = (s) => {
         <header class="panel-header"><h2>数据统计</h2></header>
         <div class="stats-grid">
           <div class="stat-card">
-            <span class="stat-icon">📝</span>
+            <span class="stat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
             <div class="stat-body"><div class="stat-num">{{ stats.totalPosts || 0 }}</div><div class="stat-label">总帖子</div></div>
           </div>
           <div class="stat-card">
-            <span class="stat-icon">👤</span>
+            <span class="stat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
             <div class="stat-body"><div class="stat-num">{{ stats.totalUsers || 0 }}</div><div class="stat-label">总用户</div></div>
           </div>
           <div class="stat-card">
-            <span class="stat-icon">🔄</span>
+            <span class="stat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>
             <div class="stat-body"><div class="stat-num">{{ stats.activePosts || 0 }}</div><div class="stat-label">进行中</div></div>
           </div>
           <div class="stat-card">
-            <span class="stat-icon">✅</span>
+            <span class="stat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
             <div class="stat-body"><div class="stat-num">{{ stats.completedPosts || 0 }}</div><div class="stat-label">已完结</div></div>
           </div>
         </div>

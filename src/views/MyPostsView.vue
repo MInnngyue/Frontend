@@ -169,7 +169,7 @@ async function loadPosts() {
         </tbody>
       </table>
       <div v-if="!loading && posts.length === 0" class="empty-state">
-        <div class="empty-icon">📋</div>
+        <div class="empty-icon" style="font-size:48px;color:#94a3b8;">—</div>
         <div class="empty-title">还没有发布过帖子</div>
         <button class="empty-btn" @click="router.push('/publish')">去发布帖子</button>
       </div>

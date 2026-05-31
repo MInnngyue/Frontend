@@ -86,13 +86,13 @@ function roleBadge(c) {
 }
 
 function actionLabel(c) {
-  if (c.claimStatus === 2) return '✅ 已完成'
+  if (c.claimStatus === 2) return '已完成'
   if (c.claimStatus === 3) return '已取消'
   const myC = c.myRole === 'owner' ? c.ownerConfirmed : c.claimerConfirmed
   const otherC = c.myRole === 'owner' ? c.claimerConfirmed : c.ownerConfirmed
-  if (!myC && !otherC) return '🔔 待我确认'
-  if (!myC && otherC) return '🔔 对方已确认，待我确认'
-  if (myC && !otherC) return '⏳ 我已确认，等待对方'
+  if (!myC && !otherC) return '待我确认'
+  if (!myC && otherC) return '对方已确认，待我确认'
+  if (myC && !otherC) return '我已确认，等待对方'
   return ''
 }
 
@@ -131,7 +131,7 @@ function goPost(id) { router.push(`/post/${id}`) }
 
     <div class="search-bar">
       <div class="search-input-wrap">
-        <span class="search-icon">🔍</span>
+        <span class="search-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
         <input v-model="searchText" placeholder="搜索帖子标题、类型或对方昵称..." class="search-input" />
       </div>
       <div class="filter-chips">
@@ -144,9 +144,9 @@ function goPost(id) { router.push(`/post/${id}`) }
 
     <div class="claims-list" v-loading="loading">
       <div v-if="!loading && filteredClaims.length === 0" class="empty-state">
-        <div class="empty-icon">📋</div>
-        <div class="empty-title">暂无认领记录</div>
-        <div class="empty-desc">在失物广场找到你的物品后，点击"这是我的物品"即可发起认领</div>
+        <div class="empty-icon" style="font-size:48px;color:#94a3b8;">—</div>
+        <div class="empty-title">还没有认领记录</div>
+        <div class="empty-desc">去广场看看有没有你丢的东西，找到了就点"这是我的物品"</div>
         <button class="empty-btn" @click="router.push('/')">去失物广场</button>
       </div>
 
@@ -197,7 +197,7 @@ function goPost(id) { router.push(`/post/${id}`) }
           </div>
         </div>
         <div class="claim-action" v-else>
-          <span class="action-hint done">🎉 认领已完成</span>
+          <span class="action-hint done">认领已完成</span>
         </div>
       </div>
     </div>

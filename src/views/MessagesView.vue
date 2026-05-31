@@ -35,7 +35,7 @@ async function handleMsgClick(m) {
         <span>系统通知 <span v-if="systemUnread > 0" class="sys-badge">{{ systemUnread }}</span></span>
         <el-button size="small" class="expand-btn" @click="sysExpanded = !sysExpanded">{{ sysExpanded ? '收起 ▲' : '展开 ▼' }}</el-button>
       </div>
-      <div v-if="systemMsgs.length === 0" class="empty-hint">暂无系统通知</div>
+      <div v-if="systemMsgs.length === 0" class="empty-hint">暂时没有通知</div>
       <div v-if="sysExpanded" v-for="m in systemMsgs" :key="m.id" class="msg-item" :class="{ unread: m.isRead === 0 }" @click="handleMsgClick(m)">
         <div class="msg-title">
           {{ m.title }}
@@ -48,7 +48,7 @@ async function handleMsgClick(m) {
 
     <div class="section-card">
       <div class="section-header">私信</div>
-      <div v-if="conversations.length === 0" class="empty-hint">暂无私信</div>
+      <div v-if="conversations.length === 0" class="empty-hint">还没有私信记录</div>
       <div v-for="c in conversations" :key="c.userId" class="msg-item" @click="goChat(c.userId)">
         <div class="conv-row">
           <span class="conv-avatar">{{ c.nickname?.charAt(0) || 'U' }}</span>

@@ -78,7 +78,7 @@ const displayMessages = computed(() => {
           <div class="chat-time">{{ item.createTime?.substring(11, 16) }}</div>
         </div>
       </template>
-      <div v-if="messages.length === 0" class="chat-empty">暂无消息，发送第一条私信吧</div>
+      <div v-if="messages.length === 0" class="chat-empty">还没有消息，和对方打个招呼吧</div>
     </div>
     <div class="chat-input">
       <el-input v-model="text" placeholder="输入消息..." maxlength="500" @keyup.enter="send" />

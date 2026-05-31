@@ -100,15 +100,15 @@ function statusLabel(status) {
 
       <section class="content-area" v-loading="loading">
         <div v-if="posts.length === 0 && !loading" class="empty-state">
-          <p class="empty-text">还没有帖子</p>
-          <p class="empty-hint">成为第一个发布寻物或招领信息的人吧</p>
+          <p class="empty-text">广场暂时空空如也</p>
+          <p class="empty-hint">发一条寻物或招领，帮自己也帮别人</p>
         </div>
 
         <div class="card-grid">
           <div v-for="post in posts" :key="post.id" class="card" @click="goDetail(post.id)">
             <div class="card-cover">
               <el-image v-if="post.coverImage" :src="imageUrl(post.coverImage)" fit="cover" />
-              <div v-else class="cover-placeholder">📷</div>
+              <div v-else class="cover-placeholder"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
             </div>
             <div class="card-body">
               <span class="card-type-tag" :class="post.type === 0 ? 'lost' : 'found'">{{ typeLabel(post.type) }}</span>

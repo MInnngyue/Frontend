@@ -15,8 +15,8 @@ function goHome() { router.push('/') }
           <rect x="88" y="58" rx="2" width="24" height="3" fill="#fbbf24" opacity="0.2" />
         </svg>
       </div>
-      <h2 class="nf-title">页面不见了</h2>
-      <p class="nf-desc">你访问的页面可能已被移除、更名或暂时不可用。</p>
+      <h2 class="nf-title">找不到这个页面</h2>
+      <p class="nf-desc">地址可能输错了，或者页面已经被移走了。</p>
       <el-button type="primary" size="large" round @click="goHome">返回首页</el-button>
     </div>
   </div>

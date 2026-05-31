@@ -8,7 +8,7 @@
           <div class="profile-avatar">{{ (userInfo?.nickname || userInfo?.username || 'U').charAt(0) }}</div>
           <div class="profile-main">
             <div class="profile-name">{{ userInfo?.nickname || userInfo?.username || '-' }}</div>
-            <div class="profile-sign">{{ userInfo?.signature || '这个人很懒，什么都没写' }}</div>
+            <div class="profile-sign">{{ userInfo?.signature || '还没有写签名' }}</div>
           </div>
           <div class="profile-right">
             <el-button v-if="isAdmin" class="admin-entry-btn" @click="$router.push('/admin')">管理后台</el-button>
@@ -43,21 +43,21 @@
               <div class="stat-label">账户类型</div>
             </div>
           </div>
-          <div v-else class="empty-info">暂无用户信息</div>
+          <div v-else class="empty-info">信息加载中...</div>
         </el-skeleton>
       </div>
 
       <div class="quick-links">
         <div class="quick-link" @click="$router.push('/publish')">
-          <span class="ql-icon">📝</span>
+          <span class="ql-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>
           <span class="ql-text">发布帖子</span>
         </div>
         <div class="quick-link" @click="$router.push('/messages')">
-          <span class="ql-icon">💬</span>
+          <span class="ql-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
           <span class="ql-text">消息中心</span>
         </div>
         <div class="quick-link" @click="$router.push('/my-posts')">
-          <span class="ql-icon">📋</span>
+          <span class="ql-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
           <span class="ql-text">我的帖子</span>
         </div>
       </div>
@@ -77,7 +77,7 @@
             </div>
             <div v-if="!postsExpanded && myPosts.length > 3" class="gradient-fade"></div>
           </div>
-          <div v-else class="empty-info">还没有发布过帖子</div>
+          <div v-else class="empty-info">你还没有发过帖子，去广场看看吧</div>
         </el-skeleton>
         <button v-if="myPosts.length > 3" class="toggle-more-btn" @click="postsExpanded = !postsExpanded">
           {{ postsExpanded ? '收起 ▲' : '更多 ▼' }}
