@@ -16,7 +16,7 @@
           />
         </el-form-item>
 
-        <el-form-item v-if="isRegister" label="邮箱" prop="email">
+        <el-form-item v-show="isRegister" label="邮箱" prop="email">
           <el-input
             v-model.trim="form.email"
             placeholder="请输入邮箱"
@@ -39,7 +39,7 @@
           />
         </el-form-item>
 
-        <el-form-item v-if="isRegister" label="确认密码" prop="confirmPassword">
+        <el-form-item v-show="isRegister" label="确认密码" prop="confirmPassword">
           <el-input
             v-model="form.confirmPassword"
             type="password"
