@@ -12,6 +12,7 @@
             size="large"
             prefix-icon="User"
             clearable
+            @input="clearFieldError('username')"
           />
         </el-form-item>
 
@@ -22,6 +23,7 @@
             size="large"
             prefix-icon="Message"
             clearable
+            @input="clearFieldError('email')"
           />
         </el-form-item>
 
@@ -33,6 +35,7 @@
             size="large"
             prefix-icon="Lock"
             show-password
+            @input="clearFieldError('password')"
           />
         </el-form-item>
 
@@ -44,6 +47,7 @@
             size="large"
             prefix-icon="Lock"
             show-password
+            @input="clearFieldError('confirmPassword')"
           />
         </el-form-item>
 
@@ -73,7 +77,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { login, register } from '../api/user'
@@ -130,13 +134,21 @@ const resetForm = () => {
   form.email = ''
   form.password = ''
   form.confirmPassword = ''
-  formRef.value?.clearValidate()
+  formRef.value?.resetFields()
 }
 
 const switchMode = () => {
   isRegister.value = !isRegister.value
   resetForm()
 }
+
+// 用户开始输入时清除该字段的校验提示
+const clearFieldError = (field) => {
+  formRef.value?.clearValidate(field)
+}
+
+// 页面加载后清除可能出现的初始校验状态
+onMounted(() => { nextTick(() => formRef.value?.clearValidate()) })
 
 const handleSubmit = () => {
   formRef.value.validate(async (valid) => {
