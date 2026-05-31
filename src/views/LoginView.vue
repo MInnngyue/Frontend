@@ -77,7 +77,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, nextTick } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { login, register } from '../api/user'
@@ -86,6 +86,8 @@ const router = useRouter()
 const formRef = ref()
 const loading = ref(false)
 const isRegister = ref(false)
+// 核心：只有点了提交按钮后才启用校验规则
+const submitted = ref(false)
 
 const form = reactive({
   username: '',
@@ -95,11 +97,6 @@ const form = reactive({
 })
 
 const validateConfirmPassword = (rule, value, callback) => {
-  if (!isRegister.value) {
-    callback()
-    return
-  }
-
   if (!value) {
     callback(new Error('请再次输入密码'))
   } else if (value !== form.password) {
@@ -109,45 +106,47 @@ const validateConfirmPassword = (rule, value, callback) => {
   }
 }
 
-const rules = computed(() => ({
-  username: [
-    { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 3, max: 20, message: '用户名长度为 3-20 个字符', trigger: 'blur' },
-  ],
-  email: isRegister.value
-    ? [
-        { required: true, message: '请输入邮箱', trigger: 'blur' },
-        { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' },
-      ]
-    : [],
-  password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, max: 30, message: '密码长度为 6-30 个字符', trigger: 'blur' },
-  ],
-  confirmPassword: isRegister.value
-    ? [{ validator: validateConfirmPassword, trigger: 'blur' }]
-    : [],
-}))
+// 只有 submitted 为 true 时才返回规则，否则返回空 → 不显示任何校验提示
+const rules = computed(() => {
+  if (!submitted.value) return {}
+  return {
+    username: [
+      { required: true, message: '请输入用户名', trigger: 'blur' },
+      { min: 3, max: 20, message: '用户名长度为 3-20 个字符', trigger: 'blur' },
+    ],
+    email: isRegister.value
+      ? [
+          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' },
+        ]
+      : [],
+    password: [
+      { required: true, message: '请输入密码', trigger: 'blur' },
+      { min: 6, max: 30, message: '密码长度为 6-30 个字符', trigger: 'blur' },
+    ],
+    confirmPassword: isRegister.value
+      ? [{ validator: validateConfirmPassword, trigger: 'blur' }]
+      : [],
+  }
+})
 
 const switchMode = () => {
   isRegister.value = !isRegister.value
+  submitted.value = false
   form.username = ''
   form.email = ''
   form.password = ''
   form.confirmPassword = ''
-  // 双层 nextTick：等 v-if 渲染 + Element 内部校验都跑完后再清除
-  nextTick(() => nextTick(() => formRef.value?.clearValidate()))
+  formRef.value?.clearValidate()
 }
 
-// 用户开始输入时清除该字段的校验提示
+// 用户输入后清除该字段的红色提示
 const clearFieldError = (field) => {
   formRef.value?.clearValidate(field)
 }
 
-// 页面加载后清除可能出现的初始校验状态
-onMounted(() => { nextTick(() => formRef.value?.clearValidate()) })
-
 const handleSubmit = () => {
+  submitted.value = true
   formRef.value.validate(async (valid) => {
     if (!valid) return
 
@@ -162,6 +161,7 @@ const handleSubmit = () => {
 
         ElMessage.success('注册成功，请登录')
         isRegister.value = false
+        submitted.value = false
         form.password = ''
         form.confirmPassword = ''
         formRef.value?.clearValidate()
