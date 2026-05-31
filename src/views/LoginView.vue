@@ -117,7 +117,7 @@ const rules = computed(() => ({
   email: isRegister.value
     ? [
         { required: true, message: '请输入邮箱', trigger: 'blur' },
-        { type: 'email', message: '请输入正确的邮箱格式', trigger: ['blur', 'change'] },
+        { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' },
       ]
     : [],
   password: [
@@ -125,7 +125,7 @@ const rules = computed(() => ({
     { min: 6, max: 30, message: '密码长度为 6-30 个字符', trigger: 'blur' },
   ],
   confirmPassword: isRegister.value
-    ? [{ validator: validateConfirmPassword, trigger: ['blur', 'change'] }]
+    ? [{ validator: validateConfirmPassword, trigger: 'blur' }]
     : [],
 }))
 
@@ -140,6 +140,8 @@ const resetForm = () => {
 const switchMode = () => {
   isRegister.value = !isRegister.value
   resetForm()
+  // 新字段出现后再清一次，防止动态 rules 导致残留提示
+  nextTick(() => formRef.value?.clearValidate())
 }
 
 // 用户开始输入时清除该字段的校验提示
