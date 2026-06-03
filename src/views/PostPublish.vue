@@ -247,10 +247,10 @@ async function onSubmit() {
 }
 
 .page-title {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
   color: #1e293b;
-  margin: 0 0 28px;
+  margin: 0 0 22px;
   text-align: center;
 }
 
