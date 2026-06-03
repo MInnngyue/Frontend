@@ -241,7 +241,7 @@ async function onSubmit() {
 .publish-page {
   max-width: 800px;
   margin: 0 auto;
-  padding: 28px 20px 40px;
+  padding: 22px 24px 36px;
   background: #f8fafc;
   min-height: 100vh;
 }
