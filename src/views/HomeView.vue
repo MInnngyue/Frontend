@@ -250,9 +250,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.profile-page { max-width: 720px; margin: 0 auto; padding: 20px 20px 32px; background: #f8fafc; min-height: 100vh; }
+.profile-page { max-width: 720px; margin: 0 auto; padding: 22px 24px 36px; background: #f8fafc; min-height: 100vh; }
 /* safari sometimes shifts the avatar up 1px, this fixes it */
-.page-title { font-size: 32px; font-weight: 700; color: #1e293b; margin: 0 0 24px; text-align: left; }
+.page-title { font-size: 32px; font-weight: 700; color: #1e293b; margin: 0 0 22px; text-align: center; }
 .more-btn { background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; font-size: 13px; border-radius: 8px; padding: 6px 14px; }
 .more-btn:hover { background: #eef2ff; border-color: #4f46e5; color: #4f46e5; }
 .content-area { display: flex; flex-direction: column; gap: 14px; }

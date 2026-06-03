@@ -205,8 +205,8 @@ function goPost(id) { router.push(`/post/${id}`) }
 </template>
 
 <style scoped>
-.claims-page { max-width: 800px; margin: 0 auto; padding: 24px 20px 40px; min-height: 100vh; }
-.page-title { font-size: 28px; font-weight: 700; color: #1e293b; margin: 0 0 20px; text-align: center; }
+.claims-page { max-width: 800px; margin: 0 auto; padding: 22px 24px 36px; min-height: 100vh; }
+.page-title { font-size: 32px; font-weight: 700; color: #1e293b; margin: 0 0 22px; text-align: center; }
 
 /* Search */
 .search-bar { margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; }

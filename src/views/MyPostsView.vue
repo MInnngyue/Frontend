@@ -137,7 +137,7 @@ async function loadPosts() {
 <template>
   <div class="myposts-page">
     <div class="mp-header">
-      <h1>我的帖子</h1>
+      <h1 class="page-title">我的帖子</h1>
       <button class="btn-back" @click="router.push('/profile')">← 返回个人中心</button>
     </div>
 
@@ -235,9 +235,9 @@ async function loadPosts() {
 </template>
 
 <style scoped>
-.myposts-page { max-width: 960px; margin: 0 auto; padding: 24px 20px 40px; background: #f8fafc; min-height: 100vh; }
-.mp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-.mp-header h1 { font-size: 28px; font-weight: 700; color: #1e293b; margin: 0; }
+.myposts-page { max-width: 960px; margin: 0 auto; padding: 22px 24px 36px; background: #f8fafc; min-height: 100vh; }
+.mp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0; }
+.mp-header h1 { font-size: 32px; font-weight: 700; color: #1e293b; margin: 0 0 22px; text-align: center; }
 .btn-back {
   padding: 8px 18px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;
   font-size: 14px; color: #475569; cursor: pointer; transition: all 0.15s;

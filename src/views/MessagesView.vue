@@ -64,8 +64,8 @@ async function handleMsgClick(m) {
 </template>
 
 <style scoped>
-.msg-page { max-width: 700px; margin: 0 auto; padding: 24px 20px 32px; background: #f8fafc; min-height: 100vh; }
-.page-title { font-size: 32px; font-weight: 700; color: #1e293b; margin: 0 0 28px; }
+.msg-page { max-width: 700px; margin: 0 auto; padding: 22px 24px 36px; background: #f8fafc; min-height: 100vh; }
+.page-title { font-size: 32px; font-weight: 700; color: #1e293b; margin: 0 0 22px; text-align: center; }
 .section-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
 .section-header { display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: 600; color: #1e293b; margin-bottom: 14px; }
 .empty-hint { text-align: center; color: #94a3b8; padding: 36px 0; font-size: 14px; }
