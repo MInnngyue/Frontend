@@ -98,22 +98,28 @@ html {
 
 body {
   font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #faf6ee;
   color: #2d2a26;
 }
 
-/* paper fiber texture */
+/* heavy paper texture — material, not decoration */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
+  background-color: #f5efde;
   background-image:
-    radial-gradient(circle at 20% 30%, rgba(45,42,38,0.015) 0.5px, transparent 0.5px),
-    radial-gradient(circle at 70% 60%, rgba(45,42,38,0.012) 0.4px, transparent 0.4px),
-    radial-gradient(circle at 40% 80%, rgba(45,42,38,0.01) 0.3px, transparent 0.3px);
-  background-size: 28px 28px, 36px 36px, 44px 44px;
+    /* coarse fibers */
+    radial-gradient(circle at 15% 25%, rgba(90,80,60,0.06) 0.8px, transparent 1px),
+    radial-gradient(circle at 65% 55%, rgba(90,80,60,0.05) 0.7px, transparent 0.9px),
+    radial-gradient(circle at 35% 75%, rgba(90,80,60,0.04) 0.6px, transparent 0.8px),
+    radial-gradient(circle at 85% 15%, rgba(90,80,60,0.05) 0.5px, transparent 0.7px),
+    /* fine grain */
+    radial-gradient(circle at 50% 50%, rgba(60,52,40,0.03) 0.4px, transparent 0.5px),
+    /* subtle horizontal lines like paper grain direction */
+    linear-gradient(0deg, rgba(90,80,60,0.02) 1px, transparent 1px);
+  background-size: 22px 22px, 30px 30px, 38px 38px, 26px 26px, 12px 12px, 100% 4px;
 }
 
 .app-shell { position: relative; z-index: 1; }
