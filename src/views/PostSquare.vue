@@ -120,7 +120,7 @@ function statusLabel(status) {
         <div v-else class="card-grid">
           <div v-for="post in posts" :key="post.id" class="card" :class="post.type === 0 ? 'card-lost' : 'card-found'" @click="goDetail(post.id)">
             <div class="card-pin" :class="post.type === 0 ? 'pin-lost' : 'pin-found'">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1 2.89-2.64l3.05 2.05a2 2 0 0 1-.14 3.5l-2.5 1.8a2 2 0 0 1-2.3-.1l-1.5-1.2a2 2 0 0 1-.5-2.6z"/><circle cx="12" cy="6" r="2.5"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1 2.89-2.64l3.05 2.05a2 2 0 0 1-.14 3.5l-2.5 1.8a2 2 0 0 1-2.3-.1l-1.5-1.2a2 2 0 0 1-.5-2.6z"/><circle cx="12" cy="6" r="2.5"/></svg>
             </div>
             <div class="card-cover">
               <el-image v-if="post.coverImage" :src="imageUrl(post.coverImage)" fit="cover" />
@@ -248,11 +248,11 @@ function statusLabel(status) {
 /* pushpin */
 .card-pin {
   position: absolute;
-  top: -8px;
+  top: -10px;
   left: 50%;
   transform: translateX(-50%);
-  width: 22px;
-  height: 22px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   display: flex;
   align-items: center;
