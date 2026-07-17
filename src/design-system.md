@@ -1,6 +1,7 @@
-# 校园失物招领平台 — 前端设计规范 v3.0
+# 校园失物招领平台 — 前端设计规范 v3.1
 
 > 日期：2026-07-17 | 状态：待确认 | 风格：方格本 · 书页卡片 · 衬线钢笔字
+> 更新：补充现代组件规范、全页面遍历、管理员路由分离
 
 ---
 
@@ -21,7 +22,7 @@
 | 令牌 | 值 | 用途 |
 |------|------|------|
 | --grid-bg | #f8f9fa | 方格本底色 |
-| --grid-line | #4a4a4a | 背景网格线（深灰，明显可见） |
+| --grid-line | #4a4a4a | 背景网格线 |
 | --page | #ffffff | 书页卡片底色（纯白不透明） |
 | --page-grid | rgba(100,105,110,0.25) | 卡片网格纹理线 |
 | --page-edge | #e2e8f0 | 书页边框 |
@@ -39,7 +40,11 @@
 | --amber-light | #fffbeb | 琥珀浅底 |
 | --rose | #dc2626 | 寻物/删除 |
 | --rose-light | #fef2f2 | 玫瑰浅底 |
-| --ring-color | #000 | 装订环颜色（全黑） |
+| --ring-color | #000 | 装订环颜色 |
+| --shadow-card | 0 1px 3px rgba(0,0,0,0.04) | 卡片默认阴影 |
+| --shadow-hover | 0 4px 12px rgba(0,0,0,0.08) | 卡片hover阴影 |
+| --shadow-ring | 0 3px 5px rgba(0,0,0,0.3) | 装订环阴影 |
+| --shadow-corner | -2px -2px 4px rgba(0,0,0,0.08) | 卷角阴影 |
 
 ### 2.2 字体
 
@@ -77,6 +82,7 @@
 | --r-card | 8px | 书页卡片 |
 | --r-btn | 6px | 按钮、输入框 |
 | --r-tag | 4px | 标签 |
+| --r-pill | 9999px | 胶囊、徽章 |
 
 ### 2.6 布局
 
@@ -86,6 +92,14 @@
 | --max-w | 1280px | 页面最大宽度 |
 | --sidebar-w | 260px | 侧边栏宽度 |
 | --page-pad | 24px 28px | 页面 padding |
+| --admin-sidebar | 200px | 管理后台侧边栏 |
+
+### 2.7 过渡
+
+| 令牌 | 值 | 用途 |
+|------|------|------|
+| --transition | all 0.15s ease | 默认过渡 |
+| --transition-slow | all 0.2s ease | 卡片hover等慢过渡 |
 
 ---
 
@@ -104,10 +118,7 @@ body::before {
 }
 ```
 
-- 网格线颜色 #4a4a4a（深灰，明显可见）
-- 线条粗度 3px
-- 格子大小 96px × 96px
-- 页面容器不设 background，让网格透出
+页面容器不设 background，让网格透出。
 
 ---
 
@@ -115,14 +126,10 @@ body::before {
 
 ### 4.1 结构
 
-每张书页卡片由三层结构组成：
-
 ```html
 <div class="card-wrap">
-  <div class="bind-rings"><span></span>...</div>  <!-- 装订环 -->
-  <div class="note-card">                          <!-- 卡片本体 -->
-    内容...
-  </div>
+  <div class="bind-rings"><span></span>...</div>
+  <div class="note-card">内容...</div>
 </div>
 ```
 
@@ -131,9 +138,9 @@ body::before {
 - 纯白底 #ffffff（完全不透明）
 - 1px 边框 #e2e8f0
 - 圆角 8px
-- 极淡阴影 0 1px 3px rgba(0,0,0,0.04)
-- hover：阴影 0 4px 12px rgba(0,0,0,0.08) + translateY(-2px)
-- 左侧 4px 色条（如有类型区分）：寻物 #dc2626 / 招领 #059669
+- 阴影 var(--shadow-card)
+- hover：阴影 var(--shadow-hover) + translateY(-2px)
+- 左侧 4px 色条（如有类型区分）：寻物 --rose / 招领 --moss
 
 卡片自带纹理（和背景网格完全不同，避免重合）：
 
@@ -141,10 +148,8 @@ body::before {
 .note-card {
   background-color: #ffffff;
   background-image:
-    /* 细网格——24px，颜色淡，和背景96px完全不同尺寸 */
     linear-gradient(rgba(100,105,110,0.25) 1px, transparent 1px),
     linear-gradient(90deg, rgba(100,105,110,0.25) 1px, transparent 1px),
-    /* 纸纤维粗糙感 */
     radial-gradient(circle at 20% 30%, rgba(120,110,90,0.04) 0.5px, transparent 0.6px),
     radial-gradient(circle at 65% 55%, rgba(120,110,90,0.03) 0.4px, transparent 0.5px),
     radial-gradient(circle at 40% 80%, rgba(120,110,90,0.035) 0.3px, transparent 0.4px),
@@ -155,40 +160,34 @@ body::before {
 
 ### 4.3 装订环（.bind-rings）
 
-卡片顶部等距黑色圆环，模拟活页本装订：
-
 - 位置：卡片顶部 top: -12px，左右内缩 24px
 - 每个圆环：20px × 20px，border 4px solid #000，background transparent（中间镂空）
-- transform: rotateZ(20deg)（倾斜，看到环的侧面）
-- box-shadow: 0 3px 5px rgba(0,0,0,0.3)（立体阴影）
-- z-index: 5（高于卡片）
+- transform: rotateZ(20deg)
+- box-shadow: var(--shadow-ring)
+- z-index: 5
 - 数量：根据卡片宽度等距排列，通常 6 个
 
-卡片顶部对应位置有装订孔（.bind-holes）：
-- 4px × 4px 黑色圆点，模拟装订针穿透痕迹
+### 4.4 装订孔（.bind-holes）
+
+- 4px × 4px 黑色圆点
+- 对应装订环位置
 - z-index: 3
 
-### 4.4 卷角效果
-
-卡片右下角卷起，模拟书页翻折：
+### 4.5 卷角效果
 
 ```css
 .note-card {
   clip-path: polygon(0 0, 100% 0, 100% calc(100% - 28px), calc(100% - 28px) 100%, 0 100%);
 }
 .note-card::after {
-  /* 卷角背面——实色三角 */
-  content: '';
-  position: absolute; bottom: 0; right: 0;
+  content: ''; position: absolute; bottom: 0; right: 0;
   width: 28px; height: 28px;
   background: linear-gradient(135deg, #f1f5f9 30%, #e2e8f0 70%, #cbd5e1 100%);
   clip-path: polygon(100% 0, 0 100%, 100% 100%);
-  box-shadow: -2px -2px 4px rgba(0,0,0,0.08);
+  box-shadow: var(--shadow-corner);
 }
 .note-card::before {
-  /* 卷角对角阴影线——卷起的厚度 */
-  content: '';
-  position: absolute; bottom: 0; right: 0;
+  content: ''; position: absolute; bottom: 0; right: 0;
   width: 28px; height: 28px;
   background: linear-gradient(135deg, transparent 47%, rgba(0,0,0,0.1) 50%, transparent 53%);
   clip-path: polygon(100% 0, 0 100%, 100% 100%);
@@ -198,95 +197,388 @@ body::before {
 
 ---
 
-## 五、其他共享组件
+## 五、共享组件规范
 
-### 5.1 导航栏
+### 5.1 导航栏（用户端）
 
 - 白底 #ffffff + 底部 1px #e2e8f0 边框，高 60px，固定顶部
 - flex：品牌名（左）+ 导航（中）+ 操作（右）
 - 品牌名 24px pen 字体，--ink-900
 - 导航链接 15px --ink-500，active 用 --indigo + 2px 底部下划线
 - 发布按钮 --indigo 实色白字，退出 ghost
+- 消息未读徽章：--indigo 底白字，--r-pill 圆角，12px
 
-### 5.2 页面标题区（.page-header）
+### 5.2 管理端导航栏（管理员专用）
+
+- 深色底 #1f2937 + 底部 1px #374151 边框，高 60px
+- 品牌名后加「管理后台」标签（--indigo 底白字胶囊）
+- 导航：帖子管理 / 用户管理 / 分类管理 / 数据概览
+- 右侧：管理员用户名 + 退出（ghost 白色文字）
+- 与用户端完全分离，不共享导航组件
+
+### 5.3 页面标题区（.page-header）
 
 - 标题 34px pen 字体，左对齐
 - 副标题 14px --ink-500
 - 统计 mono 字体 --indigo 色
 - 底部 2px --page-edge 分隔线
 
-### 5.3 筛选卡片
+### 5.4 按钮（现代化）
 
-- 书页卡片样式（装订环 + 卷角 + 纸纹理）
-- 标题 18px pen 字体
-- 选项行：8px 12px，--r-tag 圆角
-- active：--indigo-light 底 + --indigo 文字
+**主按钮**
+- --indigo 底 + 白文字 + --r-btn 圆角
+- padding: 8px 20px, font-size: 14px, font-weight: 600
+- hover: --indigo-hover，active: --indigo-active + scale(0.97)
+- 过渡: var(--transition)
 
-### 5.4 按钮
+**次按钮**
+- --page 底 + 1px --page-edge 边框 + --ink-700 文字
+- hover: 边框加深 #cbd5e1，文字变 --ink-900
+- 不用灰色背景填充，用白底+边框（Notion 风格）
 
-| 类型 | 样式 |
-|------|------|
-| 主按钮 | --indigo 底 + 白文字 + --r-btn |
-| 次按钮 | --page 底 + --page-edge 边框 + --ink-700 文字 |
-| 危险按钮 | --rose 底 + 白文字 |
-| Ghost | 无底无边框 + --ink-500 文字 |
+**危险按钮**
+- --rose 底 + 白文字
+- hover: #b91c1c
 
-### 5.5 表单
+**Ghost 按钮**
+- 无底无边框 + --ink-500 文字
+- hover: --ink-900 + 淡底 rgba(0,0,0,0.04)
+- 用于退出、取消等弱操作
 
-- 输入框：--page 底 + --page-edge 边框 + --r-btn 圆角
-- focus：--indigo 边框
-- label：--ink-700 + 500 字重
+**图标按钮**
+- 32px × 32px 正方形，--r-btn 圆角
+- 无底色，hover: rgba(0,0,0,0.04) 淡底
+- 用于返回、关闭、更多操作
 
-### 5.6 标签
+**胶囊按钮（筛选 tab）**
+- 透明底 + 1px --page-edge 边框 + --r-pill 圆角
+- padding: 6px 16px, font-size: 14px
+- active: --indigo 底 + 白文字 + --indigo 边框
+- hover: --indigo-light 底 + --indigo 文字
 
+### 5.5 表单（现代化）
+
+**输入框**
+- 白底 + 1px #d1d5db 边框 + --r-btn 圆角
+- padding: 8px 12px, font-size: 14px
+- focus: --indigo 边框 + 0 0 0 3px rgba(79,70,229,0.1) 光环
+- placeholder: --ink-300
+- 不用 inset shadow 做边框，用实线 border（Notion 风格）
+
+**文本域**
+- 同输入框，min-height 80px
+- resize: vertical
+
+**下拉选择（el-select 覆盖）**
+- 白底 + 1px #d1d5db 边框 + --r-btn 圆角
+- 下拉面板：白底 + 1px --page-edge + 8px 圆角 + var(--shadow-hover)
+- 选项 hover: --indigo-light 底
+- 选中: --indigo 文字
+
+**单选（el-radio 覆盖）**
+- 选中圆点: --indigo
+- label: --ink-700
+- 不选中外圈: #d1d5db
+
+**日期选择器（el-date-picker 覆盖）**
+- 输入框样式同输入框
+- 日历面板：白底 + 1px --page-edge + 8px 圆角 + var(--shadow-hover)
+- 今天: --indigo-light 底
+- 选中: --indigo 底白字
+- 周末: --ink-300 文字
+
+**文件上传（el-upload 覆盖）**
+- 上传区域：虚线边框 1px dashed #d1d5db + --r-card 圆角
+- hover: 边框变 --indigo + 底色 --indigo-light
+- 文件预览项：白底 + 1px --page-edge + --r-btn 圆角
+- 删除按钮: --rose ghost
+
+### 5.6 标签 / 徽章
+
+**类型标签**
+| 类型 | 底色 | 文字色 | 边框 |
+|------|------|--------|------|
+| 寻物 | --rose-light | --rose | 1px #fecaca |
+| 招领 | --moss-light | --moss | 1px #bbf7d0 |
+
+**状态标签**
 | 类型 | 底色 | 文字色 |
 |------|------|--------|
-| 寻物 | --rose-light | --rose |
-| 招领 | --moss-light | --moss |
 | 进行中 | --indigo-light | --indigo-hover |
+| 已匹配 | --amber-light | --amber |
 | 认领中 | --amber-light | --amber |
 | 已完结 | --moss-light | --moss |
-| 已归档/下架 | #f3f4f6 | --ink-500 |
+| 已归档 | #f3f4f6 | --ink-500 |
+| 已下架 | #f3f4f6 | --ink-300 |
 
-### 5.7 空状态
+**计数徽章**
+- --indigo 底 + 白文字 + --r-pill 圆角
+- min-width: 18px, height: 18px, font-size: 11px, font-weight: 600
+- padding: 0 5px
 
-居中，--ink-500 主文字 + --ink-300 副文字 + 引导按钮（如有）
+**胶囊筛选标签**
+- 透明底 + 1px --page-edge + --r-pill 圆角
+- active: --indigo 底白字
 
-### 5.8 分页器
+### 5.7 表格（管理后台用）
 
-白底按钮 + --page-edge 边框，hover --indigo-light 底，active --indigo 底白文字
+- 白底 + 1px --page-edge 边框 + --r-card 圆角
+- 表头: #f9fafb 底 + --ink-700 文字 + font-weight 600
+- 行高: 48px
+- 行分隔: 1px #f3f4f6
+- hover 行: #f9fafb 底
+- 操作列按钮: 图标按钮或小次按钮
+
+### 5.8 图表（管理后台用，ECharts 覆盖）
+
+- 柱状图: --indigo 渐变 → #818cf8
+- 饼图: --indigo / --moss / --amber / #f3f4f6
+- 坐标轴文字: --ink-500, 12px
+- 分割线: #f3f4f6
+- 图例文字: --ink-500, 11px
+- 网格底色: 透明（让卡片纹理透出）
+
+### 5.9 头像
+
+- 圆形, --indigo 底 + 白文字
+- 首字母大写, font-weight 600
+- 尺寸: 大 44px / 中 36px / 小 28px
+- 不用图片头像，统一首字母色块
+
+### 5.10 消息提示（ElMessage 覆盖）
+
+- 成功: 白底 + --moss 左边框 3px + --moss 图标 + --ink-900 文字
+- 错误: 白底 + --rose 左边框 3px + --rose 图标
+- 警告: 白底 + --amber 左边框 3px + --amber 图标
+- 信息: 白底 + --indigo 左边框 3px + --indigo 图标
+- 圆角 6px，阴影 var(--shadow-hover)
+- 固定顶部 top: 72px（在导航栏下方）
+
+### 5.11 确认弹窗（ElMessageBox 覆盖）
+
+- 白底 + 1px --page-edge + 8px 圆角 + var(--shadow-hover)
+- 标题: pen 字体 17px --ink-900
+- 正文: --ink-500 14px
+- 确认按钮: 主按钮样式
+- 取消按钮: 次按钮样式
+- 警告图标: --amber
+
+### 5.12 对话框（el-dialog 覆盖）
+
+- 白底 + 1px --page-edge + 8px 圆角 + var(--shadow-hover)
+- 标题: pen 字体 17px --ink-900
+- 关闭按钮: 图标按钮 ghost
+- 底部按钮区: 主按钮 + 次按钮
+
+### 5.13 分页器
+
+- 白底按钮 + 1px --page-edge 边框 + --r-btn 圆角
+- hover: --indigo-light 底 + --indigo 文字
+- active: --indigo 底白字
+- 上/下一页: 图标按钮样式
+
+### 5.14 加载状态（v-loading 覆盖）
+
+- 遮罩: rgba(255,255,255,0.7)
+- 加载圈: --indigo
+- 文字: --ink-500
+
+### 5.15 空状态
+
+- 居中，--ink-500 主文字 16px + --ink-300 副文字 13px
+- 引导按钮（如有）: 主按钮
+- 上方可加简化 SVG 插图（线条风格，--ink-300 色）
+
+### 5.16 图片预览
+
+- el-image: 1px --page-edge 边框 + --r-card 圆角
+- 占位: #f9fafb 底 + 线条 SVG 图标 --ink-300
+- 预览遮罩: rgba(0,0,0,0.8)
+
+### 5.17 评论列表
+
+- 每条评论: 白底 + 1px #f3f4f6 边框 + --r-btn 圆角
+- 头像: 小号 36px
+- 昵称: --ink-900 14px 600
+- 时间: --ink-300 12px mono
+- 内容: --ink-700 14px line-height 1.6
+- hover: 底色变 #f9fafb
+
+### 5.18 聊天气泡（私信）
+
+- 对方消息: 白底 + 1px --page-edge + --r-card 圆角，左对齐
+- 我的消息: --indigo 底 + 白文字 + --r-card 圆角，右对齐
+- 时间: --ink-300 11px mono，气泡下方
+- 最大宽度 70%
+
+### 5.19 消息列表项
+
+- 白底 + 1px --page-edge + --r-card 圆角
+- 未读: 左侧 3px --indigo 色条 + --indigo-light 底
+- 已读: 无色条
+- 头像: 中号 36px
+- 昵称: --ink-900 14px 600
+- 摘要: --ink-500 13px 单行截断
+- 时间: --ink-300 12px mono
+
+### 5.20 进度条/步骤条（认领进度用）
+
+- 步骤: 编号圆 + 文字
+- 已完成: --moss 圆 + 白字
+- 当前: --indigo 圆 + 白字 + 脉冲动画
+- 未到达: #e5e7eb 圆 + --ink-300 字
+- 连接线: 已完成 --moss / 未到达 #e5e7eb
+
+### 5.21 骨架屏（可选，数据加载时）
+
+- 背景: #f3f4f6 → #e5e7eb 闪烁动画
+- 圆角同实际内容元素
+- 不用图片占位
 
 ---
 
-## 六、页面布局
+## 六、页面布局与功能遍历
 
-### 列表页（失物广场、我的帖子）
+### 6.1 登录页（LoginView）
 
-左卡片 2列 gap 20px + 右侧筛选 260px
+- 全屏居中，方格本网格背景
+- 一张书页卡片（装订环+卷角+纸纹理）
+- 顶部图钉 SVG（靛蓝圆形 + 白色图钉图标）
+- 标题「失物招领系统」pen 字体
+- 表单：用户名 + 密码 +（注册时）邮箱+确认密码
+- 主按钮：登录/注册，全宽
+- 切换链接：去注册/去登录，--indigo 文字
+- 底部 slogan：--ink-300 13px
 
-### 详情页
+### 6.2 失物广场（PostSquare）
 
-max-width 800px 居中，书页卡片纵向堆叠
+- 标题区：左标题+副标题，右帖子总数
+- 左卡片 2列 gap 20px + 右侧筛选 260px
+- 卡片：书页卡片（装订环+卷角），左侧色条，封面 200px，标题 17px，meta 行
+- 筛选：搜索 + 类型 + 状态 + 分类，书页卡片样式
+- 空状态 + 引导按钮
+- 分页器
 
-### 表单页
+### 6.3 帖子详情（PostDetail）
 
-max-width 800px 居中，书页卡片包裹表单
+- max-width 800px 居中
+- 返回按钮（图标按钮 ghost）
+- 书页卡片纵向堆叠：
+  1. 类型标签 + 状态标签 + 标题 + 分类·地点·时间
+  2. 描述文字
+  3. 图片网格
+  4. 发布者信息 + 操作按钮（认领/私信/删除/完结）
+  5. 评论区（输入框 + 评论列表）
 
-### 登录页
+### 6.4 发布帖子（PostPublish）
 
-全屏居中，一张书页卡片 + 底部 slogan
+- max-width 800px 居中
+- 书页卡片包裹表单
+- 类型单选 + 标题输入 + 描述文本域 + 日期选择 + 分类下拉 + 地点三级联动 + 图片上传
+- 提交主按钮 + 取消次按钮
 
-### 管理后台
+### 6.5 个人中心（HomeView）
 
-侧边 200px 导航 + 内容区表格/图表
+- max-width 720px 居中
+- 书页卡片：用户信息（头像+昵称+信用分+注册时间）
+- 统计行：发帖数 / 认领数 / 完成数
+- 快捷入口：发布帖子 / 我的帖子 / 认领进度 / 消息中心
+- 操作：编辑资料（弹窗）
 
-### 消息/私信
+### 6.6 认领进度（ClaimProgress）
 
-消息列表 300px + 聊天区 flex:1
+- 标题区 + 搜索框
+- 认领列表：书页卡片，每条包含帖子标题 + 认领状态 + 步骤条 + 操作按钮
+- 状态步骤条：发起 → 发布者确认 → 认领者确认 → 完结
+- 操作：确认 / 取消 / 前往帖子
+
+### 6.7 消息中心（MessagesView）
+
+- 标题区 + 未读统计
+- 消息列表：系统通知 + 私信对话列表
+- 每条：头像 + 昵称 + 摘要 + 时间 + 未读色条
+- 点击进入私信聊天
+
+### 6.8 私信聊天（ChatView）
+
+- 消息列表 300px（左）+ 聊天区 flex:1（右）
+- 聊天区：消息气泡列表 + 输入框 + 发送按钮
+- 对方气泡白底，我的气泡靛蓝底
+- 滚动到底部
+
+### 6.9 我的帖子（MyPostsView）
+
+- 标题区 + 搜索 + 类型筛选下拉
+- 帖子列表：书页卡片，每条包含封面缩略 + 标题 + 状态标签 + 时间
+- 操作：编辑 / 删除（二级确认）
+- 分页器
+
+### 6.10 管理后台（AdminDashboard）
+
+- 管理端导航栏（深色，与用户端分离）
+- 侧边导航 200px + 内容区 flex:1
+- 数据概览：统计卡片（帖子总数/用户数/认领数/完成率）+ ECharts 图表
+- 帖子管理：表格 + 搜索 + 筛选 + 查看/删除操作
+- 用户管理：表格 + 信用分调整
+- 分类管理：树形列表 + 增删改
+
+### 6.11 404页（NotFoundView）
+
+- 全屏居中
+- 大号「404」mono 字体 --ink-300
+- 「页面不存在」pen 字体 --ink-900
+- 返回广场主按钮
 
 ---
 
-## 七、实现
+## 七、管理员路由分离
+
+### 7.1 路由设计
+
+```
+用户端路由：
+/ → 失物广场
+/publish → 发布帖子
+/post/:id → 帖子详情
+/profile → 个人中心
+/claims → 认领进度
+/messages → 消息中心
+/chat → 私信聊天
+/myposts → 我的帖子
+
+管理端路由：
+/admin → 数据概览
+/admin/posts → 帖子管理
+/admin/users → 用户管理
+/admin/categories → 分类管理
+```
+
+### 7.2 登录跳转逻辑
+
+```javascript
+// 登录成功后
+if (userInfo.role === 1) {
+  router.push('/admin')      // 管理员进后台
+} else {
+  router.push('/')            // 普通用户进广场
+}
+```
+
+### 7.3 导航分离
+
+- 用户端：App.vue 的导航栏（白底）
+- 管理端：AdminLayout.vue 独立导航栏（深色底 #1f2937）
+- 管理端不显示用户端导航，反之亦然
+- 路由守卫：role !== 1 访问 /admin/* 重定向到 /，role === 1 访问用户页面重定向到 /admin
+
+### 7.4 退出行为
+
+- 用户退出 → 回登录页
+- 管理员退出 → 回登录页
+
+---
+
+## 八、实现
 
 ### CSS 变量集中管理
 
@@ -301,39 +593,49 @@ App.vue 定义所有变量，页面用 var(--xxx) 引用。
 - .bind-rings — 装订环
 - .bind-holes — 装订孔
 - .filter-card — 筛选卡片
+- .btn-primary / .btn-secondary / .btn-danger / .btn-ghost — 按钮系列
+- .tab-pill — 胶囊筛选
+- .tag-type / .tag-status — 标签系列
+- .avatar — 头像
+- .badge-count — 计数徽章
 
 ### 重写顺序
 
-| 阶段 | 文件 |
-|------|------|
-| 0 | App.vue（变量+导航+背景） |
-| 1 | main.js（Element Plus 覆盖） |
-| 2 | LoginView.vue |
-| 3 | PostSquare.vue |
-| 4 | PostDetail.vue |
-| 5 | PostPublish.vue |
-| 6 | HomeView.vue |
-| 7 | ClaimProgress.vue |
-| 8 | MessagesView + ChatView |
-| 9 | MyPostsView.vue |
-| 10 | AdminDashboard.vue |
-| 11 | NotFoundView.vue |
+| 阶段 | 文件 | 说明 |
+|------|------|------|
+| 0 | App.vue | 全局变量 + 用户端导航 + 背景 |
+| 0.5 | AdminLayout.vue（新建） | 管理端导航 + 布局 |
+| 1 | main.js | Element Plus 覆盖 |
+| 1.5 | router/index.js | 管理员路由分离 + 登录跳转 + 路由守卫 |
+| 2 | LoginView.vue | 登录页 + 管理员跳转 |
+| 3 | PostSquare.vue | 失物广场 |
+| 4 | PostDetail.vue | 帖子详情 |
+| 5 | PostPublish.vue | 发布帖子 |
+| 6 | HomeView.vue | 个人中心 |
+| 7 | ClaimProgress.vue | 认领进度 |
+| 8 | MessagesView + ChatView | 消息+私信 |
+| 9 | MyPostsView.vue | 我的帖子 |
+| 10 | AdminDashboard.vue | 管理后台（移入 AdminLayout） |
+| 11 | NotFoundView.vue | 404 |
 
 每阶段 commit + push。
 
 ---
 
-## 八、约束
+## 九、约束
 
-- 卡片允许极淡层次阴影（0 1px 3px rgba(0,0,0,0.04)）
-- 装订环允许立体阴影（0 3px 5px rgba(0,0,0,0.3)）
-- 卷角允许阴影（-2px -2px 4px rgba(0,0,0,0.08)）
+- 卡片允许 var(--shadow-card) / var(--shadow-hover) 层次阴影
+- 装订环允许 var(--shadow-ring) 立体阴影
+- 卷角允许 var(--shadow-corner) 阴影
+- 输入框 focus 允许 0 0 0 3px rgba(79,70,229,0.1) 光环
 - 其他位置禁止 box-shadow 装饰
-- 禁止全局渐变
+- 禁止全局渐变（卡片纸纤维噪点除外）
 - 禁止 emoji（用 SVG）
 - 时间显示 .replace('T', ' ')
 - 删除操作二级确认
 - Element Plus 主色通过 main.js 覆盖
 - 所有颜色用 var(--xxx)，不硬编码 hex
 - 衬线体只用于标题级文字，正文/按钮/导航用无衬线
-- 卡片纹理必须和背景网格尺寸不同（卡片24px / 背景96px），避免重合导致视觉透明
+- 卡片纹理必须和背景网格尺寸不同（卡片24px / 背景96px）
+- 管理员和用户导航完全分离，不共享组件
+- 管理员登录后直接进 /admin，不进广场
