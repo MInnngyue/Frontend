@@ -47,12 +47,6 @@ function onFilterClick(key, val) {
 function goDetail(id) { router.push(`/post/${id}`) }
 function goPublish() { router.push('/publish') }
 function onPageChange(p) { page.value = p; fetchPosts() }
-function statusDotClass(status) {
-  if (status === 0) return 'dot-active'
-  if (status === 1 || status === 2) return 'dot-claiming'
-  if (status === 3) return 'dot-done'
-  return 'dot-archived'
-}
 </script>
 
 <template>
@@ -91,12 +85,10 @@ function statusDotClass(status) {
             <!-- left color stripe -->
             <div class="card-stripe" :class="post.type === 0 ? 'stripe-lost' : 'stripe-found'"></div>
 
-            <!-- pushpin with status dot hole -->
+            <!-- pushpin -->
             <div class="card-pin" :class="post.type === 0 ? 'pin-lost' : 'pin-found'">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1 2.89-2.64l3.05 2.05a2 2 0 0 1-.14 3.5l-2.5 1.8a2 2 0 0 1-2.3-.1l-1.5-1.2a2 2 0 0 1-.5-2.6z"/><circle cx="12" cy="6" r="2.5"/></svg>
             </div>
-            <!-- status dot sits on top of pin center — "pin pierced a hole" -->
-            <div class="card-status-hole" :class="statusDotClass(post.status)"></div>
 
             <!-- cover -->
             <div class="card-cover">
@@ -285,23 +277,6 @@ function statusDotClass(status) {
 }
 .pin-lost { background: #c8553d; border-color: #a8442f; }
 .pin-found { background: #6b8e4e; border-color: #547039; }
-
-/* status hole — below pin layer, positioned at pin's needle tip */
-.card-status-hole {
-  position: absolute;
-  top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  z-index: 4;
-  border: 2px solid #f3ecdb;
-}
-.dot-active { background: #c8553d; }
-.dot-claiming { background: #c9956b; }
-.dot-done { background: #6b8e4e; }
-.dot-archived { background: #b0a690; }
 
 /* cover */
 .card-cover { width: 100%; height: 200px; background: #e8dfc6; overflow: hidden; }
