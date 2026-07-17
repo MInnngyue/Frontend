@@ -27,36 +27,58 @@ async function handleMsgClick(m) {
 </script>
 
 <template>
-  <div class="msg-page">
-    <h1 class="page-title">消息</h1>
-
-    <div class="section-card">
-      <div class="section-header">
-        <span>系统通知 <span v-if="systemUnread > 0" class="sys-badge">{{ systemUnread }}</span></span>
-        <el-button size="small" class="expand-btn" @click="sysExpanded = !sysExpanded">{{ sysExpanded ? '收起 ▲' : '展开 ▼' }}</el-button>
+  <div class="page msg-page">
+    <div class="page-header">
+      <div>
+        <h1>消息中心</h1>
+        <p class="subtitle">系统通知与私信</p>
       </div>
-      <div v-if="systemMsgs.length === 0" class="empty-hint">暂时没有通知</div>
-      <div v-if="sysExpanded" v-for="m in systemMsgs" :key="m.id" class="msg-item" :class="{ unread: m.isRead === 0 }" @click="handleMsgClick(m)">
-        <div class="msg-title">
-          {{ m.title }}
-          <span v-if="m.isRead === 0" class="item-badge">●</span>
-        </div>
-        <div class="msg-content">{{ m.content }}</div>
-        <div class="msg-time">{{ m.createTime?.substring(0, 16).replace('T', ' ') }}</div>
+      <div class="stat-block" v-if="systemUnread > 0">
+        <span class="stat-num">{{ systemUnread }}</span>
+        <span class="stat-label">条未读</span>
       </div>
     </div>
 
-    <div class="section-card">
-      <div class="section-header">私信</div>
-      <div v-if="conversations.length === 0" class="empty-hint">还没有私信记录</div>
-      <div v-for="c in conversations" :key="c.userId" class="msg-item" @click="goChat(c.userId)">
-        <div class="conv-row">
-          <span class="conv-avatar">{{ c.nickname?.charAt(0) || 'U' }}</span>
-          <div class="conv-info">
-            <div class="conv-name">{{ c.nickname }} <el-badge v-if="c.unread" :value="c.unread" style="margin-left:6px" /></div>
-            <div class="conv-last">{{ c.lastMsg?.substring(0, 50) }}</div>
+    <!-- system notifications -->
+    <div class="card-wrap">
+      <div class="bind-rings"><span></span><span></span><span></span></div>
+      <div class="note-card">
+        <div class="section-header">
+          <span>系统通知 <span v-if="systemUnread > 0" class="badge-count">{{ systemUnread }}</span></span>
+          <button class="btn-ghost" @click="sysExpanded = !sysExpanded">{{ sysExpanded ? '收起' : '展开' }}</button>
+        </div>
+        <div v-if="systemMsgs.length === 0" class="empty-state">
+          <p class="empty-text">暂时没有通知</p>
+        </div>
+        <div v-if="sysExpanded" class="msg-list">
+          <div v-for="m in systemMsgs" :key="m.id" class="msg-item" :class="{ unread: m.isRead === 0 }" @click="handleMsgClick(m)">
+            <div class="msg-title">{{ m.title }} <span v-if="m.isRead === 0" class="unread-dot"></span></div>
+            <div class="msg-content">{{ m.content }}</div>
+            <div class="msg-time">{{ m.createTime?.substring(0, 16).replace('T', ' ') }}</div>
           </div>
-          <span class="conv-time">{{ c.lastTime?.substring(0, 16).replace('T', ' ') }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- private messages -->
+    <div class="card-wrap">
+      <div class="bind-rings"><span></span><span></span><span></span></div>
+      <div class="note-card">
+        <div class="section-header">
+          <span>私信</span>
+        </div>
+        <div v-if="conversations.length === 0" class="empty-state">
+          <p class="empty-text">还没有私信记录</p>
+        </div>
+        <div v-else class="conv-list">
+          <div v-for="c in conversations" :key="c.userId" class="conv-item" @click="goChat(c.userId)">
+            <div class="avatar avatar-md">{{ c.nickname?.charAt(0) || 'U' }}</div>
+            <div class="conv-info">
+              <div class="conv-name">{{ c.nickname }} <span v-if="c.unread" class="badge-count">{{ c.unread }}</span></div>
+              <div class="conv-last">{{ c.lastMsg?.substring(0, 50) }}</div>
+            </div>
+            <span class="conv-time">{{ c.lastTime?.substring(0, 16).replace('T', ' ') }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -64,34 +86,43 @@ async function handleMsgClick(m) {
 </template>
 
 <style scoped>
-.msg-page { max-width: 700px; margin: 0 auto; padding: 22px 24px 36px; background: var(--page); min-height: 100vh; }
-.page-title { font-family: 'Noto Serif SC', Georgia, serif; font-size: 32px; font-weight: 700; color: var(--ink-900); margin: 0 0 22px; text-align: center; }
-.section-card { background: var(--page); border: 1px solid var(--page-edge); border-radius: 6px; padding: 20px; margin-bottom: 16px; border-bottom: 3px solid #cbd5e1; }
-.section-header { display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: 600; color: var(--ink-900); margin-bottom: 14px; }
-.empty-hint { text-align: center; color: var(--ink-300); padding: 36px 0; font-size: 14px; }
-.msg-item { padding: 12px 14px; border-radius: 6px; cursor: pointer; border-bottom: 1px solid #f3f4f6; transition: background 0.15s; }
-.msg-item:last-child { border-bottom: none; }
-.msg-item:hover { background: #f3f4f6; }
-.msg-item.unread { background: var(--indigo-light); }
-.msg-item.unread:hover { background: #eedfd9; }
-.msg-title { font-size: 14px; font-weight: 600; color: var(--ink-900); margin-bottom: 4px; }
-.msg-content { font-size: 13px; color: var(--ink-500); white-space: pre-line; line-height: 1.5; }
-.msg-time { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 12px; color: var(--ink-300); margin-top: 6px; }
-.conv-row { display: flex; align-items: center; gap: 12px; }
-.conv-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--indigo); color: #fff; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.conv-info { flex: 1; min-width: 0; }
-.conv-name { font-size: 14px; font-weight: 600; color: var(--ink-900); display: flex; align-items: center; }
-.conv-last { font-size: 13px; color: var(--ink-500); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 3px; }
-.conv-time { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 12px; color: var(--ink-300); flex-shrink: 0; }
-.expand-btn { background: var(--indigo-light); border: 1px solid #eedfd9; color: var(--indigo-hover); border-radius: 6px; font-size: 13px; padding: 6px 14px; height: auto; }
-.expand-btn:hover { background: #eedfd9; color: var(--indigo-active); border-color: var(--indigo); }
+.msg-page { max-width: 700px; }
 
-/* Badges */
-.sys-badge {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-width: 18px; height: 18px; padding: 0 5px; border-radius: 6px;
-  background: var(--rose); color: #fff; font-size: 11px; font-weight: 700;
-  margin-left: 6px; vertical-align: middle;
+/* section header */
+.section-header { display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: 600; color: var(--ink-900); margin-bottom: 16px; }
+
+/* message items */
+.msg-list { display: flex; flex-direction: column; }
+.msg-item {
+  padding: 14px 0;
+  border-bottom: 1px solid #f3f4f6;
+  cursor: pointer;
+  transition: var(--transition);
 }
-.item-badge { color: var(--rose); font-size: 10px; margin-left: 6px; }
+.msg-item:last-child { border-bottom: none; }
+.msg-item:hover { background: #f9fafb; margin: 0 -16px; padding: 14px 16px; }
+.msg-item.unread { background: var(--indigo-light); margin: 0 -16px; padding: 14px 16px; border-radius: var(--r-btn); }
+.msg-item.unread:hover { background: #dbeafe; }
+.msg-title { font-size: 14px; font-weight: 600; color: var(--ink-900); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+.unread-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--indigo); display: inline-block; }
+.msg-content { font-size: 13px; color: var(--ink-500); white-space: pre-line; line-height: 1.5; }
+.msg-time { font-family: var(--mono-font); font-size: 12px; color: var(--ink-300); margin-top: 6px; }
+
+/* conversation items */
+.conv-list { display: flex; flex-direction: column; }
+.conv-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid #f3f4f6;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.conv-item:last-child { border-bottom: none; }
+.conv-item:hover { background: #f9fafb; margin: 0 -16px; padding: 14px 16px; }
+.conv-info { flex: 1; min-width: 0; }
+.conv-name { font-size: 14px; font-weight: 600; color: var(--ink-900); display: flex; align-items: center; gap: 6px; }
+.conv-last { font-size: 13px; color: var(--ink-500); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 3px; }
+.conv-time { font-family: var(--mono-font); font-size: 12px; color: var(--ink-300); flex-shrink: 0; }
 </style>

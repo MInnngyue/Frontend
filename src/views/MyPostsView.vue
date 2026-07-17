@@ -11,7 +11,6 @@ const posts = ref([])
 const loading = ref(false)
 const saving = ref(false)
 
-// 字典数据
 const categories = ref([])
 const colors = ref([])
 const campuses = ref([])
@@ -37,10 +36,9 @@ onMounted(async () => {
     categories.value = cats.data || []
     colors.value = cols.data || []
     campuses.value = locs.data || []
-  } catch { /* ignore */ }
+  } catch {}
 })
 
-// 校区变化 → 加载区域
 async function onCampusChange(name) {
   editForm.value.locationArea = ''
   editForm.value.locationDetail = ''
@@ -54,7 +52,6 @@ async function onCampusChange(name) {
   }
 }
 
-// 区域变化 → 加载具体地点
 async function onAreaChange(name) {
   editForm.value.locationDetail = ''
   details.value = []
@@ -66,9 +63,8 @@ async function onAreaChange(name) {
   }
 }
 
-// 打开编辑时，如果已有校区信息，预加载下属数据
 async function openEdit(p) {
-    editForm.value = {
+  editForm.value = {
     id: p.id, type: p.type, itemCategory: p.itemCategory || '', color: p.color || '',
     title: p.title || '', description: p.description || '',
     locationCampus: p.locationCampus || '', locationArea: p.locationArea || '',
@@ -77,8 +73,6 @@ async function openEdit(p) {
     images: []
   }
   showEditDialog.value = true
-
-  // 预加载已有的校区下属区域
   areas.value = []
   details.value = []
   if (p.locationCampus) {
@@ -106,7 +100,7 @@ async function saveEdit() {
     ElMessage.success('修改已保存')
     showEditDialog.value = false
     loadPosts()
-  } catch { }
+  } catch {}
   finally { saving.value = false }
 }
 
@@ -116,7 +110,7 @@ async function handleDelete(id) {
     await deletePost(id)
     ElMessage.success('已删除')
     loadPosts()
-  } catch { /* 取消或失败 */ }
+  } catch {}
 }
 
 function typeLabel(t) { return t === 0 ? '寻物' : '招领' }
@@ -135,43 +129,54 @@ async function loadPosts() {
 </script>
 
 <template>
-  <div class="myposts-page">
-    <div class="mp-header">
-      <h1 class="page-title">我的帖子</h1>
-      <button class="btn-back" @click="router.push('/profile')">← 返回个人中心</button>
+  <div class="page myposts-page">
+    <div class="page-header">
+      <div>
+        <h1>我的帖子</h1>
+        <p class="subtitle">管理你发布的帖子</p>
+      </div>
+      <button class="btn-secondary" @click="router.push('/profile')">返回个人中心</button>
     </div>
 
-    <div class="table-wrap" v-loading="loading">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th style="width:56px">ID</th>
-            <th style="width:68px">类型</th>
-            <th style="min-width:140px">标题</th>
-            <th style="width:80px">状态</th>
-            <th style="width:100px">时间</th>
-            <th style="width:190px">操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="row in posts" :key="row.id">
-            <td class="td-id">{{ row.id }}</td>
-            <td><span class="type-badge" :class="row.type === 0 ? 't-lost' : 't-found'">{{ typeLabel(row.type) }}</span></td>
-            <td><div class="td-title">{{ row.title }}</div></td>
-            <td><span class="status-badge" :class="'s-' + row.status">{{ statusLabel(row.status) }}</span></td>
-            <td class="td-time">{{ (row.lostTime || '').replace('T', ' ')?.substring(0, 10) }}</td>
-            <td class="td-actions">
-              <button class="btn btn-view" @click="goPost(row.id)">查看</button>
-              <button class="btn btn-edit" @click="openEdit(row)">编辑</button>
-              <button class="btn btn-del" @click="handleDelete(row.id)">删除</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div v-if="!loading && posts.length === 0" class="empty-state">
-        <div class="empty-icon" style="font-size:48px;color:var(--ink-300);">—</div>
-        <div class="empty-title">还没有发布过帖子</div>
-        <button class="empty-btn" @click="router.push('/publish')">去发布帖子</button>
+    <div class="card-wrap">
+      <div class="bind-rings"><span></span><span></span><span></span></div>
+      <div class="note-card table-card" v-loading="loading">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:56px">ID</th>
+              <th style="width:68px">类型</th>
+              <th style="min-width:140px">标题</th>
+              <th style="width:80px">状态</th>
+              <th style="width:100px">时间</th>
+              <th style="width:190px">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in posts" :key="row.id">
+              <td class="td-id">{{ row.id }}</td>
+              <td><span class="tag-type" :class="row.type === 0 ? 'lost' : 'found'">{{ typeLabel(row.type) }}</span></td>
+              <td><div class="td-title">{{ row.title }}</div></td>
+              <td><span class="tag-status" :class="'s-' + row.status">{{ statusLabel(row.status) }}</span></td>
+              <td class="td-time">{{ (row.lostTime || '').replace('T', ' ')?.substring(0, 10) }}</td>
+              <td class="td-actions">
+                <button class="btn-icon" title="查看" @click="goPost(row.id)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--indigo)" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+                <button class="btn-icon" title="编辑" @click="openEdit(row)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-500)" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button class="btn-icon" title="删除" @click="handleDelete(row.id)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div v-if="!loading && posts.length === 0" class="empty-state">
+          <p class="empty-text">还没有发布过帖子</p>
+          <button class="btn-primary" @click="router.push('/publish')">去发布帖子</button>
+        </div>
       </div>
     </div>
 
@@ -196,7 +201,6 @@ async function loadPosts() {
             <el-option v-for="c in colors" :key="c.id" :label="c.name" :value="c.name" />
           </el-select>
         </el-form-item>
-
         <el-form-item label="地点" required>
           <div style="display:flex;gap:8px;width:100%">
             <el-select v-model="editForm.locationCampus" placeholder="校区" style="flex:1" @change="onCampusChange">
@@ -211,17 +215,9 @@ async function loadPosts() {
             <el-input v-else v-model="editForm.locationDetail" placeholder="具体地点" style="flex:1" :disabled="!editForm.locationArea" />
           </div>
         </el-form-item>
-
         <el-form-item label="时间">
-          <el-date-picker
-            v-model="editForm.lostTime"
-            type="date"
-            placeholder="选择日期"
-            value-format="YYYY-MM-DD"
-            style="width:100%"
-          />
+          <el-date-picker v-model="editForm.lostTime" type="date" placeholder="选择日期" value-format="YYYY-MM-DD" style="width:100%" />
         </el-form-item>
-
         <el-form-item label="描述">
           <el-input v-model="editForm.description" type="textarea" :rows="4" maxlength="2000" show-word-limit placeholder="请详细描述物品特征..." />
         </el-form-item>
@@ -235,65 +231,24 @@ async function loadPosts() {
 </template>
 
 <style scoped>
-.myposts-page { max-width: 960px; margin: 0 auto; padding: 22px 24px 36px; background: var(--page); min-height: 100vh; }
-.mp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0; }
-.mp-header h1 { font-family: 'Noto Serif SC', Georgia, serif; font-size: 32px; font-weight: 700; color: var(--ink-900); margin: 0 0 22px; text-align: center; }
-.btn-back {
-  padding: 8px 18px; border: 1px solid var(--page-edge); border-radius: 6px; background: var(--page);
-  font-size: 14px; color: var(--ink-700); cursor: pointer; transition: all 0.15s;
-}
-.btn-back:hover { background: #f3f4f6; border-color: #cbd5e1; color: var(--ink-900); }
+.myposts-page { max-width: 960px; }
 
-/* Table */
-.table-wrap { background: var(--page); border-radius: 6px; border: 1px solid #cbd5e1; border-bottom: 3px solid #cbd5e1; overflow: hidden; }
+/* table inside note-card */
+.table-card { padding: 0; overflow: hidden; }
 .data-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
 .data-table th {
-  text-align: left; padding: 14px 14px; font-size: 13px; font-weight: 600;
-  color: var(--ink-500); background: #f3f4f6; border-bottom: 1px solid var(--page-edge); white-space: nowrap;
+  text-align: left; padding: 14px; font-size: 13px; font-weight: 600;
+  color: var(--ink-500); background: #f9fafb; border-bottom: 1px solid var(--page-edge); white-space: nowrap;
 }
 .data-table td { padding: 12px 14px; font-size: 14px; color: var(--ink-900); border-bottom: 1px solid #f3f4f6; }
 .data-table tr:last-child td { border-bottom: none; }
-.data-table tr:hover td { background: #f3f4f6; }
-.td-id { font-family: 'JetBrains Mono', 'Courier New', monospace; color: var(--ink-300); font-size: 13px; }
+.data-table tr:hover td { background: #f9fafb; }
+
+.td-id { font-family: var(--mono-font); color: var(--ink-300); font-size: 13px; }
 .td-title { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.td-time { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 13px; color: var(--ink-300); white-space: nowrap; }
+.td-time { font-family: var(--mono-font); font-size: 13px; color: var(--ink-300); white-space: nowrap; }
 .td-actions { display: flex; gap: 6px; flex-wrap: nowrap; }
 
-/* Badges */
-.type-badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; color: #fff; white-space: nowrap; }
-.t-lost { background: var(--rose); }
-.t-found { background: var(--moss); }
-.status-badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; }
-.s-0 { background: var(--indigo-light); color: var(--indigo); }
-.s-1 { background: var(--amber-light); color: var(--amber); }
-.s-2 { background: var(--amber-light); color: var(--amber); }
-.s-3 { background: var(--moss-light); color: var(--moss); }
-.s-4, .s-5 { background: #f3f4f6; color: var(--ink-500); }
-
-/* Buttons */
-.btn { padding: 6px 14px; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-.btn-view { background: var(--indigo-light); color: var(--indigo); }
-.btn-view:hover { background: #eedfd9; }
-.btn-edit { background: var(--indigo-light); color: var(--indigo-hover); }
-.btn-edit:hover { background: #eedfd9; }
-.btn-del { background: var(--indigo-light); color: var(--rose); }
-.btn-del:hover { background: #eedfd9; }
-
-/* Empty */
-.empty-state { text-align: center; padding: 60px 20px; }
-.empty-icon { font-size: 48px; margin-bottom: 12px; }
-.empty-title { font-size: 16px; font-weight: 600; color: var(--ink-900); margin-bottom: 8px; }
-.empty-btn { padding: 10px 24px; background: var(--indigo); color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 12px; }
-.empty-btn:hover { background: var(--indigo-hover); }
-
-/* Dialog */
+/* edit form */
 .edit-form { padding: 8px 0; max-height: 65vh; overflow-y: auto; }
-:deep(.el-dialog) { border-radius: 6px; overflow: hidden; }
-:deep(.el-dialog__title) { font-family: 'Noto Serif SC', Georgia, serif; font-size: 17px; font-weight: 700; color: var(--ink-900); }
-:deep(.el-dialog .el-input__wrapper) { border-radius: 6px; box-shadow: 0 0 0 1px var(--page-edge) inset; }
-:deep(.el-dialog .el-select .el-input__wrapper) { border-radius: 6px; box-shadow: 0 0 0 1px var(--page-edge) inset; }
-:deep(.el-dialog .el-date-editor .el-input__wrapper) { border-radius: 6px; box-shadow: 0 0 0 1px var(--page-edge) inset; }
-:deep(.el-dialog .el-button--primary) { background: var(--indigo); border-color: var(--indigo); border-radius: 6px; font-weight: 600; }
-:deep(.el-dialog .el-button--primary:hover) { background: var(--indigo-hover); border-color: var(--indigo-hover); }
-:deep(.el-dialog .el-button) { border-radius: 6px; }
 </style>

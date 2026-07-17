@@ -32,7 +32,6 @@ async function send() {
 
 function isMe(msg) { const info = localStorage.getItem('userInfo'); if (!info) return false; const me = JSON.parse(info); return msg.fromUserId === (me.userId || me.id) }
 
-// 格式化日期显示
 function formatDateLabel(dateStr) {
   if (!dateStr) return ''
   const d = new Date(dateStr.replace(' ', 'T'))
@@ -45,13 +44,11 @@ function formatDateLabel(dateStr) {
   return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`
 }
 
-// 带日期分隔的消息列表
 const displayMessages = computed(() => {
   const result = []
   let lastTime = null
   for (const m of messages.value) {
     const mTime = m.createTime ? new Date(m.createTime.replace(' ', 'T')).getTime() : null
-    // 如果距上一条消息超过3分钟，插入日期分隔
     if (lastTime === null || (mTime && mTime - lastTime > 3 * 60 * 1000)) {
       result.push({ type: 'date', date: formatDateLabel(m.createTime), createTime: m.createTime })
     }
@@ -65,7 +62,9 @@ const displayMessages = computed(() => {
 <template>
   <div class="chat-page">
     <div class="chat-header">
-      <el-button text @click="router.push('/messages')">&larr; 返回消息</el-button>
+      <button class="btn-icon" @click="router.push('/messages')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      </button>
       <span class="chat-title">私信</span>
     </div>
     <div class="chat-box" ref="chatBox">
@@ -82,22 +81,29 @@ const displayMessages = computed(() => {
     </div>
     <div class="chat-input">
       <el-input v-model="text" placeholder="输入消息..." maxlength="500" @keyup.enter="send" />
-      <el-button type="primary" :loading="sending" @click="send">发送</el-button>
+      <button class="btn-primary" :disabled="sending" @click="send">{{ sending ? '发送中...' : '发送' }}</button>
     </div>
   </div>
 </template>
 
 <style scoped>
-.chat-page { max-width: 700px; margin: 0 auto; height: calc(100vh - 84px); display: flex; flex-direction: column; background: var(--page); }
+.chat-page { max-width: 700px; margin: 0 auto; height: calc(100vh - 84px); display: flex; flex-direction: column; }
+
 .chat-header {
-  display: flex; align-items: center; gap: 12px; padding: 14px 20px;
-  background: var(--page); border: 1px solid var(--page-edge); border-bottom: none; border-radius: 6px 6px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: var(--page);
+  border: 1px solid var(--page-edge);
+  border-bottom: none;
+  border-radius: var(--r-card) var(--r-card) 0 0;
 }
-.chat-header :deep(.el-button) { color: var(--indigo-hover); }
-.chat-header :deep(.el-button:hover) { color: var(--indigo-active); background: var(--indigo-light); }
-.chat-title { font-family: 'Noto Serif SC', Georgia, serif; font-size: 17px; font-weight: 600; color: var(--ink-900); }
+.chat-title { font-family: var(--pen-font); font-size: 17px; font-weight: 600; color: var(--ink-900); }
+
 .chat-box {
-  flex: 1; overflow-y: auto; padding: 20px; background: var(--page);
+  flex: 1; overflow-y: auto; padding: 20px;
+  background: var(--page);
   display: flex; flex-direction: column; gap: 14px;
   border-left: 1px solid var(--page-edge); border-right: 1px solid var(--page-edge);
 }
@@ -105,8 +111,9 @@ const displayMessages = computed(() => {
 .chat-date-sep { text-align: center; padding: 8px 0; }
 .chat-date-sep span {
   font-size: 12px; color: var(--ink-300); background: #f3f4f6;
-  padding: 3px 12px; border-radius: 6px;
+  padding: 3px 12px; border-radius: var(--r-btn);
 }
+
 .chat-msg { display: flex; flex-direction: column; max-width: 70%; }
 .chat-msg.mine { align-self: flex-end; }
 .chat-msg:not(.mine) { width: fit-content; }
@@ -115,12 +122,13 @@ const displayMessages = computed(() => {
   background: var(--page); color: var(--ink-900); padding: 10px 16px; border-radius: 16px 16px 16px 4px;
   font-size: 14px; line-height: 1.5; word-break: break-word; border: 1px solid var(--page-edge);
 }
-.chat-time { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 11px; color: var(--ink-300); margin-top: 4px; padding: 0 4px; }
+.chat-time { font-family: var(--mono-font); font-size: 11px; color: var(--ink-300); margin-top: 4px; padding: 0 4px; }
 .chat-msg.mine .chat-time { text-align: right; }
+
 .chat-input {
-  display: flex; gap: 10px; padding: 14px 20px; background: var(--page);
-  border: 1px solid var(--page-edge); border-top: none; border-radius: 0 0 6px 6px;
+  display: flex; gap: 10px; padding: 14px 20px;
+  background: var(--page);
+  border: 1px solid var(--page-edge); border-top: none;
+  border-radius: 0 0 var(--r-card) var(--r-card);
 }
-.chat-input :deep(.el-button--primary) { background: var(--indigo); border-color: var(--indigo); border-radius: 6px; }
-.chat-input :deep(.el-button--primary:hover) { background: var(--indigo-hover); border-color: var(--indigo-hover); }
 </style>

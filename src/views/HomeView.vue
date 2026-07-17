@@ -1,129 +1,150 @@
 <template>
-  <div class="profile-page">
-    <h1 class="page-title">个人中心</h1>
+  <div class="page profile-page">
+    <div class="page-header">
+      <div>
+        <h1>个人中心</h1>
+        <p class="subtitle">{{ userInfo?.nickname || userInfo?.username || '-' }}，欢迎回来</p>
+      </div>
+      <el-button v-if="isAdmin" type="primary" @click="$router.push('/admin')">进入管理后台</el-button>
+    </div>
 
     <div class="content-area">
-      <div class="profile-card">
-        <div class="profile-top">
-          <div class="profile-avatar">{{ (userInfo?.nickname || userInfo?.username || 'U').charAt(0) }}</div>
-          <div class="profile-main">
-            <div class="profile-name">{{ userInfo?.nickname || userInfo?.username || '-' }}</div>
-            <div class="profile-sign">{{ userInfo?.signature || '还没有写签名' }}</div>
-          </div>
-          <div class="profile-right">
-            <el-button v-if="isAdmin" class="admin-entry-btn" @click="$router.push('/admin')">管理后台</el-button>
-            <input ref="avatarInput" type="file" accept="image/*" style="display:none" @change="handleAvatarChange" />
-            <el-dropdown @command="handleMore">
-              <el-button class="more-btn" :loading="avatarUploading">更多 ▾</el-button>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item command="avatar">更换头像</el-dropdown-item>
-                  <el-dropdown-item command="info">更改个人信息</el-dropdown-item>
-                  <el-dropdown-item command="sign">更改签名</el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-          </div>
-        </div>
-
-        <el-skeleton :loading="loading" animated :rows="3">
-          <div class="stats-row" v-if="userInfo">
-            <div class="stat-item">
-              <div class="stat-value">{{ userInfo.creditScore ?? 100 }}</div>
-              <div class="stat-label">信用分</div>
+      <!-- user info card -->
+      <div class="card-wrap">
+        <div class="bind-rings"><span></span><span></span><span></span></div>
+        <div class="note-card profile-card">
+          <div class="profile-top">
+            <div class="avatar avatar-lg">{{ (userInfo?.nickname || userInfo?.username || 'U').charAt(0) }}</div>
+            <div class="profile-main">
+              <div class="profile-name">{{ userInfo?.nickname || userInfo?.username || '-' }}</div>
+              <div class="profile-sign">{{ userInfo?.signature || '还没有写签名' }}</div>
             </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-              <div class="stat-value">{{ userInfo.successCount ?? 0 }}</div>
-              <div class="stat-label">成功认领</div>
-            </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-              <div class="stat-value">{{ formatRole(userInfo.role) }}</div>
-              <div class="stat-label">账户类型</div>
+            <div class="profile-right">
+              <input ref="avatarInput" type="file" accept="image/*" style="display:none" @change="handleAvatarChange" />
+              <el-dropdown @command="handleMore">
+                <el-button class="btn-secondary" :loading="avatarUploading">更多 <span style="font-size:10px">&#9662;</span></el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item command="avatar">更换头像</el-dropdown-item>
+                    <el-dropdown-item command="info">更改个人信息</el-dropdown-item>
+                    <el-dropdown-item command="sign">更改签名</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </div>
           </div>
-          <div v-else class="empty-info">信息加载中...</div>
-        </el-skeleton>
-      </div>
 
-      <div class="quick-links">
-        <div class="quick-link" @click="$router.push('/publish')">
-          <span class="ql-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--indigo)" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>
-          <span class="ql-text">发布帖子</span>
-        </div>
-        <div class="quick-link" @click="$router.push('/messages')">
-          <span class="ql-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--indigo)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
-          <span class="ql-text">消息中心</span>
-        </div>
-        <div class="quick-link" @click="$router.push('/my-posts')">
-          <span class="ql-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--indigo)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
-          <span class="ql-text">我的帖子</span>
-        </div>
-      </div>
-
-      <div class="info-card">
-        <div class="info-title">我的帖子</div>
-        <el-skeleton :loading="postsLoading" animated :rows="3">
-          <div v-if="myPosts.length > 0" class="posts-list-wrap" :class="{ collapsed: !postsExpanded && myPosts.length > 3 }">
-            <div class="archive-list">
-              <div v-for="p in (postsExpanded ? myPosts : myPosts.slice(0, 3))" :key="p.id" class="archive-row" @click="goPost(p.id)" style="cursor:pointer">
-                <div class="archive-info">
-                  <span class="s-capsule" :class="p.type === 0 ? 'sc-lost' : 'sc-found'">{{ p.type === 0 ? '寻物' : '招领' }}</span>
-                  <span class="archive-title">{{ p.title }}</span>
-                </div>
-                <span class="archive-status">{{ statusLabel(p.status) }}</span>
+          <el-skeleton :loading="loading" animated :rows="3">
+            <div class="stats-row" v-if="userInfo">
+              <div class="stat-item">
+                <div class="stat-value">{{ userInfo.creditScore ?? 100 }}</div>
+                <div class="stat-label">信用分</div>
+              </div>
+              <div class="stat-divider"></div>
+              <div class="stat-item">
+                <div class="stat-value">{{ userInfo.successCount ?? 0 }}</div>
+                <div class="stat-label">成功认领</div>
+              </div>
+              <div class="stat-divider"></div>
+              <div class="stat-item">
+                <div class="stat-value">{{ formatRole(userInfo.role) }}</div>
+                <div class="stat-label">账户类型</div>
               </div>
             </div>
-            <div v-if="!postsExpanded && myPosts.length > 3" class="gradient-fade"></div>
-          </div>
-          <div v-else class="empty-info">你还没有发过帖子，去广场看看吧</div>
-        </el-skeleton>
-        <button v-if="myPosts.length > 3" class="toggle-more-btn" @click="postsExpanded = !postsExpanded">
-          {{ postsExpanded ? '收起 ▲' : '更多 ▼' }}
-        </button>
+            <div v-else class="empty-state">
+              <p class="empty-text">信息加载中...</p>
+            </div>
+          </el-skeleton>
+        </div>
       </div>
 
-      <el-dialog v-model="showSignDialog" title="修改签名" width="380px">
-        <el-input v-model="signForm.signature" maxlength="50" placeholder="写下你的个性签名" show-word-limit />
-        <template #footer>
-          <el-button @click="showSignDialog = false">取消</el-button>
-          <el-button type="primary" @click="saveSign">保存</el-button>
-        </template>
-      </el-dialog>
+      <!-- quick links -->
+      <div class="quick-links">
+        <div class="quick-link" @click="$router.push('/publish')">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--indigo)" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <span>发布帖子</span>
+        </div>
+        <div class="quick-link" @click="$router.push('/messages')">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--indigo)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>消息中心</span>
+        </div>
+        <div class="quick-link" @click="$router.push('/my-posts')">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--indigo)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <span>我的帖子</span>
+        </div>
+        <div class="quick-link" @click="$router.push('/claims')">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--indigo)" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <span>认领进度</span>
+        </div>
+      </div>
 
-      <el-dialog v-model="showInfoDialog" title="修改个人信息" width="400px">
-        <el-form label-width="60px">
-          <el-form-item label="昵称"><el-input v-model="infoForm.nickname" maxlength="20" /></el-form-item>
-          <el-form-item label="手机号"><el-input v-model="infoForm.phone" maxlength="11" placeholder="选填" /></el-form-item>
-          <el-form-item label="邮箱"><el-input v-model="infoForm.email" maxlength="50" placeholder="选填" /></el-form-item>
-        </el-form>
-        <template #footer>
-          <el-button @click="showInfoDialog = false">取消</el-button>
-          <el-button type="primary" @click="saveInfo">保存</el-button>
-        </template>
-      </el-dialog>
+      <!-- my posts -->
+      <div class="card-wrap">
+        <div class="bind-rings"><span></span><span></span><span></span></div>
+        <div class="note-card">
+          <h2 class="section-title">我的帖子</h2>
+          <el-skeleton :loading="postsLoading" animated :rows="3">
+            <div v-if="myPosts.length > 0">
+              <div v-for="p in myPosts.slice(0, 5)" :key="p.id" class="post-row" @click="goPost(p.id)">
+                <span class="tag-type" :class="p.type === 0 ? 'lost' : 'found'">{{ p.type === 0 ? '寻物' : '招领' }}</span>
+                <span class="post-title">{{ p.title }}</span>
+                <span class="post-time">{{ p.createTime?.replace('T', ' ') }}</span>
+              </div>
+              <button v-if="myPosts.length > 5" class="btn-ghost more-btn" @click="$router.push('/my-posts')">查看全部 &rarr;</button>
+            </div>
+            <div v-else class="empty-state">
+              <p class="empty-text">你还没有发过帖子</p>
+              <p class="empty-hint">去广场看看吧</p>
+            </div>
+          </el-skeleton>
+        </div>
+      </div>
 
-      <div class="info-card" v-if="userInfo">
-        <div class="info-title">账号信息</div>
-        <div class="info-row">
-          <span class="info-label">用户 ID</span>
-          <span class="info-value">{{ userInfo.id || userInfo.userId || '-' }}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">用户名</span>
-          <span class="info-value">{{ userInfo.username || '-' }}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">昵称</span>
-          <span class="info-value">{{ userInfo.nickname || '-' }}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">邮箱</span>
-          <span class="info-value">{{ userInfo.email || '未设置' }}</span>
+      <!-- account info -->
+      <div class="card-wrap" v-if="userInfo">
+        <div class="bind-rings"><span></span><span></span><span></span></div>
+        <div class="note-card">
+          <h2 class="section-title">账号信息</h2>
+          <div class="info-row">
+            <span class="info-label">用户 ID</span>
+            <span class="info-value">{{ userInfo.id || userInfo.userId || '-' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">用户名</span>
+            <span class="info-value">{{ userInfo.username || '-' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">昵称</span>
+            <span class="info-value">{{ userInfo.nickname || '-' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">邮箱</span>
+            <span class="info-value">{{ userInfo.email || '未设置' }}</span>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- dialogs -->
+    <el-dialog v-model="showSignDialog" title="修改签名" width="380px">
+      <el-input v-model="signForm.signature" maxlength="50" placeholder="写下你的个性签名" show-word-limit />
+      <template #footer>
+        <el-button @click="showSignDialog = false">取消</el-button>
+        <el-button type="primary" @click="saveSign">保存</el-button>
+      </template>
+    </el-dialog>
+
+    <el-dialog v-model="showInfoDialog" title="修改个人信息" width="400px">
+      <el-form label-width="60px">
+        <el-form-item label="昵称"><el-input v-model="infoForm.nickname" maxlength="20" /></el-form-item>
+        <el-form-item label="手机号"><el-input v-model="infoForm.phone" maxlength="11" placeholder="选填" /></el-form-item>
+        <el-form-item label="邮箱"><el-input v-model="infoForm.email" maxlength="50" placeholder="选填" /></el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showInfoDialog = false">取消</el-button>
+        <el-button type="primary" @click="saveInfo">保存</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -132,14 +153,13 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { getUserInfo, updateProfile, getMyPosts } from '../api/user'
 import { uploadImage } from '@/api/upload'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const loading = ref(false)
 const userInfo = ref(null)
 const myPosts = ref([])
 const postsLoading = ref(false)
-const postsExpanded = ref(false)
 
 const showSignDialog = ref(false)
 const showInfoDialog = ref(false)
@@ -182,11 +202,6 @@ const formatRole = (role) => {
   return '普通用户'
 }
 
-function statusLabel(s) {
-  const map = { 0: '进行中', 1: '已匹配', 2: '认领中', 3: '已完结', 4: '已归档', 5: '已下架' }
-  return map[s] || '未知'
-}
-
 async function handleAvatarChange(e) {
   const file = e.target.files?.[0]
   if (!file) return
@@ -211,7 +226,7 @@ async function saveSign() {
     userInfo.value.signature = signForm.value.signature
     showSignDialog.value = false
     ElMessage.success('签名已更新')
-  } catch { /* 拦截器已处理错误 */ }
+  } catch {}
 }
 
 function openInfoDialog() {
@@ -226,7 +241,7 @@ async function saveInfo() {
     Object.assign(userInfo.value, infoForm.value)
     showInfoDialog.value = false
     ElMessage.success('资料已更新')
-  } catch { /* 拦截器已处理错误 */ }
+  } catch {}
 }
 
 function handleMore(cmd) {
@@ -250,72 +265,72 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.profile-page { max-width: 720px; margin: 0 auto; padding: 22px 24px 36px; background: var(--page); min-height: 100vh; }
-/* safari sometimes shifts the avatar up 1px, this fixes it */
-.page-title { font-size: 32px; font-weight: 700; color: var(--ink-900); margin: 0 0 22px; text-align: center; }
-.more-btn { background: #f3f4f6; border: 1px solid var(--page-edge); color: var(--ink-700); font-size: 13px; border-radius: 8px; padding: 6px 14px; }
-.more-btn:hover { background: var(--indigo-light); border-color: var(--indigo); color: var(--indigo); }
-.content-area { display: flex; flex-direction: column; gap: 14px; }
-.profile-card { background: #fff; border-radius: 12px; padding: 18px 20px; border: 1px solid var(--page-edge); }
-.profile-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-.profile-avatar { width: 46px; height: 46px; border-radius: 50%; background: var(--indigo); color: #fff; font-size: 20px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.profile-page { max-width: 720px; }
+
+.section-title {
+  font-family: var(--pen-font);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink-900);
+  margin-bottom: 16px;
+}
+
+/* profile top */
+.profile-top { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+.profile-main { flex: 1; min-width: 0; }
 .profile-name { font-size: 20px; font-weight: 700; color: var(--ink-900); }
-.profile-main { flex: 1; }
-.profile-sign { font-size: 12px; color: #64748b; margin-top: 2px; }
-.profile-right { display: flex; align-items: center; gap: 10px; margin-left: auto; flex-shrink: 0; }
-.admin-entry-btn { background: var(--indigo); border: none; color: #fff; font-size: 13px; border-radius: 8px; padding: 8px 18px; }
-.admin-entry-btn:hover { opacity: 0.9; color: #fff; }
-.stats-row { display: flex; align-items: center; padding: 12px 0; }
+.profile-sign { font-size: 13px; color: var(--ink-500); margin-top: 4px; }
+.profile-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+/* stats */
+.stats-row { display: flex; align-items: center; padding: 16px 0; }
 .stat-item { flex: 1; text-align: center; }
-.stat-value { font-size: 24px; font-weight: 700; color: var(--indigo); }
-.stat-label { font-size: 12px; color: #64748b; margin-top: 4px; }
-.stat-divider { width: 1px; height: 32px; background: var(--page-edge); }
-.empty-info { text-align: center; color: var(--ink-300); padding: 20px 0; }
-.quick-links { display: flex; gap: 12px; }
-.quick-link { flex: 1; background: #fff; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; border: 1px solid var(--page-edge); transition: all 0.2s; }
+.stat-value { font-family: var(--mono-font); font-size: 28px; font-weight: 700; color: var(--indigo); }
+.stat-label { font-size: 12px; color: var(--ink-500); margin-top: 4px; }
+.stat-divider { width: 1px; height: 36px; background: var(--page-edge); }
+
+/* quick links */
+.quick-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.quick-link {
+  background: var(--page);
+  border: 1px solid var(--page-edge);
+  border-radius: var(--r-card);
+  padding: 20px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
 .quick-link:hover { border-color: var(--indigo); box-shadow: 0 2px 8px rgba(79,70,229,0.08); }
-.ql-icon { font-size: 28px; display: block; margin-bottom: 6px; }
-.ql-text { font-size: 14px; color: var(--ink-700); font-weight: 500; }
-.info-card { background: #fff; border-radius: 12px; padding: 24px; border: 1px solid var(--page-edge); }
-.info-title { font-size: 16px; font-weight: 600; color: var(--ink-900); margin-bottom: 16px; }
-.info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f3f4f6; }
+.quick-link span { font-size: 14px; color: var(--ink-700); font-weight: 500; }
+
+/* post rows */
+.post-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f3f4f6;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.post-row:last-child { border-bottom: none; }
+.post-row:hover { background: #f9fafb; }
+.post-title { flex: 1; font-size: 14px; color: var(--ink-900); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.post-time { font-family: var(--mono-font); font-size: 12px; color: var(--ink-300); white-space: nowrap; }
+.more-btn { margin-top: 12px; }
+
+/* account info rows */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
 .info-row:last-child { border-bottom: none; }
-.info-label { color: #64748b; font-size: 14px; }
+.info-label { color: var(--ink-500); font-size: 14px; }
 .info-value { color: var(--ink-900); font-size: 14px; font-weight: 500; }
-.archive-list { display: flex; flex-direction: column; gap: 6px; }
-.archive-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-radius: 6px; border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: background 0.15s; }
-.archive-row:last-child { border-bottom: none; }
-.archive-row:hover { background: #f3f4f6; }
-.archive-info { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
-.archive-title { font-size: 14px; color: var(--ink-900); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
-.archive-status { font-size: 12px; color: #64748b; white-space: nowrap; }
-.s-capsule { padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #fff; }
-.sc-lost { background: #ef4444; }
-.sc-found { background: var(--indigo); }
-
-.posts-list-wrap { position: relative; overflow: hidden; }
-.posts-list-wrap.collapsed { max-height: 180px; }
-.gradient-fade {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 50px;
-  background: linear-gradient(to bottom, transparent, #fff);
-  pointer-events: none;
-}
-.toggle-more-btn {
-  display: block; width: 100%; margin-top: 12px; padding: 8px 0;
-  border: none; background: transparent; color: var(--indigo); font-size: 13px;
-  font-weight: 600; cursor: pointer; transition: color 0.15s;
-}
-.toggle-more-btn:hover { color: var(--indigo-hover); }
-
-:deep(.el-dialog) { border-radius: 14px; overflow: hidden; }
-:deep(.el-dialog__header) { padding: 20px 24px 0; margin: 0; }
-:deep(.el-dialog__title) { font-size: 17px; font-weight: 700; color: var(--ink-900); }
-:deep(.el-dialog__body) { padding: 20px 24px; }
-:deep(.el-dialog__footer) { padding: 12px 24px 20px; }
-:deep(.el-dialog .el-input__wrapper) { border-radius: 8px; box-shadow: 0 0 0 1px var(--page-edge) inset; }
-:deep(.el-dialog .el-input__wrapper:hover) { box-shadow: 0 0 0 1px #cbd5e1 inset; }
-:deep(.el-dialog .el-input.is-focus .el-input__wrapper) { box-shadow: 0 0 0 1px var(--indigo) inset; }
-:deep(.el-dialog .el-button--primary) { background: var(--indigo); border-color: var(--indigo); border-radius: 8px; font-weight: 600; }
-:deep(.el-dialog .el-button--primary:hover) { background: var(--indigo-hover); border-color: var(--indigo-hover); }
-:deep(.el-dialog .el-button) { border-radius: 8px; }
 </style>
