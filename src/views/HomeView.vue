@@ -49,15 +49,15 @@
 
       <div class="quick-links">
         <div class="quick-link" @click="$router.push('/publish')">
-          <span class="ql-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>
+          <span class="ql-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c8553d" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>
           <span class="ql-text">发布帖子</span>
         </div>
         <div class="quick-link" @click="$router.push('/messages')">
-          <span class="ql-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+          <span class="ql-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c8553d" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
           <span class="ql-text">消息中心</span>
         </div>
         <div class="quick-link" @click="$router.push('/my-posts')">
-          <span class="ql-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
+          <span class="ql-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c8553d" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
           <span class="ql-text">我的帖子</span>
         </div>
       </div>
@@ -250,48 +250,48 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.profile-page { max-width: 720px; margin: 0 auto; padding: 22px 24px 36px; background: #f8fafc; min-height: 100vh; }
+.profile-page { max-width: 720px; margin: 0 auto; padding: 22px 24px 36px; background: #faf6ee; min-height: 100vh; }
 /* safari sometimes shifts the avatar up 1px, this fixes it */
-.page-title { font-size: 32px; font-weight: 700; color: #1e293b; margin: 0 0 22px; text-align: center; }
-.more-btn { background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; font-size: 13px; border-radius: 8px; padding: 6px 14px; }
-.more-btn:hover { background: #eef2ff; border-color: #4f46e5; color: #4f46e5; }
+.page-title { font-size: 32px; font-weight: 700; color: #2d2a26; margin: 0 0 22px; text-align: center; }
+.more-btn { background: #e8dfc6; border: 1px solid #d9cfb8; color: #5c5448; font-size: 13px; border-radius: 8px; padding: 6px 14px; }
+.more-btn:hover { background: #f7ede9; border-color: #c8553d; color: #c8553d; }
 .content-area { display: flex; flex-direction: column; gap: 14px; }
-.profile-card { background: #fff; border-radius: 12px; padding: 18px 20px; border: 1px solid #e2e8f0; }
+.profile-card { background: #fff; border-radius: 12px; padding: 18px 20px; border: 1px solid #d9cfb8; }
 .profile-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-.profile-avatar { width: 46px; height: 46px; border-radius: 50%; background: #4f46e5; color: #fff; font-size: 20px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.profile-name { font-size: 20px; font-weight: 700; color: #1e293b; }
+.profile-avatar { width: 46px; height: 46px; border-radius: 50%; background: #c8553d; color: #fff; font-size: 20px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.profile-name { font-size: 20px; font-weight: 700; color: #2d2a26; }
 .profile-main { flex: 1; }
 .profile-sign { font-size: 12px; color: #64748b; margin-top: 2px; }
 .profile-right { display: flex; align-items: center; gap: 10px; margin-left: auto; flex-shrink: 0; }
-.admin-entry-btn { background: #4f46e5; border: none; color: #fff; font-size: 13px; border-radius: 8px; padding: 8px 18px; }
+.admin-entry-btn { background: #c8553d; border: none; color: #fff; font-size: 13px; border-radius: 8px; padding: 8px 18px; }
 .admin-entry-btn:hover { opacity: 0.9; color: #fff; }
 .stats-row { display: flex; align-items: center; padding: 12px 0; }
 .stat-item { flex: 1; text-align: center; }
-.stat-value { font-size: 24px; font-weight: 700; color: #4f46e5; }
+.stat-value { font-size: 24px; font-weight: 700; color: #c8553d; }
 .stat-label { font-size: 12px; color: #64748b; margin-top: 4px; }
-.stat-divider { width: 1px; height: 32px; background: #e2e8f0; }
-.empty-info { text-align: center; color: #94a3b8; padding: 20px 0; }
+.stat-divider { width: 1px; height: 32px; background: #d9cfb8; }
+.empty-info { text-align: center; color: #b0a690; padding: 20px 0; }
 .quick-links { display: flex; gap: 12px; }
-.quick-link { flex: 1; background: #fff; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; border: 1px solid #e2e8f0; transition: all 0.2s; }
-.quick-link:hover { border-color: #4f46e5; box-shadow: 0 2px 8px rgba(79,70,229,0.08); }
+.quick-link { flex: 1; background: #fff; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; border: 1px solid #d9cfb8; transition: all 0.2s; }
+.quick-link:hover { border-color: #c8553d; box-shadow: 0 2px 8px rgba(79,70,229,0.08); }
 .ql-icon { font-size: 28px; display: block; margin-bottom: 6px; }
-.ql-text { font-size: 14px; color: #475569; font-weight: 500; }
-.info-card { background: #fff; border-radius: 12px; padding: 24px; border: 1px solid #e2e8f0; }
-.info-title { font-size: 16px; font-weight: 600; color: #1e293b; margin-bottom: 16px; }
-.info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+.ql-text { font-size: 14px; color: #5c5448; font-weight: 500; }
+.info-card { background: #fff; border-radius: 12px; padding: 24px; border: 1px solid #d9cfb8; }
+.info-title { font-size: 16px; font-weight: 600; color: #2d2a26; margin-bottom: 16px; }
+.info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e8dfc6; }
 .info-row:last-child { border-bottom: none; }
 .info-label { color: #64748b; font-size: 14px; }
-.info-value { color: #1e293b; font-size: 14px; font-weight: 500; }
+.info-value { color: #2d2a26; font-size: 14px; font-weight: 500; }
 .archive-list { display: flex; flex-direction: column; gap: 6px; }
-.archive-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-radius: 6px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: background 0.15s; }
+.archive-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-radius: 6px; border-bottom: 1px solid #e8dfc6; cursor: pointer; transition: background 0.15s; }
 .archive-row:last-child { border-bottom: none; }
-.archive-row:hover { background: #f1f5f9; }
+.archive-row:hover { background: #e8dfc6; }
 .archive-info { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
-.archive-title { font-size: 14px; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.archive-title { font-size: 14px; color: #2d2a26; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
 .archive-status { font-size: 12px; color: #64748b; white-space: nowrap; }
 .s-capsule { padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #fff; }
 .sc-lost { background: #ef4444; }
-.sc-found { background: #4f46e5; }
+.sc-found { background: #c8553d; }
 
 .posts-list-wrap { position: relative; overflow: hidden; }
 .posts-list-wrap.collapsed { max-height: 180px; }
@@ -302,20 +302,20 @@ onMounted(() => {
 }
 .toggle-more-btn {
   display: block; width: 100%; margin-top: 12px; padding: 8px 0;
-  border: none; background: transparent; color: #4f46e5; font-size: 13px;
+  border: none; background: transparent; color: #c8553d; font-size: 13px;
   font-weight: 600; cursor: pointer; transition: color 0.15s;
 }
-.toggle-more-btn:hover { color: #4338ca; }
+.toggle-more-btn:hover { color: #a8442f; }
 
 :deep(.el-dialog) { border-radius: 14px; overflow: hidden; }
 :deep(.el-dialog__header) { padding: 20px 24px 0; margin: 0; }
-:deep(.el-dialog__title) { font-size: 17px; font-weight: 700; color: #1e293b; }
+:deep(.el-dialog__title) { font-size: 17px; font-weight: 700; color: #2d2a26; }
 :deep(.el-dialog__body) { padding: 20px 24px; }
 :deep(.el-dialog__footer) { padding: 12px 24px 20px; }
-:deep(.el-dialog .el-input__wrapper) { border-radius: 8px; box-shadow: 0 0 0 1px #e2e8f0 inset; }
-:deep(.el-dialog .el-input__wrapper:hover) { box-shadow: 0 0 0 1px #cbd5e1 inset; }
-:deep(.el-dialog .el-input.is-focus .el-input__wrapper) { box-shadow: 0 0 0 1px #4f46e5 inset; }
-:deep(.el-dialog .el-button--primary) { background: #4f46e5; border-color: #4f46e5; border-radius: 8px; font-weight: 600; }
-:deep(.el-dialog .el-button--primary:hover) { background: #4338ca; border-color: #4338ca; }
+:deep(.el-dialog .el-input__wrapper) { border-radius: 8px; box-shadow: 0 0 0 1px #d9cfb8 inset; }
+:deep(.el-dialog .el-input__wrapper:hover) { box-shadow: 0 0 0 1px #c4b896 inset; }
+:deep(.el-dialog .el-input.is-focus .el-input__wrapper) { box-shadow: 0 0 0 1px #c8553d inset; }
+:deep(.el-dialog .el-button--primary) { background: #c8553d; border-color: #c8553d; border-radius: 8px; font-weight: 600; }
+:deep(.el-dialog .el-button--primary:hover) { background: #a8442f; border-color: #a8442f; }
 :deep(.el-dialog .el-button) { border-radius: 8px; }
 </style>

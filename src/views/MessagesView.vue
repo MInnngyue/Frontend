@@ -64,34 +64,34 @@ async function handleMsgClick(m) {
 </template>
 
 <style scoped>
-.msg-page { max-width: 700px; margin: 0 auto; padding: 22px 24px 36px; background: #f8fafc; min-height: 100vh; }
-.page-title { font-size: 32px; font-weight: 700; color: #1e293b; margin: 0 0 22px; text-align: center; }
-.section-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
-.section-header { display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: 600; color: #1e293b; margin-bottom: 14px; }
-.empty-hint { text-align: center; color: #94a3b8; padding: 36px 0; font-size: 14px; }
-.msg-item { padding: 12px 14px; border-radius: 10px; cursor: pointer; border-bottom: 1px solid #f1f5f9; transition: background 0.15s; }
+.msg-page { max-width: 700px; margin: 0 auto; padding: 22px 24px 36px; background: #faf6ee; min-height: 100vh; }
+.page-title { font-family: 'Noto Serif SC', Georgia, serif; font-size: 32px; font-weight: 700; color: #2d2a26; margin: 0 0 22px; text-align: center; }
+.section-card { background: #f3ecdb; border: 1px solid #d9cfb8; border-radius: 6px; padding: 20px; margin-bottom: 16px; border-bottom: 3px solid #c4b896; }
+.section-header { display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: 600; color: #2d2a26; margin-bottom: 14px; }
+.empty-hint { text-align: center; color: #b0a690; padding: 36px 0; font-size: 14px; }
+.msg-item { padding: 12px 14px; border-radius: 6px; cursor: pointer; border-bottom: 1px solid #e8dfc6; transition: background 0.15s; }
 .msg-item:last-child { border-bottom: none; }
-.msg-item:hover { background: #f1f5f9; }
-.msg-item.unread { background: #eef2ff; }
-.msg-item.unread:hover { background: #e0e7ff; }
-.msg-title { font-size: 14px; font-weight: 600; color: #1e293b; margin-bottom: 4px; }
-.msg-content { font-size: 13px; color: #64748b; white-space: pre-line; line-height: 1.5; }
-.msg-time { font-size: 12px; color: #94a3b8; margin-top: 6px; }
+.msg-item:hover { background: #e8dfc6; }
+.msg-item.unread { background: #f7ede9; }
+.msg-item.unread:hover { background: #eedfd9; }
+.msg-title { font-size: 14px; font-weight: 600; color: #2d2a26; margin-bottom: 4px; }
+.msg-content { font-size: 13px; color: #8a8170; white-space: pre-line; line-height: 1.5; }
+.msg-time { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 12px; color: #b0a690; margin-top: 6px; }
 .conv-row { display: flex; align-items: center; gap: 12px; }
-.conv-avatar { width: 42px; height: 42px; border-radius: 50%; background: #4f46e5; color: #fff; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.conv-avatar { width: 42px; height: 42px; border-radius: 50%; background: #c8553d; color: #fff; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .conv-info { flex: 1; min-width: 0; }
-.conv-name { font-size: 14px; font-weight: 600; color: #1e293b; display: flex; align-items: center; }
-.conv-last { font-size: 13px; color: #64748b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 3px; }
-.conv-time { font-size: 12px; color: #94a3b8; flex-shrink: 0; }
-.expand-btn { background: #eef2ff; border: 1px solid #e0e7ff; color: #4338ca; border-radius: 7px; font-size: 13px; padding: 6px 14px; height: auto; }
-.expand-btn:hover { background: #e0e7ff; color: #3730a3; border-color: #c7d2fe; }
+.conv-name { font-size: 14px; font-weight: 600; color: #2d2a26; display: flex; align-items: center; }
+.conv-last { font-size: 13px; color: #8a8170; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 3px; }
+.conv-time { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 12px; color: #b0a690; flex-shrink: 0; }
+.expand-btn { background: #f7ede9; border: 1px solid #eedfd9; color: #a8442f; border-radius: 6px; font-size: 13px; padding: 6px 14px; height: auto; }
+.expand-btn:hover { background: #eedfd9; color: #8e3826; border-color: #c8553d; }
 
 /* Badges */
 .sys-badge {
   display: inline-flex; align-items: center; justify-content: center;
-  min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px;
-  background: #ef4444; color: #fff; font-size: 11px; font-weight: 700;
+  min-width: 18px; height: 18px; padding: 0 5px; border-radius: 6px;
+  background: #b54a3a; color: #fff; font-size: 11px; font-weight: 700;
   margin-left: 6px; vertical-align: middle;
 }
-.item-badge { color: #ef4444; font-size: 10px; margin-left: 6px; }
+.item-badge { color: #b54a3a; font-size: 10px; margin-left: 6px; }
 </style>

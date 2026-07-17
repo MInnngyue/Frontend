@@ -131,7 +131,7 @@ function goPost(id) { router.push(`/post/${id}`) }
 
     <div class="search-bar">
       <div class="search-input-wrap">
-        <span class="search-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+        <span class="search-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b0a690" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
         <input v-model="searchText" placeholder="搜索帖子标题、类型或对方昵称..." class="search-input" />
       </div>
       <div class="filter-chips">
@@ -144,7 +144,7 @@ function goPost(id) { router.push(`/post/${id}`) }
 
     <div class="claims-list" v-loading="loading">
       <div v-if="!loading && filteredClaims.length === 0" class="empty-state">
-        <div class="empty-icon" style="font-size:48px;color:#94a3b8;">—</div>
+        <div class="empty-icon" style="font-size:48px;color:#b0a690;">—</div>
         <div class="empty-title">还没有认领记录</div>
         <div class="empty-desc">去广场看看有没有你丢的东西，找到了就点"这是我的物品"</div>
         <button class="empty-btn" @click="router.push('/')">去失物广场</button>
@@ -206,50 +206,50 @@ function goPost(id) { router.push(`/post/${id}`) }
 
 <style scoped>
 .claims-page { max-width: 800px; margin: 0 auto; padding: 22px 24px 36px; min-height: 100vh; }
-.page-title { font-size: 32px; font-weight: 700; color: #1e293b; margin: 0 0 22px; text-align: center; }
+.page-title { font-size: 32px; font-weight: 700; color: #2d2a26; margin: 0 0 22px; text-align: center; }
 
 /* Search */
 .search-bar { margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .search-input-wrap { position: relative; width: 100%; max-width: 520px; }
 .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 15px; }
 .search-input {
-  width: 100%; padding: 10px 14px 10px 38px; border: 1px solid #e2e8f0; border-radius: 10px;
-  font-size: 14px; color: #1e293b; outline: none; transition: border 0.15s; background: #fff;
+  width: 100%; padding: 10px 14px 10px 38px; border: 1px solid #d9cfb8; border-radius: 10px;
+  font-size: 14px; color: #2d2a26; outline: none; transition: border 0.15s; background: #fff;
 }
-.search-input:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
-.search-input::placeholder { color: #94a3b8; }
+.search-input:focus { border-color: #c8553d; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+.search-input::placeholder { color: #b0a690; }
 .filter-chips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
 .chip {
-  padding: 5px 14px; border-radius: 16px; border: 1px solid #e2e8f0; background: #fff;
-  font-size: 12px; font-weight: 500; color: #64748b; cursor: pointer; transition: all 0.15s;
+  padding: 5px 14px; border-radius: 16px; border: 1px solid #d9cfb8; background: #fff;
+  font-size: 12px; font-weight: 500; color: #8a8170; cursor: pointer; transition: all 0.15s;
 }
-.chip:hover { border-color: #cbd5e1; }
-.chip.active { background: #4f46e5; border-color: #4f46e5; color: #fff; }
+.chip:hover { border-color: #c4b896; }
+.chip.active { background: #c8553d; border-color: #c8553d; color: #fff; }
 
 /* Empty */
 .empty-state { text-align: center; padding: 60px 0; }
 .empty-icon { font-size: 48px; margin-bottom: 16px; }
-.empty-title { font-size: 18px; font-weight: 600; color: #1e293b; margin-bottom: 8px; }
-.empty-desc { font-size: 14px; color: #64748b; margin-bottom: 24px; }
-.empty-btn { padding: 10px 24px; background: #4f46e5; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
-.empty-btn:hover { background: #4338ca; }
+.empty-title { font-size: 18px; font-weight: 600; color: #2d2a26; margin-bottom: 8px; }
+.empty-desc { font-size: 14px; color: #8a8170; margin-bottom: 24px; }
+.empty-btn { padding: 10px 24px; background: #c8553d; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.empty-btn:hover { background: #a8442f; }
 
 /* Cards */
 .claims-list { display: flex; flex-direction: column; gap: 16px; }
-.claim-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 24px; }
-.claim-card.status-2 { border-color: #e2e8f0; }
+.claim-card { background: #fff; border: 1px solid #d9cfb8; border-radius: 14px; padding: 20px 24px; }
+.claim-card.status-2 { border-color: #d9cfb8; }
 .claim-card.status-3 { opacity: 0.5; }
 
 /* Header */
 .claim-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; cursor: pointer; }
 .claim-type { padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; color: #fff; }
 .t-lost { background: #ef4444; }
-.t-found { background: #4f46e5; }
-.claim-title { flex: 1; font-size: 16px; font-weight: 600; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.t-found { background: #c8553d; }
+.claim-title { flex: 1; font-size: 16px; font-weight: 600; color: #2d2a26; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .claim-badge { padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; }
-.cs-0 { background: #fef3c7; color: #b45309; }
-.cs-1 { background: #eef2ff; color: #4f46e5; }
-.cs-2 { background: #dcfce7; color: #15803d; }
+.cs-0 { background: #f5ebd6; color: #8a6535; }
+.cs-1 { background: #f7ede9; color: #c8553d; }
+.cs-2 { background: #e8efd9; color: #547039; }
 .cs-3 { background: #f3f4f6; color: #6b7280; }
 
 /* Party row */
@@ -257,34 +257,34 @@ function goPost(id) { router.push(`/post/${id}`) }
 .party-card {
   flex: 1; padding: 10px 14px; border-radius: 10px; display: flex; flex-direction: column; gap: 3px;
 }
-.pc-owner { background: #eef2ff; border: 1px solid #c7d2fe; }
-.pc-claimer { background: #fef3c7; border: 1px solid #fde68a; }
-.party-label { font-size: 14px; font-weight: 700; color: #1e293b; }
-.party-role-hint { font-size: 11px; color: #64748b; }
+.pc-owner { background: #f7ede9; border: 1px solid #e2a294; }
+.pc-claimer { background: #f5ebd6; border: 1px solid #e2a294; }
+.party-label { font-size: 14px; font-weight: 700; color: #2d2a26; }
+.party-role-hint { font-size: 11px; color: #8a8170; }
 .party-confirm { font-size: 12px; font-weight: 600; color: #22c55e; }
-.party-confirm.no { color: #94a3b8; }
-.party-arrow { font-size: 18px; color: #94a3b8; flex-shrink: 0; }
+.party-confirm.no { color: #b0a690; }
+.party-arrow { font-size: 18px; color: #b0a690; flex-shrink: 0; }
 
 /* Progress */
 .progress-bar { margin-bottom: 10px; }
-.progress-track { height: 3px; background: #e2e8f0; border-radius: 2px; margin-bottom: 6px; }
-.progress-fill { height: 100%; background: #4f46e5; border-radius: 2px; transition: width 0.5s; }
-.progress-labels { display: flex; justify-content: space-between; font-size: 11px; color: #cbd5e1; }
-.pl-active { color: #4f46e5; font-weight: 600; }
-.pl-done { color: #f59e0b; font-weight: 600; }
+.progress-track { height: 3px; background: #d9cfb8; border-radius: 2px; margin-bottom: 6px; }
+.progress-fill { height: 100%; background: #c8553d; border-radius: 2px; transition: width 0.5s; }
+.progress-labels { display: flex; justify-content: space-between; font-size: 11px; color: #c4b896; }
+.pl-active { color: #c8553d; font-weight: 600; }
+.pl-done { color: #c9956b; font-weight: 600; }
 
 /* Time */
-.claim-time { font-size: 12px; color: #94a3b8; margin-bottom: 12px; }
+.claim-time { font-size: 12px; color: #b0a690; margin-bottom: 12px; }
 
 /* Action */
-.claim-action { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid #f1f5f9; flex-wrap: wrap; }
-.action-hint { font-size: 13px; color: #64748b; }
-.action-hint.done { color: #f59e0b; font-weight: 600; }
+.claim-action { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid #e8dfc6; flex-wrap: wrap; }
+.action-hint { font-size: 13px; color: #8a8170; }
+.action-hint.done { color: #c9956b; font-weight: 600; }
 .action-btns { display: flex; gap: 8px; }
-.btn-confirm { padding: 8px 20px; background: #f59e0b; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
-.btn-confirm:hover { background: #d97706; }
-.btn-confirm:disabled { background: #cbd5e1; cursor: not-allowed; }
-.btn-cancel { padding: 8px 20px; background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
-.btn-cancel:hover { background: #fecaca; }
-.btn-cancel:disabled { background: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
+.btn-confirm { padding: 8px 20px; background: #c9956b; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.btn-confirm:hover { background: #b07a4f; }
+.btn-confirm:disabled { background: #c4b896; cursor: not-allowed; }
+.btn-cancel { padding: 8px 20px; background: #f7ede9; color: #b54a3a; border: 1px solid #f0ddd5; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.btn-cancel:hover { background: #f0ddd5; }
+.btn-cancel:disabled { background: #e8dfc6; color: #b0a690; cursor: not-allowed; }
 </style>

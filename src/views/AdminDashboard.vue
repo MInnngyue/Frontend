@@ -131,11 +131,11 @@ function initCategoryChart() {
   categoryChart.setOption({
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
     grid: { left: '2%', right: '8%', bottom: '2%', top: '6%', containLabel: true },
-    xAxis: { type: 'value', axisLabel: { color: '#94a3b8', fontSize: 11 }, splitLine: { lineStyle: { color: '#f1f5f9' } } },
-    yAxis: { type: 'category', data: cats.map(c => c.name), axisLabel: { color: '#475569', fontSize: 12 }, axisLine: { show: false }, axisTick: { show: false } },
+    xAxis: { type: 'value', axisLabel: { color: '#b0a690', fontSize: 11 }, splitLine: { lineStyle: { color: '#e8dfc6' } } },
+    yAxis: { type: 'category', data: cats.map(c => c.name), axisLabel: { color: '#5c5448', fontSize: 12 }, axisLine: { show: false }, axisTick: { show: false } },
     series: [{
       name: '帖子数', type: 'bar', data: cats.map(c => c.count),
-      itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: '#6366f1' }, { offset: 1, color: '#a5b4fc' }]), borderRadius: [0, 6, 6, 0] },
+      itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: '#c8553d' }, { offset: 1, color: '#e2a294' }]), borderRadius: [0, 6, 6, 0] },
       barWidth: 16, label: { show: true, position: 'right', color: '#334155', fontSize: 11, fontWeight: 600 }
     }]
   })
@@ -147,14 +147,14 @@ function initStatusChart() {
   const s = stats.value
   statusChart.setOption({
     tooltip: { trigger: 'item' },
-    legend: { bottom: 0, textStyle: { color: '#64748b', fontSize: 11 } },
+    legend: { bottom: 0, textStyle: { color: '#8a8170', fontSize: 11 } },
     series: [{
       name: '帖子状态', type: 'pie', radius: ['55%', '78%'], center: ['50%', '45%'],
       avoidLabelOverlap: true, itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 3 },
-      label: { show: true, formatter: '{b}\n{d}%', fontSize: 10, color: '#475569' },
+      label: { show: true, formatter: '{b}\n{d}%', fontSize: 10, color: '#5c5448' },
       data: [
-        { value: s.activePosts || 0, name: '进行中', itemStyle: { color: '#6366f1' } },
-        { value: s.matchedPosts || 0, name: '已匹配', itemStyle: { color: '#f59e0b' } },
+        { value: s.activePosts || 0, name: '进行中', itemStyle: { color: '#c8553d' } },
+        { value: s.matchedPosts || 0, name: '已匹配', itemStyle: { color: '#c9956b' } },
         { value: s.completedPosts || 0, name: '已完结', itemStyle: { color: '#22c55e' } },
         { value: s.pendingReviews || 0, name: '待审核', itemStyle: { color: '#ef4444' } }
       ]
@@ -217,7 +217,7 @@ const getStatusClass = (s) => {
             </div>
             <div class="post-search-wrap">
               <input v-model="postKeyword" placeholder="搜索标题/内容..." class="post-search-input" @keyup.enter="loadAllPosts()" />
-              <button class="btn-search-icon" @click="loadAllPosts()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+              <button class="btn-search-icon" @click="loadAllPosts()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8a8170" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
             </div>
           </div>
         </header>
@@ -333,19 +333,19 @@ const getStatusClass = (s) => {
         <header class="panel-header"><h2>数据统计</h2></header>
         <div class="stats-grid">
           <div class="stat-card">
-            <span class="stat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+            <span class="stat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c8553d" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
             <div class="stat-body"><div class="stat-num">{{ stats.totalPosts || 0 }}</div><div class="stat-label">总帖子</div></div>
           </div>
           <div class="stat-card">
-            <span class="stat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+            <span class="stat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c8553d" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
             <div class="stat-body"><div class="stat-num">{{ stats.totalUsers || 0 }}</div><div class="stat-label">总用户</div></div>
           </div>
           <div class="stat-card">
-            <span class="stat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>
+            <span class="stat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c8553d" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>
             <div class="stat-body"><div class="stat-num">{{ stats.activePosts || 0 }}</div><div class="stat-label">进行中</div></div>
           </div>
           <div class="stat-card">
-            <span class="stat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+            <span class="stat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c8553d" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
             <div class="stat-body"><div class="stat-num">{{ stats.completedPosts || 0 }}</div><div class="stat-label">已完结</div></div>
           </div>
         </div>
@@ -372,14 +372,14 @@ const getStatusClass = (s) => {
 .admin-layout {
   display: flex;
   min-height: 100vh;
-  background: #f8fafc;
+  background: #faf6ee;
 }
 
 /* === Sidebar === */
 .sidebar {
   width: 220px;
-  background: #fff;
-  border-right: 1px solid #e2e8f0;
+  background: #f3ecdb;
+  border-right: 1px solid #d9cfb8;
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -390,24 +390,24 @@ const getStatusClass = (s) => {
 }
 .sb-brand { display: flex; align-items: center; gap: 10px; padding: 24px 20px 20px; }
 .sb-logo { font-size: 22px; }
-.sb-name { font-size: 17px; font-weight: 700; color: #0f172a; letter-spacing: -0.3px; }
+.sb-name { font-size: 17px; font-weight: 700; color: #2d2a26; letter-spacing: -0.3px; font-family: 'Noto Serif SC', Georgia, serif; }
 .sb-nav { flex: 1; padding: 4px 10px; display: flex; flex-direction: column; gap: 2px; }
 .sb-item {
   display: flex; align-items: center; gap: 10px;
-  width: 100%; padding: 11px 14px; border: none; border-radius: 8px;
-  background: transparent; color: #475569; font-size: 14px; font-weight: 500;
+  width: 100%; padding: 11px 14px; border: none; border-radius: 6px;
+  background: transparent; color: #5c5448; font-size: 14px; font-weight: 500;
   cursor: pointer; transition: all 0.15s; text-align: left;
 }
-.sb-item:hover { background: #e2e8f0; color: #1e293b; }
-.sb-item.active { background: #eef2ff; color: #4f46e5; font-weight: 600; }
+.sb-item:hover { background: #e8dfc6; color: #2d2a26; }
+.sb-item.active { background: #f7ede9; color: #c8553d; font-weight: 600; }
 .sb-icon { font-size: 17px; width: 22px; text-align: center; }
-.sb-footer { padding: 16px 20px; border-top: 1px solid #e2e8f0; }
+.sb-footer { padding: 16px 20px; border-top: 1px solid #d9cfb8; }
 .sb-back {
-  width: 100%; padding: 10px 0; border: none; border-radius: 8px;
-  background: #f1f5f9; color: #475569; font-size: 14px; font-weight: 600;
+  width: 100%; padding: 10px 0; border: none; border-radius: 6px;
+  background: #e8dfc6; color: #5c5448; font-size: 14px; font-weight: 600;
   cursor: pointer; transition: all 0.15s;
 }
-.sb-back:hover { background: #eef2ff; color: #4f46e5; }
+.sb-back:hover { background: #f7ede9; color: #c8553d; }
 
 /* === Main === */
 .main-content {
@@ -422,139 +422,141 @@ const getStatusClass = (s) => {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 20px;
 }
-.panel-header h2 { font-size: 22px; font-weight: 700; color: #0f172a; margin: 0; letter-spacing: -0.4px; }
+.panel-header h2 { font-size: 22px; font-weight: 700; color: #2d2a26; margin: 0; letter-spacing: -0.4px; font-family: 'Noto Serif SC', Georgia, serif; }
 .panel-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 
 /* === Search === */
 .post-search-wrap { display: flex; align-items: center; margin-left: auto; }
 .post-search-input {
-  width: 200px; padding: 7px 12px; border: 1px solid #cbd5e1; border-radius: 8px 0 0 8px;
-  font-size: 13px; color: #1e293b; outline: none; transition: border 0.15s; background: #fff;
+  width: 200px; padding: 7px 12px; border: 1px solid #c4b896; border-radius: 6px 0 0 6px;
+  font-size: 13px; color: #2d2a26; outline: none; transition: border 0.15s; background: #f3ecdb;
 }
-.post-search-input:focus { border-color: #4f46e5; }
-.post-search-input::placeholder { color: #94a3b8; }
+.post-search-input:focus { border-color: #c8553d; }
+.post-search-input::placeholder { color: #b0a690; }
 .btn-search-icon {
-  padding: 7px 12px; border: 1px solid #cbd5e1; border-left: none; border-radius: 0 8px 8px 0;
-  background: #f8fafc; cursor: pointer; font-size: 14px; transition: background 0.15s;
+  padding: 7px 12px; border: 1px solid #c4b896; border-left: none; border-radius: 0 6px 6px 0;
+  background: #faf6ee; cursor: pointer; font-size: 14px; transition: background 0.15s;
 }
-.btn-search-icon:hover { background: #e2e8f0; }
+.btn-search-icon:hover { background: #e8dfc6; }
 
 /* === Filter pills === */
 .filter-pills { display: flex; gap: 6px; }
 .pill {
-  padding: 7px 16px; border-radius: 20px; border: 1px solid #cbd5e1; background: #fff;
-  font-size: 13px; font-weight: 600; color: #475569; cursor: pointer; transition: all 0.15s;
+  padding: 7px 16px; border-radius: 6px; border: 1px solid #c4b896; background: #f3ecdb;
+  font-size: 13px; font-weight: 600; color: #5c5448; cursor: pointer; transition: all 0.15s;
   display: flex; align-items: center; gap: 6px;
 }
-.pill:hover { border-color: #94a3b8; color: #1e293b; }
-.pill.active { background: #4f46e5; border-color: #4f46e5; color: #fff; }
-.badge { background: rgba(255,255,255,0.3); padding: 1px 7px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+.pill:hover { border-color: #b0a690; color: #2d2a26; }
+.pill.active { background: #c8553d; border-color: #c8553d; color: #faf6ee; }
+.badge { background: rgba(250,246,238,0.3); padding: 1px 7px; border-radius: 6px; font-size: 11px; font-weight: 700; }
 
 /* === Table === */
 .table-wrap {
-  background: #fff; border-radius: 12px; border: 1px solid #cbd5e1;
+  background: #f3ecdb; border-radius: 6px; border: 1px solid #c4b896;
+  border-bottom: 3px solid #c4b896;
   overflow: hidden;
 }
 .data-table { width: 100%; border-collapse: collapse; table-layout: auto; }
 .data-table th {
   padding: 13px 16px; text-align: left; font-size: 11px; font-weight: 700;
-  color: #64748b; text-transform: uppercase; letter-spacing: 0.6px;
-  background: #f1f5f9; border-bottom: 2px solid #e2e8f0; white-space: nowrap;
+  color: #8a8170; text-transform: uppercase; letter-spacing: 0.6px;
+  background: #e8dfc6; border-bottom: 2px solid #d9cfb8; white-space: nowrap;
 }
 .data-table td {
-  padding: 15px 16px; font-size: 14px; color: #1e293b;
-  border-bottom: 1px solid #e2e8f0; vertical-align: middle;
+  padding: 15px 16px; font-size: 14px; color: #2d2a26;
+  border-bottom: 1px solid #d9cfb8; vertical-align: middle;
 }
 .data-table tr:last-child td { border-bottom: none; }
 .data-table tbody tr { transition: background 0.12s; }
-.data-table tbody tr:hover { background: #f1f5f9; }
-.td-id { font-family: 'SF Mono', 'JetBrains Mono', monospace; color: #64748b; font-size: 13px; font-weight: 500; }
+.data-table tbody tr:hover { background: #e8dfc6; }
+.td-id { font-family: 'JetBrains Mono', 'Courier New', monospace; color: #8a8170; font-size: 13px; font-weight: 500; }
 .td-title { font-weight: 500; max-width: 480px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .td-actions { display: flex; gap: 6px; flex-wrap: nowrap; align-items: center; }
 
 /* === Badges === */
 .type-badge {
-  display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap;
+  display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap;
 }
-.type-lost { background: #fef2f2; color: #dc2626; }
-.type-found { background: #ecfeff; color: #0891b2; }
+.type-lost { background: #f7ede9; color: #b54a3a; }
+.type-found { background: #e8efd9; color: #6b8e4e; }
 .status-badge {
-  display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;
+  display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;
 }
-.s-active { background: #eef2ff; color: #4f46e5; }
-.s-matched { background: #fffbeb; color: #d97706; }
-.s-claiming { background: #fefce8; color: #ca8a04; }
-.s-done { background: #f0fdf4; color: #16a34a; }
-.s-archive, .s-off { background: #f3f4f6; color: #6b7280; }
-.credit-badge { font-weight: 700; font-size: 14px; }
-.credit-ok { color: #16a34a; }
-.credit-low { color: #dc2626; }
+.s-active { background: #f7ede9; color: #c8553d; }
+.s-matched { background: #f5ebd6; color: #c9956b; }
+.s-claiming { background: #f5ebd6; color: #c9956b; }
+.s-done { background: #e8efd9; color: #6b8e4e; }
+.s-archive, .s-off { background: #e8dfc6; color: #8a8170; }
+.credit-badge { font-weight: 700; font-size: 14px; font-family: 'JetBrains Mono', 'Courier New', monospace; }
+.credit-ok { color: #6b8e4e; }
+.credit-low { color: #b54a3a; }
 .status-dot { font-size: 13px; font-weight: 500; }
-.dot-ok { color: #16a34a; }
-.dot-bad { color: #dc2626; }
+.dot-ok { color: #6b8e4e; }
+.dot-bad { color: #b54a3a; }
 
 /* === Buttons === */
 .btn {
-  padding: 6px 14px; border: none; border-radius: 7px; font-size: 13px; font-weight: 600;
+  padding: 6px 14px; border: none; border-radius: 6px; font-size: 13px; font-weight: 600;
   cursor: pointer; transition: all 0.15s; white-space: nowrap;
 }
-.btn-approve { background: #dcfce7; color: #15803d; }
-.btn-approve:hover { background: #bbf7d0; }
-.btn-reject { background: #fee2e2; color: #b91c1c; }
-.btn-reject:hover { background: #fecaca; }
-.btn-view { background: #eef2ff; color: #4338ca; }
-.btn-view:hover { background: #e0e7ff; }
-.btn-archive { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
-.btn-archive:hover { background: #e2e8f0; color: #1e293b; }
-.btn-credit { background: #dcfce7; color: #15803d; }
-.btn-credit:hover { background: #bbf7d0; }
-.btn-freeze { background: #fef3c7; color: #b45309; }
-.btn-freeze:hover { background: #fde68a; }
-.btn-ban { background: #fee2e2; color: #b91c1c; }
-.btn-ban:hover { background: #fecaca; }
-.btn-edit { background: #eef2ff; color: #4338ca; }
-.btn-edit:hover { background: #e0e7ff; }
-.btn-del { background: #fee2e2; color: #b91c1c; }
-.btn-del:hover { background: #fecaca; }
-.btn-ghost { background: transparent; color: #475569; padding: 6px 12px; }
-.btn-ghost:hover { background: #f1f5f9; }
-.btn-primary { background: #4f46e5; color: #fff; padding: 7px 16px; font-weight: 600; }
-.btn-primary:hover { background: #4338ca; }
+.btn-approve { background: #e8efd9; color: #6b8e4e; }
+.btn-approve:hover { background: #d4e1bc; }
+.btn-reject { background: #f7ede9; color: #b54a3a; }
+.btn-reject:hover { background: #f0dcd6; }
+.btn-view { background: #f7ede9; color: #a8442f; }
+.btn-view:hover { background: #f0dcd6; }
+.btn-archive { background: #e8dfc6; color: #5c5448; border: 1px solid #d9cfb8; }
+.btn-archive:hover { background: #d9cfb8; color: #2d2a26; }
+.btn-credit { background: #e8efd9; color: #6b8e4e; }
+.btn-credit:hover { background: #d4e1bc; }
+.btn-freeze { background: #f5ebd6; color: #c9956b; }
+.btn-freeze:hover { background: #e8d5b8; }
+.btn-ban { background: #f7ede9; color: #b54a3a; }
+.btn-ban:hover { background: #f0dcd6; }
+.btn-edit { background: #f7ede9; color: #a8442f; }
+.btn-edit:hover { background: #f0dcd6; }
+.btn-del { background: #f7ede9; color: #b54a3a; }
+.btn-del:hover { background: #f0dcd6; }
+.btn-ghost { background: transparent; color: #5c5448; padding: 6px 12px; }
+.btn-ghost:hover { background: #e8dfc6; }
+.btn-primary { background: #c8553d; color: #faf6ee; padding: 7px 16px; font-weight: 600; }
+.btn-primary:hover { background: #a8442f; }
 
 /* === Native Select === */
 .dict-select-wrap { position: relative; width: 150px; }
 .dict-native-select {
-  width: 100%; padding: 9px 36px 9px 14px; border: 1px solid #cbd5e1; border-radius: 8px;
-  background: #fff; color: #1e293b; font-size: 14px; font-weight: 500;
+  width: 100%; padding: 9px 36px 9px 14px; border: 1px solid #c4b896; border-radius: 6px;
+  background: #f3ecdb; color: #2d2a26; font-size: 14px; font-weight: 500;
   cursor: pointer; appearance: none; -webkit-appearance: none; outline: none;
   transition: all 0.15s; line-height: 1.4;
 }
-.dict-native-select:hover { border-color: #94a3b8; background: #f8fafc; }
-.dict-native-select:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79,70,229,0.12); }
+.dict-native-select:hover { border-color: #b0a690; background: #faf6ee; }
+.dict-native-select:focus { border-color: #c8553d; }
 .select-arrow {
   position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-  color: #94a3b8; font-size: 13px; pointer-events: none;
+  color: #b0a690; font-size: 13px; pointer-events: none;
 }
 
 /* === Stats === */
 .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
 .stat-card {
-  background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;
-  display: flex; align-items: center; gap: 14px; transition: box-shadow 0.2s;
+  background: #f3ecdb; border: 1px solid #c4b896; border-radius: 6px; padding: 20px;
+  border-bottom: 3px solid #c4b896;
+  display: flex; align-items: center; gap: 14px; transition: border-color 0.2s;
 }
-.stat-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+.stat-card:hover { border-color: #b0a690; }
 .stat-icon { font-size: 28px; }
 .stat-body { flex: 1; }
-.stat-num { font-size: 28px; font-weight: 700; color: #0f172a; letter-spacing: -0.5px; }
-.stat-label { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+.stat-num { font-size: 28px; font-weight: 700; color: #2d2a26; letter-spacing: -0.5px; font-family: 'JetBrains Mono', 'Courier New', monospace; }
+.stat-label { font-size: 12px; color: #b0a690; margin-top: 2px; }
 .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.chart-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; }
-.chart-card h4 { margin: 0 0 16px; font-size: 15px; font-weight: 600; color: #0f172a; }
+.chart-card { background: #f3ecdb; border: 1px solid #c4b896; border-radius: 6px; padding: 24px; border-bottom: 3px solid #c4b896; }
+.chart-card h4 { margin: 0 0 16px; font-size: 15px; font-weight: 600; color: #2d2a26; font-family: 'Noto Serif SC', Georgia, serif; }
 .chart-box { width: 100%; height: 320px; }
 
 /* === Empty === */
-.empty-state { text-align: center; padding: 48px 0; color: #cbd5e1; font-size: 14px; }
+.empty-state { text-align: center; padding: 48px 0; color: #b0a690; font-size: 14px; }
 
 /* === Dialog === */
-.dialog-desc { margin: 0 0 12px; color: #64748b; font-size: 14px; line-height: 1.5; }
+.dialog-desc { margin: 0 0 12px; color: #8a8170; font-size: 14px; line-height: 1.5; }
 </style>

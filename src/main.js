@@ -17,9 +17,22 @@ app.use(router)
 // 注册 Element Plus（使用中文）
 app.use(ElementPlus, { locale: zhCn })
 
-// 全局覆盖 Element Plus 主色为 indigo 紫色
+// 全局覆盖 Element Plus 主色为朱砂红（公告板主题）
 const style = document.createElement('style')
-style.textContent = ':root { --el-color-primary: #4f46e5; --el-color-primary-light-3: #818cf8; --el-color-primary-light-5: #a5b4fc; --el-color-primary-light-7: #c7d2fe; --el-color-primary-light-9: #eef2ff; --el-color-primary-dark-2: #4338ca; }'
+style.textContent = `:root {
+  --el-color-primary: #c8553d;
+  --el-color-primary-light-3: #d97a66;
+  --el-color-primary-light-5: #e2a294;
+  --el-color-primary-light-7: #ecd1c9;
+  --el-color-primary-light-9: #f7ede9;
+  --el-color-primary-dark-2: #a8442f;
+  --el-color-success: #6b8e4e;
+  --el-color-success-light-9: #e8efd9;
+  --el-color-warning: #c9956b;
+  --el-color-warning-light-9: #f5ebd6;
+  --el-color-danger: #b54a3a;
+  --el-color-info: #8a8170;
+}`
 document.head.appendChild(style)
 
 app.mount('#app')

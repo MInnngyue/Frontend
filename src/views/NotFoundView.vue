@@ -29,30 +29,50 @@ function goHome() { router.push('/') }
   justify-content: center;
   min-height: calc(100vh - 80px);
   padding: 40px 20px;
+  background: #faf6ee;
 }
 .nf-container {
   text-align: center;
-  max-width: 420px;
+  max-width: 460px;
+  padding: 48px 40px 44px;
+  background: #f3ecdb;
+  transform: rotate(-1.5deg);
+  /* 撕掉的告示纸：上下锯齿边缘 */
+  clip-path: polygon(
+    0% 3%, 4% 0%, 10% 2%, 16% 0%, 23% 3%, 30% 0%, 37% 2%, 44% 0%, 52% 3%, 59% 0%, 66% 2%, 73% 0%, 80% 3%, 87% 0%, 94% 2%, 100% 0%,
+    100% 97%, 94% 100%, 87% 98%, 80% 100%, 73% 97%, 66% 100%, 59% 98%, 52% 100%, 44% 97%, 37% 100%, 30% 98%, 23% 100%, 16% 97%, 10% 100%, 4% 98%, 0% 100%
+  );
 }
 .nf-illustration {
-  margin-bottom: 24px;
+  margin-bottom: 18px;
 }
 .nf-illustration svg {
   width: 220px;
   height: auto;
 }
+/* 统一主色调：404 用褪色纸痕，点缀改朱砂 */
+.nf-illustration svg :deep(text) {
+  fill: #c4b896;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+}
+.nf-illustration svg :deep(circle),
+.nf-illustration svg :deep(rect) {
+  fill: #c8553d;
+}
 .nf-title {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
-  color: #1e293b;
+  color: #2d2a26;
   margin: 0 0 10px;
+  font-family: 'Noto Serif SC', Georgia, serif;
+  letter-spacing: -0.3px;
 }
 .nf-desc {
   font-size: 14px;
-  color: #64748b;
+  color: #8a8170;
   margin: 0 0 28px;
   line-height: 1.6;
 }
-.nf-container :deep(.el-button--primary) { background: #4f46e5; border-color: #4f46e5; border-radius: 8px; }
-.nf-container :deep(.el-button--primary:hover) { background: #4338ca; border-color: #4338ca; }
+.nf-container :deep(.el-button--primary) { background: #c8553d; border-color: #c8553d; border-radius: 6px; }
+.nf-container :deep(.el-button--primary:hover) { background: #a8442f; border-color: #a8442f; }
 </style>

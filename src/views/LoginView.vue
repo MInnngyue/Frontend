@@ -1,6 +1,9 @@
 <template>
   <div class="login-page">
-    <el-card class="login-card">
+    <div class="login-card">
+      <div class="card-pin">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1 2.89-2.64l3.05 2.05a2 2 0 0 1-.14 3.5l-2.5 1.8a2 2 0 0 1-2.3-.1l-1.5-1.2a2 2 0 0 1-.5-2.6z"/><circle cx="12" cy="6" r="2.5"/></svg>
+      </div>
       <h2 class="title">失物招领系统</h2>
       <p class="subtitle">{{ isRegister ? '创建新账号' : '欢迎登录' }}</p>
 
@@ -70,7 +73,7 @@
           {{ isRegister ? '去登录' : '去注册' }}
         </el-button>
       </div>
-    </el-card>
+    </div>
 
     <p class="login-slogan">校园失物招领 · 让每件物品找到回家的路</p>
   </div>
@@ -86,7 +89,6 @@ const router = useRouter()
 const formRef = ref()
 const loading = ref(false)
 const isRegister = ref(false)
-// 核心：只有点了提交按钮后才启用校验规则
 const submitted = ref(false)
 
 const form = reactive({
@@ -106,7 +108,6 @@ const validateConfirmPassword = (rule, value, callback) => {
   }
 }
 
-// 只有 submitted 为 true 时才返回规则，否则返回空 → 不显示任何校验提示
 const rules = computed(() => {
   if (!submitted.value) return {}
   return {
@@ -140,7 +141,6 @@ const switchMode = () => {
   formRef.value?.clearValidate()
 }
 
-// 用户输入后清除该字段的红色提示
 const clearFieldError = (field) => {
   formRef.value?.clearValidate(field)
 }
@@ -194,88 +194,110 @@ const handleSubmit = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #f8fafc;
-  /* subtle dot pattern — breaks AI "flat background" cliché */
-  background-image: radial-gradient(circle, #cbd5e1 1.2px, transparent 1.2px);
-  background-size: 20px 20px;
+  background: #faf6ee;
+  /* paper fiber texture */
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(45,42,38,0.02) 0.6px, transparent 0.6px),
+    radial-gradient(circle at 70% 60%, rgba(45,42,38,0.015) 0.5px, transparent 0.5px),
+    radial-gradient(circle at 40% 80%, rgba(45,42,38,0.01) 0.4px, transparent 0.4px);
+  background-size: 24px 24px, 32px 32px, 40px 40px;
 }
 
 .login-card {
   width: 430px;
-  padding: 28px 28px 22px;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
-  transition: box-shadow 0.2s, transform 0.2s;
-  /* shift card slightly up — visual center ≠ geometric center */
+  padding: 36px 28px 22px;
+  border-radius: 8px;
+  background: #f3ecdb;
+  border: 1px solid #d9cfb8;
+  /* paper corner curl — border simulates lifted edge, no shadow */
+  border-bottom: 3px solid #c4b896;
+  transition: transform 0.2s;
   margin-top: -32px;
+  position: relative;
 }
-.login-card:hover { box-shadow: 0 4px 12px rgba(79,70,229,0.06); transform: translateY(-1px); }
+.login-card:hover { transform: translateY(-2px); }
 
-/* .login-card { margin-top: calc(-1 * var(--card-offset, 32px)); } — dynamic offset, not used yet */
+/* pushpin at top center of card */
+.card-pin {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 32px;
+  background: #c8553d;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #faf6ee;
+  border: 2px solid #a8442f;
+}
 
 .title {
   text-align: center;
   margin: 0 0 4px;
+  font-family: 'Noto Serif SC', Georgia, serif;
   font-size: 24px;
   font-weight: 700;
-  color: #1e293b;
+  color: #2d2a26;
 }
 
 .subtitle {
   text-align: center;
   margin: 0 0 22px;
   font-size: 14px;
-  color: #64748b;
+  color: #8a8170;
 }
 
 :deep(.el-form-item__label) {
-  color: #475569 !important;
+  color: #5c5448 !important;
   font-weight: 500;
 }
 
 :deep(.el-input__wrapper) {
-  border-radius: 8px;
-  border-color: #e2e8f0;
-  box-shadow: 0 0 0 1px #e2e8f0 inset;
+  border-radius: 6px;
+  border-color: #d9cfb8;
+  box-shadow: 0 0 0 1px #d9cfb8 inset;
+  background: #faf6ee;
 }
 :deep(.el-input__wrapper:hover) {
-  box-shadow: 0 0 0 1px #cbd5e1 inset;
+  box-shadow: 0 0 0 1px #c4b896 inset;
 }
 :deep(.el-input.is-focus .el-input__wrapper) {
-  box-shadow: 0 0 0 1px #4f46e5 inset;
+  box-shadow: 0 0 0 1px #c8553d inset;
 }
 :deep(.el-input__inner) {
-  color: #1e293b;
+  color: #2d2a26;
 }
 :deep(.el-input__inner::placeholder) {
-  color: #94a3b8;
+  color: #b0a690;
 }
 
 .submit-btn {
   width: 100%;
   margin-top: 4px;
-  border-radius: 8px;
+  border-radius: 6px;
   transition: transform 0.15s;
 }
 .submit-btn:active { transform: scale(0.98); }
 .submit-btn:deep(.el-button) {
-  background: #4f46e5;
-  border-color: #4f46e5;
+  background: #c8553d;
+  border-color: #c8553d;
 }
 .submit-btn:deep(.el-button:hover) {
-  background: #4338ca;
-  border-color: #4338ca;
+  background: #a8442f;
+  border-color: #a8442f;
 }
 
 :deep(.el-button--primary) {
-  --el-button-bg-color: #4f46e5;
-  --el-button-border-color: #4f46e5;
-  --el-button-hover-bg-color: #4338ca;
-  --el-button-hover-border-color: #4338ca;
-  --el-button-active-bg-color: #3730a3;
-  --el-button-active-border-color: #3730a3;
-  border-radius: 8px;
+  --el-button-bg-color: #c8553d;
+  --el-button-border-color: #c8553d;
+  --el-button-hover-bg-color: #a8442f;
+  --el-button-hover-border-color: #a8442f;
+  --el-button-active-bg-color: #8e3826;
+  --el-button-active-border-color: #8e3826;
+  border-radius: 6px;
 }
 
 .switch-box {
@@ -284,14 +306,14 @@ const handleSubmit = () => {
   justify-content: center;
   gap: 4px;
   margin-top: 18px;
-  color: #64748b;
+  color: #8a8170;
   font-size: 13px;
 }
 .switch-box :deep(.el-button) {
-  color: #4f46e5;
+  color: #c8553d;
 }
 .switch-box :deep(.el-button:hover) {
-  color: #4338ca;
+  color: #a8442f;
 }
 
 .login-slogan {
@@ -300,7 +322,7 @@ const handleSubmit = () => {
   left: 50%;
   transform: translateX(-50%);
   font-size: 13px;
-  color: #94a3b8;
+  color: #b0a690;
   letter-spacing: 1px;
   white-space: nowrap;
 }
