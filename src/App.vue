@@ -54,10 +54,13 @@ onMounted(() => {
   <div class="app-shell">
     <header v-if="showNav" class="app-header">
       <div class="header-inner">
-        <div class="brand" @click="router.push('/')">
-          <svg class="brand-pin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1 2.89-2.64l3.05 2.05a2 2 0 0 1-.14 3.5l-2.5 1.8a2 2 0 0 1-2.3-.1l-1.5-1.2a2 2 0 0 1-.5-2.6z"/><circle cx="12" cy="6" r="2.5"/></svg>
-          校园失物招领
+        <div class="header-left">
+          <div class="brand" @click="router.push('/')">
+            <svg class="brand-pin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1 2.89-2.64l3.05 2.05a2 2 0 0 1-.14 3.5l-2.5 1.8a2 2 0 0 1-2.3-.1l-1.5-1.2a2 2 0 0 1-.5-2.6z"/><circle cx="12" cy="6" r="2.5"/></svg>
+            <span class="brand-text">校园失物招领</span>
+          </div>
         </div>
+
         <nav class="nav-links">
           <router-link to="/" :class="{ active: route.path === '/' }">失物广场</router-link>
           <router-link to="/publish" :class="{ active: route.path === '/publish' }">发布帖子</router-link>
@@ -68,10 +71,11 @@ onMounted(() => {
           <router-link to="/claims" :class="{ active: route.path === '/claims' }">认领进度</router-link>
           <router-link to="/profile" :class="{ active: route.path === '/profile' }">个人中心</router-link>
         </nav>
+
         <div class="header-right">
           <el-button v-if="isPublishPage" class="header-back-btn" @click="router.push('/')">&larr; 返回广场</el-button>
           <el-button v-else class="header-publish-btn" @click="router.push('/publish')">+ 发布帖子</el-button>
-          <el-button class="header-logout-btn" @click="logout">退出登录</el-button>
+          <button class="header-logout-btn" @click="logout">退出</button>
         </div>
       </div>
     </header>
@@ -98,7 +102,7 @@ body {
   color: #2d2a26;
 }
 
-/* paper fiber texture — material, not decoration */
+/* paper fiber texture */
 body::before {
   content: '';
   position: fixed;
@@ -114,12 +118,13 @@ body::before {
 
 .app-shell { position: relative; z-index: 1; }
 
+/* === header: 60px two-column layout === */
 .app-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 72px;
+  height: 60px;
   background: #2d2a26;
   border-bottom: 3px solid #c8553d;
   z-index: 100;
@@ -129,22 +134,28 @@ body::before {
   max-width: 1400px;
   margin: 0 auto;
   height: 100%;
-  display: grid;
-  grid-template-columns: 240px 1fr 240px;
+  display: flex;
   align-items: center;
-  padding: 0 36px;
+  justify-content: space-between;
+  padding: 0 28px;
+  gap: 24px;
+}
+
+.header-left {
+  flex-shrink: 0;
 }
 
 .brand {
   font-family: 'Noto Serif SC', Georgia, serif;
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 700;
   color: #faf6ee;
   cursor: pointer;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   display: flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
 }
 
 .brand-pin {
@@ -152,83 +163,88 @@ body::before {
   flex-shrink: 0;
 }
 
+/* === nav: underline active indicator === */
 .nav-links {
   display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
   justify-content: center;
-  gap: 14px;
 }
 
 .nav-links a {
   text-decoration: none;
-  color: #d9cfb8;
-  padding: 8px 22px;
-  border-radius: 4px;
+  color: #b0a690;
+  padding: 6px 16px;
+  border-radius: 0;
   font-size: 15px;
   font-weight: 500;
-  transition: all 0.2s;
+  transition: color 0.2s;
   position: relative;
 }
 
 .nav-links a:hover {
   color: #faf6ee;
-  background: rgba(200,85,61,0.25);
 }
 
 .nav-links a.active {
   color: #faf6ee;
-  background: rgba(200,85,61,0.35);
+  font-weight: 600;
 }
 
 .nav-links a.active::after {
   content: '';
   position: absolute;
-  bottom: 2px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 16px;
-  height: 2px;
-  border-radius: 1px;
+  bottom: -4px;
+  left: 16px;
+  right: 16px;
+  height: 3px;
+  border-radius: 2px;
   background: #c8553d;
 }
 
 .nav-msg-link { position: relative; }
 .nav-badge {
-  position: absolute; top: -2px; right: -6px;
+  position: absolute; top: -2px; right: -2px;
   background: #c8553d; color: #faf6ee; font-size: 10px; font-weight: 700;
-  min-width: 15px; height: 15px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center; padding: 0 3px;
+  min-width: 16px; height: 16px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; padding: 0 4px;
 }
 
+/* === right actions: primary publish + ghost logout === */
 .header-right {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 7px;
+  gap: 12px;
+  flex-shrink: 0;
 }
 
 .header-publish-btn {
   background: #c8553d; border: none; color: #faf6ee; font-size: 13px; font-weight: 600;
-  border-radius: 6px; padding: 7px 18px; transition: all 0.15s; white-space: nowrap;
+  border-radius: 6px; padding: 8px 20px; transition: all 0.15s; white-space: nowrap;
 }
-.header-logout-btn { background: none; border: 1px solid rgba(217,207,184,0.3); color: #d9cfb8; font-size: 13px; border-radius: 6px; padding: 5px 14px; transition: all 0.15s; font-weight: 500; }
-.header-logout-btn:hover { background: rgba(181,74,58,0.3); border-color: #b54a3a; color: #faf6ee; }
-.header-logout-btn:focus,
-.header-logout-btn:focus-visible { border-color: rgba(217,207,184,0.3); color: #d9cfb8; outline: none; box-shadow: none; }
-.header-logout-btn:active { transform: scale(0.97); }
-.header-publish-btn:hover { background: #a8442f; color: #faf6ee; transform: scale(1.03); }
+.header-publish-btn:hover { background: #a8442f; color: #faf6ee; }
 .header-publish-btn:active { transform: scale(0.97); }
 
 .header-back-btn {
   background: #c8553d; border: none; color: #faf6ee; font-size: 13px; font-weight: 600;
-  border-radius: 6px; padding: 7px 18px; transition: background 0.15s; white-space: nowrap;
+  border-radius: 6px; padding: 8px 20px; transition: background 0.15s; white-space: nowrap;
 }
 .header-back-btn:hover { background: #a8442f; color: #faf6ee; }
 
+.header-logout-btn {
+  background: none; border: none; color: #8a8170; font-size: 13px;
+  padding: 6px 10px; cursor: pointer; transition: color 0.15s; font-weight: 500;
+}
+.header-logout-btn:hover { color: #d9cfb8; }
+.header-logout-btn:active { transform: scale(0.97); }
+
 main.has-header {
-  padding-top: 72px;
+  padding-top: 60px;
   min-height: 100vh;
 }
 
+/* === notification dropdown === */
 .notify-bell {
   position: relative;
   margin-right: 16px;
@@ -242,12 +258,12 @@ main.has-header {
 
 .notify-dropdown {
   position: absolute;
-  top: 52px;
+  top: 48px;
   right: 80px;
   width: 340px;
   max-height: 420px;
   background: #faf6ee;
-  border-radius: 10px;
+  border-radius: 8px;
   border: 1px solid #d9cfb8;
   z-index: 101;
   overflow: hidden;
@@ -314,7 +330,7 @@ main.has-header {
 
 <style>
 /* el-plus dialog overrides — bulletin board theme */
-.el-dialog { border-radius: 10px !important; overflow: hidden; border: 1px solid #d9cfb8; background: #faf6ee; }
+.el-dialog { border-radius: 8px !important; overflow: hidden; border: 1px solid #d9cfb8; background: #faf6ee; }
 .el-dialog__header { padding: 18px 24px 0 !important; margin: 0 !important; }
 .el-dialog__title { font-family: 'Noto Serif SC', Georgia, serif; font-size: 17px !important; font-weight: 700 !important; color: #2d2a26 !important; }
 .el-dialog__body { padding: 22px 24px !important; color: #5c5448; }
@@ -325,7 +341,7 @@ main.has-header {
 .el-dialog .el-button--primary { background: #c8553d !important; border-color: #c8553d !important; border-radius: 6px !important; font-weight: 600 !important; }
 .el-dialog .el-button--primary:hover { background: #a8442f !important; border-color: #a8442f !important; }
 .el-dialog .el-button { border-radius: 6px !important; }
-.el-message-box { border-radius: 10px !important; padding: 0 !important; border: 1px solid #d9cfb8; background: #faf6ee; }
+.el-message-box { border-radius: 8px !important; padding: 0 !important; border: 1px solid #d9cfb8; background: #faf6ee; }
 .el-message-box__header { padding: 18px 24px 6px !important; }
 .el-message-box__title { font-family: 'Noto Serif SC', Georgia, serif; font-size: 17px !important; font-weight: 700 !important; color: #2d2a26 !important; }
 .el-message-box__body { padding: 6px 24px 22px !important; }
