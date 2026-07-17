@@ -267,7 +267,7 @@ function statusDotClass(status) {
 .stripe-lost { background: #c8553d; }
 .stripe-found { background: #6b8e4e; }
 
-/* === pushpin with status hole === */
+/* === pushpin: on top layer === */
 .card-pin {
   position: absolute;
   top: -10px;
@@ -280,23 +280,23 @@ function statusDotClass(status) {
   align-items: center;
   justify-content: center;
   color: #faf6ee;
-  z-index: 3;
+  z-index: 5;
   border: 2px solid;
 }
 .pin-lost { background: #c8553d; border-color: #a8442f; }
 .pin-found { background: #6b8e4e; border-color: #547039; }
 
-/* status dot — sits on top of pin center, higher z-index = "pin pierced a hole" */
+/* status hole — below pin layer, positioned at pin's needle tip */
 .card-status-hole {
   position: absolute;
-  top: -4px;
+  top: 6px;
   left: 50%;
   transform: translateX(-50%);
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  z-index: 5;
-  border: 2px solid #faf6ee;
+  z-index: 4;
+  border: 2px solid #f3ecdb;
 }
 .dot-active { background: #c8553d; }
 .dot-claiming { background: #c9956b; }

@@ -101,25 +101,41 @@ body {
   color: #2d2a26;
 }
 
-/* heavy paper texture — material, not decoration */
+/* rough kraft paper texture */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background-color: #f5efde;
+  background-color: #e8dfc8;
   background-image:
-    /* coarse fibers */
-    radial-gradient(circle at 15% 25%, rgba(90,80,60,0.06) 0.8px, transparent 1px),
-    radial-gradient(circle at 65% 55%, rgba(90,80,60,0.05) 0.7px, transparent 0.9px),
-    radial-gradient(circle at 35% 75%, rgba(90,80,60,0.04) 0.6px, transparent 0.8px),
-    radial-gradient(circle at 85% 15%, rgba(90,80,60,0.05) 0.5px, transparent 0.7px),
-    /* fine grain */
-    radial-gradient(circle at 50% 50%, rgba(60,52,40,0.03) 0.4px, transparent 0.5px),
-    /* subtle horizontal lines like paper grain direction */
-    linear-gradient(0deg, rgba(90,80,60,0.02) 1px, transparent 1px);
-  background-size: 22px 22px, 30px 30px, 38px 38px, 26px 26px, 12px 12px, 100% 4px;
+    /* large dark fibers — scattered */
+    radial-gradient(ellipse 3px 1px at 12% 18%, rgba(80,65,40,0.18), transparent),
+    radial-gradient(ellipse 2px 1px at 28% 42%, rgba(80,65,40,0.15), transparent),
+    radial-gradient(ellipse 4px 2px at 52% 28%, rgba(70,55,35,0.14), transparent),
+    radial-gradient(ellipse 2px 1px at 75% 62%, rgba(80,65,40,0.16), transparent),
+    radial-gradient(ellipse 3px 1px at 88% 35%, rgba(70,55,35,0.12), transparent),
+    radial-gradient(ellipse 2px 1px at 8% 72%, rgba(80,65,40,0.15), transparent),
+    radial-gradient(ellipse 3px 2px at 42% 85%, rgba(70,55,35,0.13), transparent),
+    radial-gradient(ellipse 2px 1px at 68% 12%, rgba(80,65,40,0.14), transparent),
+    /* medium fibers — denser */
+    radial-gradient(circle at 22% 55%, rgba(90,75,50,0.1) 0.8px, transparent 1px),
+    radial-gradient(circle at 58% 78%, rgba(90,75,50,0.09) 0.7px, transparent 0.9px),
+    radial-gradient(circle at 82% 22%, rgba(90,75,50,0.08) 0.6px, transparent 0.8px),
+    radial-gradient(circle at 38% 38%, rgba(90,75,50,0.07) 0.5px, transparent 0.7px),
+    /* fine grain — fills gaps */
+    radial-gradient(circle at 50% 50%, rgba(60,48,30,0.05) 0.3px, transparent 0.4px),
+    /* horizontal grain direction lines */
+    linear-gradient(0deg, rgba(80,65,40,0.04) 1px, transparent 1.5px),
+    /* vertical grain faint lines */
+    linear-gradient(90deg, rgba(80,65,40,0.02) 1px, transparent 3px);
+  background-size:
+    80px 80px, 95px 95px, 70px 70px, 110px 110px, 85px 85px, 75px 75px, 90px 90px, 65px 65px,
+    20px 20px, 25px 25px, 18px 18px, 15px 15px,
+    8px 8px,
+    100% 5px,
+    3px 100%;
 }
 
 .app-shell { position: relative; z-index: 1; }
