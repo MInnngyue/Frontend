@@ -17,7 +17,13 @@ const activeTab = ref(null)
 const queryParams = ref({ type: null, itemCategory: '', keyword: '' })
 
 const itemCategories = ref([])
-const catExpanded = ref(false)
+
+const statusOptions = [
+  { value: 0, label: '进行中' },
+  { value: 1, label: '已匹配' },
+  { value: 2, label: '认领中' },
+  { value: 3, label: '已完结' },
+]
 
 onMounted(async () => {
   itemCategories.value = (await getCategories('item_category')).data
@@ -39,18 +45,23 @@ async function fetchPosts() {
 
 function onTabChange(type) { activeTab.value = type; queryParams.value.type = type; page.value = 1; fetchPosts() }
 function onSearch() { page.value = 1; fetchPosts() }
-function onFilterClick(key, val) {
-  if (queryParams.value[key] === val) { delete queryParams.value[key] }
-  else { queryParams.value[key] = val }
+function onStatusChange(val) {
+  if (val === '' || val === null) { delete queryParams.value.status }
+  else { queryParams.value.status = val }
+  page.value = 1; fetchPosts()
+}
+function onCategoryChange(val) {
+  queryParams.value.itemCategory = val || ''
   page.value = 1; fetchPosts()
 }
 function goDetail(id) { router.push(`/post/${id}`) }
 function goPublish() { router.push('/publish') }
 function onPageChange(p) { page.value = p; fetchPosts() }
-function typeLabel(type) { return type === 0 ? '寻物启事' : '失物招领' }
-function statusLabel(status) {
-  const map = { 0: '进行中', 1: '已匹配', 2: '认领中', 3: '已完结', 4: '已归档', 5: '已下架' }
-  return map[status] || '未知'
+function statusDotClass(status) {
+  if (status === 0) return 'dot-active'
+  if (status === 1 || status === 2) return 'dot-claiming'
+  if (status === 3) return 'dot-done'
+  return 'dot-archived'
 }
 </script>
 
@@ -70,82 +81,98 @@ function statusLabel(status) {
       </div>
     </div>
 
-    <div class="main-layout">
-      <aside class="sidebar">
-        <div class="filter-card">
-          <el-input v-model="queryParams.keyword" placeholder="搜索关键词..." clearable :prefix-icon="Search" @keyup.enter="onSearch" @clear="onSearch" />
-        </div>
+    <!-- horizontal filter bar -->
+    <div class="filter-bar">
+      <el-input
+        v-model="queryParams.keyword"
+        placeholder="搜索关键词..."
+        clearable
+        :prefix-icon="Search"
+        class="filter-search"
+        @keyup.enter="onSearch"
+        @clear="onSearch"
+      />
 
-        <div class="filter-card">
-          <div class="section-title">类型</div>
-          <div class="row-list">
-            <div class="row-chip" :class="{ active: activeTab === null }" @click="onTabChange(null)">全部 <span v-if="activeTab === null" class="check"><span style="color:#2d2a26;font-weight:700">&check;</span></span></div>
-            <div class="row-chip" :class="{ active: activeTab === 0 }" @click="onTabChange(0)">寻物 <span v-if="activeTab === 0" class="check"><span style="color:#2d2a26;font-weight:700">&check;</span></span></div>
-            <div class="row-chip" :class="{ active: activeTab === 1 }" @click="onTabChange(1)">招领 <span v-if="activeTab === 1" class="check"><span style="color:#2d2a26;font-weight:700">&check;</span></span></div>
-          </div>
-        </div>
+      <div class="filter-tabs">
+        <button class="tab-btn" :class="{ active: activeTab === null }" @click="onTabChange(null)">全部</button>
+        <button class="tab-btn" :class="{ active: activeTab === 0 }" @click="onTabChange(0)">寻物</button>
+        <button class="tab-btn" :class="{ active: activeTab === 1 }" @click="onTabChange(1)">招领</button>
+      </div>
 
-        <div class="filter-card">
-          <div class="section-title">状态</div>
-          <div class="row-list">
-            <div class="row-chip" :class="{ active: queryParams.status === undefined }" @click="delete queryParams.status; page=1; fetchPosts()">全部 <span v-if="queryParams.status === undefined" class="check"><span style="color:#2d2a26;font-weight:700">&check;</span></span></div>
-            <div class="row-chip" :class="{ active: queryParams.status === 0 }" @click="onFilterClick('status', 0)">进行中 <span v-if="queryParams.status === 0" class="check"><span style="color:#2d2a26;font-weight:700">&check;</span></span></div>
-            <div class="row-chip" :class="{ active: queryParams.status === 1 }" @click="onFilterClick('status', 1)">已匹配 <span v-if="queryParams.status === 1" class="check"><span style="color:#2d2a26;font-weight:700">&check;</span></span></div>
-            <div class="row-chip" :class="{ active: queryParams.status === 2 }" @click="onFilterClick('status', 2)">认领中 <span v-if="queryParams.status === 2" class="check"><span style="color:#2d2a26;font-weight:700">&check;</span></span></div>
-            <div class="row-chip" :class="{ active: queryParams.status === 3 }" @click="onFilterClick('status', 3)">已完结 <span v-if="queryParams.status === 3" class="check"><span style="color:#2d2a26;font-weight:700">&check;</span></span></div>
-          </div>
-        </div>
+      <el-select
+        v-model="queryParams.status"
+        placeholder="状态"
+        clearable
+        class="filter-select"
+        @change="onStatusChange"
+      >
+        <el-option v-for="s in statusOptions" :key="s.value" :label="s.label" :value="s.value" />
+      </el-select>
 
-        <div class="filter-card">
-          <div class="section-title">分类</div>
-          <div class="cat-list-wrap" :class="{ collapsed: !catExpanded && itemCategories.length > 5 }">
-            <div class="row-list">
-              <div v-for="c in (catExpanded ? itemCategories : itemCategories.slice(0, 5))" :key="c.id" class="row-chip" :class="{ active: queryParams.itemCategory === c.name }" @click="onFilterClick('itemCategory', c.name)">{{ c.name }} <span v-if="queryParams.itemCategory === c.name" class="check"><span style="color:#2d2a26;font-weight:700">&check;</span></span></div>
-            </div>
-            <div v-if="!catExpanded && itemCategories.length > 5" class="gradient-fade"></div>
-          </div>
-          <button v-if="itemCategories.length > 5" class="toggle-more-btn" @click="catExpanded = !catExpanded">
-            {{ catExpanded ? '收起' : '更多' }}
-          </button>
-        </div>
-      </aside>
-
-      <section class="content-area" v-loading="loading">
-        <div v-if="posts.length === 0 && !loading" class="empty-state">
-          <p class="empty-text">广场暂时空空如也</p>
-          <p class="empty-hint">发一条寻物或招领，帮自己也帮别人</p>
-          <button class="empty-action-btn" @click="goPublish">去发布帖子</button>
-        </div>
-
-        <div v-else class="card-grid">
-          <div v-for="post in posts" :key="post.id" class="card" :class="post.type === 0 ? 'card-lost' : 'card-found'" @click="goDetail(post.id)">
-            <div class="card-pin" :class="post.type === 0 ? 'pin-lost' : 'pin-found'">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1 2.89-2.64l3.05 2.05a2 2 0 0 1-.14 3.5l-2.5 1.8a2 2 0 0 1-2.3-.1l-1.5-1.2a2 2 0 0 1-.5-2.6z"/><circle cx="12" cy="6" r="2.5"/></svg>
-            </div>
-            <div class="card-cover">
-              <el-image v-if="post.coverImage" :src="imageUrl(post.coverImage)" fit="cover" />
-              <div v-else class="cover-placeholder"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#b0a690" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-            </div>
-            <div class="card-body">
-              <div class="card-tags-row">
-                <span class="card-type-tag" :class="post.type === 0 ? 'lost' : 'found'">{{ typeLabel(post.type) }}</span>
-                <span class="card-status-tag" :class="'s-' + post.status">{{ statusLabel(post.status) }}</span>
-              </div>
-              <h3 class="card-title">{{ post.title || '无标题' }}</h3>
-              <div class="card-meta">
-                <span class="meta-capsule mc-cat">{{ post.itemCategory }}</span>
-                <span class="meta-capsule mc-loc">{{ post.locationCampus }}</span>
-              </div>
-              <div class="card-time">{{ post.lostTime?.replace('T', ' ') }}</div>
-            </div>
-          </div>
-        </div>
-
-        <div v-if="total > pageSize" class="pagination">
-          <el-pagination background layout="prev, pager, next" :total="total" :page-size="pageSize" v-model:current-page="page" @current-change="onPageChange" />
-        </div>
-      </section>
+      <el-select
+        v-model="queryParams.itemCategory"
+        placeholder="分类"
+        clearable
+        class="filter-select"
+        @change="onCategoryChange"
+      >
+        <el-option v-for="c in itemCategories" :key="c.id" :label="c.name" :value="c.name" />
+      </el-select>
     </div>
+
+    <!-- card grid -->
+    <section class="content-area" v-loading="loading">
+      <div v-if="posts.length === 0 && !loading" class="empty-state">
+        <p class="empty-text">广场暂时空空如也</p>
+        <p class="empty-hint">发一条寻物或招领，帮自己也帮别人</p>
+        <button class="empty-action-btn" @click="goPublish">去发布帖子</button>
+      </div>
+
+      <div v-else class="card-grid">
+        <div
+          v-for="post in posts"
+          :key="post.id"
+          class="card"
+          :class="post.type === 0 ? 'card-lost' : 'card-found'"
+          @click="goDetail(post.id)"
+        >
+          <!-- left color stripe — type encoding -->
+          <div class="card-stripe" :class="post.type === 0 ? 'stripe-lost' : 'stripe-found'"></div>
+
+          <!-- pushpin -->
+          <div class="card-pin" :class="post.type === 0 ? 'pin-lost' : 'pin-found'">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1 2.89-2.64l3.05 2.05a2 2 0 0 1-.14 3.5l-2.5 1.8a2 2 0 0 1-2.3-.1l-1.5-1.2a2 2 0 0 1-.5-2.6z"/><circle cx="12" cy="6" r="2.5"/></svg>
+          </div>
+
+          <!-- status dot — top right -->
+          <div class="card-status-dot" :class="statusDotClass(post.status)"></div>
+
+          <!-- cover image -->
+          <div class="card-cover">
+            <el-image v-if="post.coverImage" :src="imageUrl(post.coverImage)" fit="cover" />
+            <div v-else class="cover-placeholder">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#b0a690" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+          </div>
+
+          <!-- 3-layer info -->
+          <div class="card-body">
+            <h3 class="card-title">{{ post.title || '无标题' }}</h3>
+            <div class="card-meta-line">
+              <span class="meta-cat">{{ post.itemCategory }}</span>
+              <span class="meta-sep">&middot;</span>
+              <span class="meta-loc">{{ post.locationCampus }}</span>
+              <span class="meta-sep">&middot;</span>
+              <span class="meta-time">{{ post.lostTime?.replace('T', ' ') }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="total > pageSize" class="pagination">
+        <el-pagination background layout="prev, pager, next" :total="total" :page-size="pageSize" v-model:current-page="page" @current-change="onPageChange" />
+      </div>
+    </section>
   </div>
 </template>
 
@@ -157,8 +184,8 @@ function statusLabel(status) {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-bottom: 28px;
-  padding-bottom: 18px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
   border-bottom: 2px solid #d9cfb8;
 }
 .banner-left { display: flex; flex-direction: column; gap: 4px; }
@@ -169,66 +196,47 @@ function statusLabel(status) {
 .stat-num { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 32px; font-weight: 700; color: #c8553d; }
 .stat-label { font-size: 14px; color: #8a8170; }
 
-/* === layout === */
-.main-layout { display: flex; gap: 24px; align-items: flex-start; }
-
-/* === sidebar: 260px === */
-.sidebar {
-  width: 260px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px;
-}
-.filter-card {
-  background: #f3ecdb; border-radius: 6px; padding: 16px;
+/* === horizontal filter bar === */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 12px 16px;
+  background: #f3ecdb;
   border: 1px solid #d9cfb8;
   border-bottom: 3px solid #c4b896;
+  border-radius: 6px;
 }
-:deep(.filter-card .el-input__wrapper) {
+.filter-search { width: 220px; flex-shrink: 0; }
+:deep(.filter-search .el-input__wrapper) {
   border-radius: 6px; background: #faf6ee;
   box-shadow: 0 0 0 1px #d9cfb8 inset;
 }
-:deep(.filter-card .el-input__wrapper:hover) {
-  box-shadow: 0 0 0 1px #c4b896 inset;
-}
-:deep(.filter-card .el-input.is-focus .el-input__wrapper) {
-  box-shadow: 0 0 0 1px #c8553d inset;
-}
+:deep(.filter-search .el-input__wrapper:hover) { box-shadow: 0 0 0 1px #c4b896 inset; }
+:deep(.filter-search .el-input.is-focus .el-input__wrapper) { box-shadow: 0 0 0 1px #c8553d inset; }
 
-.section-title {
-  font-family: 'Noto Serif SC', Georgia, serif; font-size: 18px; font-weight: 700; color: #2d2a26; margin-bottom: 10px;
+.filter-tabs { display: flex; gap: 4px; flex-shrink: 0; }
+.tab-btn {
+  padding: 6px 16px; border: 1px solid #d9cfb8; border-radius: 4px;
+  background: #faf6ee; color: #5c5448; font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s;
 }
-.row-list { display: flex; flex-direction: column; gap: 3px; }
-.row-chip {
-  display: flex; justify-content: space-between; align-items: center;
-  font-size: 14px; padding: 8px 12px; border-radius: 4px;
-  cursor: pointer; background: #faf6ee; color: #5c5448;
-  transition: all 0.15s; user-select: none;
-}
-.row-chip:hover { background: #f7ede9; color: #c8553d; }
-.row-chip.active { background: #f7ede9; color: #c8553d; font-weight: 600; }
-.row-chip:active { transform: scale(0.98); }
-.row-chip .check { font-size: 14px; color: #c8553d; }
+.tab-btn:hover { background: #f7ede9; color: #c8553d; border-color: #e2a294; }
+.tab-btn.active { background: #c8553d; color: #faf6ee; border-color: #c8553d; font-weight: 600; }
 
-/* cat fold */
-.cat-list-wrap { position: relative; overflow: hidden; }
-.cat-list-wrap.collapsed { max-height: 240px; }
-.gradient-fade {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 40px;
-  background: linear-gradient(to bottom, transparent, #f3ecdb);
-  pointer-events: none;
+.filter-select { width: 120px; flex-shrink: 0; }
+:deep(.filter-select .el-select__wrapper) {
+  border-radius: 6px; background: #faf6ee;
+  box-shadow: 0 0 0 1px #d9cfb8 inset;
 }
-.toggle-more-btn {
-  display: block; width: 100%; margin-top: 8px; padding: 6px 0;
-  border: none; background: transparent; color: #c8553d; font-size: 13px;
-  font-weight: 600; cursor: pointer; transition: color 0.15s;
-}
-.toggle-more-btn:hover { color: #a8442f; }
+:deep(.filter-select .el-select__wrapper:hover) { box-shadow: 0 0 0 1px #c4b896 inset; }
+:deep(.filter-select.is-focused .el-select__wrapper) { box-shadow: 0 0 0 1px #c8553d inset; }
 
-.content-area { flex: 1; min-height: 400px; }
-
-/* === responsive card grid: 3 cols wide / 2 cols narrow === */
-.card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-@media (max-width: 1100px) {
-  .card-grid { grid-template-columns: repeat(2, 1fr); }
-}
+/* === card grid: 4 cols wide / 3 cols mid / 2 cols narrow === */
+.card-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+@media (max-width: 1200px) { .card-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 900px) { .card-grid { grid-template-columns: repeat(2, 1fr); } }
 
 /* === sticky note card === */
 .card {
@@ -245,6 +253,17 @@ function statusLabel(status) {
 }
 .card:active { transform: scale(0.99); }
 
+/* left color stripe */
+.card-stripe {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  border-radius: 6px 0 0 6px;
+  z-index: 3;
+}
+.stripe-lost { background: #c8553d; }
+.stripe-found { background: #6b8e4e; }
+
 /* pushpin */
 .card-pin {
   position: absolute;
@@ -258,58 +277,50 @@ function statusLabel(status) {
   align-items: center;
   justify-content: center;
   color: #faf6ee;
-  z-index: 2;
+  z-index: 4;
   border: 2px solid;
 }
 .pin-lost { background: #c8553d; border-color: #a8442f; }
 .pin-found { background: #6b8e4e; border-color: #547039; }
 
-.card-cover { width: 100%; height: 180px; background: #e8dfc6; overflow: hidden; }
+/* status dot — top right */
+.card-status-dot {
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  z-index: 4;
+  border: 2px solid #f3ecdb;
+}
+.dot-active { background: #c8553d; }
+.dot-claiming { background: #c9956b; }
+.dot-done { background: #6b8e4e; }
+.dot-archived { background: #b0a690; }
+
+/* cover */
+.card-cover { width: 100%; height: 160px; background: #e8dfc6; overflow: hidden; }
 .card-cover :deep(.el-image) { width: 100%; height: 100%; }
 .card-cover :deep(.el-image img) { object-fit: cover; width: 100%; height: 100%; }
 .cover-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #b0a690; }
 
-/* === card info hierarchy === */
-.card-body { padding: 12px 14px 14px; }
-.card-tags-row { display: flex; gap: 6px; align-items: center; }
-.card-type-tag {
-  display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 3px;
-  font-weight: 600;
-}
-.card-type-tag.lost { background: #f7ede9; color: #c8553d; border: 1px solid #e2a294; }
-.card-type-tag.found { background: #e8efd9; color: #547039; border: 1px solid #b5cc97; }
-
-.card-status-tag {
-  display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 3px;
-  font-weight: 600;
-}
-.s-0 { background: #f7ede9; color: #a8442f; }
-.s-1, .s-2 { background: #f5ebd6; color: #8a6535; }
-.s-3 { background: #e8efd9; color: #547039; }
-.s-4, .s-5 { background: #e8dfc6; color: #8a8170; }
-
+/* 3-layer info */
+.card-body { padding: 12px 14px 14px 18px; }
 .card-title {
-  font-size: 15px; font-weight: 600; color: #2d2a26; margin: 8px 0 6px;
+  font-size: 15px; font-weight: 600; color: #2d2a26; margin: 0 0 6px;
   line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
-.card-meta { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
-
-.meta-capsule {
-  padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 500;
+.card-meta-line {
+  font-size: 12px; color: #8a8170;
+  display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;
+  overflow: hidden; white-space: nowrap;
 }
-.mc-cat { background: #f7ede9; color: #c8553d; }
-.mc-loc { background: #e8dfc6; color: #5c5448; }
+.meta-cat { color: #c8553d; font-weight: 500; }
+.meta-sep { color: #c4b896; margin: 0 3px; }
+.meta-loc { color: #5c5448; }
+.meta-time { font-family: 'JetBrains Mono', 'Courier New', monospace; color: #b0a690; }
 
-.card-time {
-  margin-top: 6px;
-  font-size: 11px;
-  color: #b0a690;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-}
-
-/* === empty state with CTA === */
+/* === empty state === */
 .empty-state { text-align: center; padding: 100px 0; }
 .empty-text { font-size: 16px; color: #8a8170; margin: 0 0 6px; }
 .empty-hint { font-size: 13px; color: #b0a690; margin: 0 0 20px; }
@@ -321,7 +332,7 @@ function statusLabel(status) {
 .empty-action-btn:hover { background: #a8442f; }
 .empty-action-btn:active { transform: scale(0.97); }
 
-/* === pagination paper theme === */
+/* === pagination === */
 .pagination { display: flex; justify-content: center; margin-top: 28px; }
 :deep(.pagination .el-pagination.is-background .btn-prev),
 :deep(.pagination .el-pagination.is-background .btn-next),
