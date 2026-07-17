@@ -56,31 +56,43 @@ function statusLabel(status) {
 
 <template>
   <div class="post-square">
-    <h1 class="page-title">失物广场</h1>
+    <!-- bulletin board header banner -->
+    <div class="board-banner">
+      <div class="banner-left">
+        <h1 class="page-title">失物广场</h1>
+        <p class="page-subtitle">在这里找到你丢失的，或拾到他人遗失的</p>
+      </div>
+      <div class="banner-right">
+        <div class="stat-block">
+          <span class="stat-num">{{ total }}</span>
+          <span class="stat-label">条帖子</span>
+        </div>
+      </div>
+    </div>
 
     <div class="main-layout">
       <aside class="sidebar">
         <div class="filter-card">
-          <el-input v-model="queryParams.keyword" placeholder="搜索..." clearable :prefix-icon="Search" @keyup.enter="onSearch" @clear="onSearch" />
+          <el-input v-model="queryParams.keyword" placeholder="搜索关键词..." clearable :prefix-icon="Search" @keyup.enter="onSearch" @clear="onSearch" />
         </div>
 
         <div class="filter-card">
           <div class="section-title">类型</div>
           <div class="row-list">
-            <div class="row-chip" :class="{ active: activeTab === null }" @click="onTabChange(null)">全部 <span v-if="activeTab === null" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
-            <div class="row-chip" :class="{ active: activeTab === 0 }" @click="onTabChange(0)">寻物 <span v-if="activeTab === 0" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
-            <div class="row-chip" :class="{ active: activeTab === 1 }" @click="onTabChange(1)">招领 <span v-if="activeTab === 1" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
+            <div class="row-chip" :class="{ active: activeTab === null }" @click="onTabChange(null)">全部 <span v-if="activeTab === null" class="check"><span style="color:#2d2a26;font-weight:700">&check;</span></span></div>
+            <div class="row-chip" :class="{ active: activeTab === 0 }" @click="onTabChange(0)">寻物 <span v-if="activeTab === 0" class="check"><span style="color:#2d2a26;font-weight:700">&check;</span></span></div>
+            <div class="row-chip" :class="{ active: activeTab === 1 }" @click="onTabChange(1)">招领 <span v-if="activeTab === 1" class="check"><span style="color:#2d2a26;font-weight:700">&check;</span></span></div>
           </div>
         </div>
 
         <div class="filter-card">
           <div class="section-title">状态</div>
           <div class="row-list">
-            <div class="row-chip" :class="{ active: queryParams.status === undefined }" @click="delete queryParams.status; page=1; fetchPosts()">全部 <span v-if="queryParams.status === undefined" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
-            <div class="row-chip" :class="{ active: queryParams.status === 0 }" @click="onFilterClick('status', 0)">进行中 <span v-if="queryParams.status === 0" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
-            <div class="row-chip" :class="{ active: queryParams.status === 1 }" @click="onFilterClick('status', 1)">已匹配 <span v-if="queryParams.status === 1" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
-            <div class="row-chip" :class="{ active: queryParams.status === 2 }" @click="onFilterClick('status', 2)">认领中 <span v-if="queryParams.status === 2" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
-            <div class="row-chip" :class="{ active: queryParams.status === 3 }" @click="onFilterClick('status', 3)">已完结 <span v-if="queryParams.status === 3" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
+            <div class="row-chip" :class="{ active: queryParams.status === undefined }" @click="delete queryParams.status; page=1; fetchPosts()">全部 <span v-if="queryParams.status === undefined" class="check"><span style="color:#2d2a26;font-weight:700">&check;</span></span></div>
+            <div class="row-chip" :class="{ active: queryParams.status === 0 }" @click="onFilterClick('status', 0)">进行中 <span v-if="queryParams.status === 0" class="check"><span style="color:#2d2a26;font-weight:700">&check;</span></span></div>
+            <div class="row-chip" :class="{ active: queryParams.status === 1 }" @click="onFilterClick('status', 1)">已匹配 <span v-if="queryParams.status === 1" class="check"><span style="color:#2d2a26;font-weight:700">&check;</span></span></div>
+            <div class="row-chip" :class="{ active: queryParams.status === 2 }" @click="onFilterClick('status', 2)">认领中 <span v-if="queryParams.status === 2" class="check"><span style="color:#2d2a26;font-weight:700">&check;</span></span></div>
+            <div class="row-chip" :class="{ active: queryParams.status === 3 }" @click="onFilterClick('status', 3)">已完结 <span v-if="queryParams.status === 3" class="check"><span style="color:#2d2a26;font-weight:700">&check;</span></span></div>
           </div>
         </div>
 
@@ -88,12 +100,12 @@ function statusLabel(status) {
           <div class="section-title">分类</div>
           <div class="cat-list-wrap" :class="{ collapsed: !catExpanded && itemCategories.length > 5 }">
             <div class="row-list">
-              <div v-for="c in (catExpanded ? itemCategories : itemCategories.slice(0, 5))" :key="c.id" class="row-chip" :class="{ active: queryParams.itemCategory === c.name }" @click="onFilterClick('itemCategory', c.name)">{{ c.name }} <span v-if="queryParams.itemCategory === c.name" class="check"><span style="color:#111827;font-weight:700">✓</span></span></div>
+              <div v-for="c in (catExpanded ? itemCategories : itemCategories.slice(0, 5))" :key="c.id" class="row-chip" :class="{ active: queryParams.itemCategory === c.name }" @click="onFilterClick('itemCategory', c.name)">{{ c.name }} <span v-if="queryParams.itemCategory === c.name" class="check"><span style="color:#2d2a26;font-weight:700">&check;</span></span></div>
             </div>
             <div v-if="!catExpanded && itemCategories.length > 5" class="gradient-fade"></div>
           </div>
           <button v-if="itemCategories.length > 5" class="toggle-more-btn" @click="catExpanded = !catExpanded">
-            {{ catExpanded ? '收起 ▲' : '更多 ▼' }}
+            {{ catExpanded ? '收起' : '更多' }}
           </button>
         </div>
       </aside>
@@ -102,26 +114,29 @@ function statusLabel(status) {
         <div v-if="posts.length === 0 && !loading" class="empty-state">
           <p class="empty-text">广场暂时空空如也</p>
           <p class="empty-hint">发一条寻物或招领，帮自己也帮别人</p>
+          <button class="empty-action-btn" @click="goPublish">去发布帖子</button>
         </div>
 
-        <div class="card-grid">
+        <div v-else class="card-grid">
           <div v-for="post in posts" :key="post.id" class="card" :class="post.type === 0 ? 'card-lost' : 'card-found'" @click="goDetail(post.id)">
             <div class="card-pin" :class="post.type === 0 ? 'pin-lost' : 'pin-found'">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1 2.89-2.64l3.05 2.05a2 2 0 0 1-.14 3.5l-2.5 1.8a2 2 0 0 1-2.3-.1l-1.5-1.2a2 2 0 0 1-.5-2.6z"/><circle cx="12" cy="6" r="2.5"/></svg>
             </div>
             <div class="card-cover">
               <el-image v-if="post.coverImage" :src="imageUrl(post.coverImage)" fit="cover" />
-              <div v-else class="cover-placeholder"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#b0a690" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+              <div v-else class="cover-placeholder"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#b0a690" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
             </div>
             <div class="card-body">
-              <span class="card-type-tag" :class="post.type === 0 ? 'lost' : 'found'">{{ typeLabel(post.type) }}</span>
-              <span class="card-status-tag" :class="'s-' + post.status">{{ statusLabel(post.status) }}</span>
+              <div class="card-tags-row">
+                <span class="card-type-tag" :class="post.type === 0 ? 'lost' : 'found'">{{ typeLabel(post.type) }}</span>
+                <span class="card-status-tag" :class="'s-' + post.status">{{ statusLabel(post.status) }}</span>
+              </div>
               <h3 class="card-title">{{ post.title || '无标题' }}</h3>
               <div class="card-meta">
                 <span class="meta-capsule mc-cat">{{ post.itemCategory }}</span>
                 <span class="meta-capsule mc-loc">{{ post.locationCampus }}</span>
-                <span class="meta-capsule mc-time">{{ post.lostTime?.replace('T', ' ') }}</span>
               </div>
+              <div class="card-time">{{ post.lostTime?.replace('T', ' ') }}</div>
             </div>
           </div>
         </div>
@@ -135,26 +150,55 @@ function statusLabel(status) {
 </template>
 
 <style scoped>
-.post-square { max-width: 1280px; margin: 0 auto; padding: 22px 24px 36px; background: #faf6ee; min-height: 100vh; }
+.post-square { max-width: 1280px; margin: 0 auto; padding: 24px 28px 40px; background: #faf6ee; min-height: 100vh; }
 
-.page-title { font-family: 'Noto Serif SC', Georgia, serif; font-size: 32px; font-weight: 700; color: #2d2a26; margin: 0 0 22px; text-align: center; }
+/* === bulletin board header banner === */
+.board-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 28px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid #d9cfb8;
+}
+.banner-left { display: flex; flex-direction: column; gap: 4px; }
+.page-title { font-family: 'Noto Serif SC', Georgia, serif; font-size: 34px; font-weight: 700; color: #2d2a26; margin: 0; letter-spacing: 1px; }
+.page-subtitle { font-size: 14px; color: #8a8170; margin: 0; }
+.banner-right { display: flex; align-items: flex-end; }
+.stat-block { display: flex; align-items: baseline; gap: 6px; }
+.stat-num { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 32px; font-weight: 700; color: #c8553d; }
+.stat-label { font-size: 14px; color: #8a8170; }
 
-.main-layout { display: flex; gap: 22px; align-items: flex-start; }
+/* === layout === */
+.main-layout { display: flex; gap: 24px; align-items: flex-start; }
 
+/* === sidebar: 260px === */
 .sidebar {
-  width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 11px;
+  width: 260px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px;
 }
 .filter-card {
-  background: #f3ecdb; border-radius: 8px; padding: 16px;
+  background: #f3ecdb; border-radius: 6px; padding: 16px;
   border: 1px solid #d9cfb8;
+  border-bottom: 3px solid #c4b896;
 }
+:deep(.filter-card .el-input__wrapper) {
+  border-radius: 6px; background: #faf6ee;
+  box-shadow: 0 0 0 1px #d9cfb8 inset;
+}
+:deep(.filter-card .el-input__wrapper:hover) {
+  box-shadow: 0 0 0 1px #c4b896 inset;
+}
+:deep(.filter-card .el-input.is-focus .el-input__wrapper) {
+  box-shadow: 0 0 0 1px #c8553d inset;
+}
+
 .section-title {
-  font-family: 'Noto Serif SC', Georgia, serif; font-size: 20px; font-weight: 700; color: #2d2a26; margin-bottom: 10px;
+  font-family: 'Noto Serif SC', Georgia, serif; font-size: 18px; font-weight: 700; color: #2d2a26; margin-bottom: 10px;
 }
-.row-list { display: flex; flex-direction: column; gap: 2px; }
+.row-list { display: flex; flex-direction: column; gap: 3px; }
 .row-chip {
   display: flex; justify-content: space-between; align-items: center;
-  font-size: 14px; padding: 9px 14px; border-radius: 6px;
+  font-size: 14px; padding: 8px 12px; border-radius: 4px;
   cursor: pointer; background: #faf6ee; color: #5c5448;
   transition: all 0.15s; user-select: none;
 }
@@ -180,9 +224,13 @@ function statusLabel(status) {
 
 .content-area { flex: 1; min-height: 400px; }
 
-.card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+/* === responsive card grid: 3 cols wide / 2 cols narrow === */
+.card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (max-width: 1100px) {
+  .card-grid { grid-template-columns: repeat(2, 1fr); }
+}
 
-/* sticky note card */
+/* === sticky note card === */
 .card {
   background: #f3ecdb; border-radius: 6px; overflow: visible; cursor: pointer;
   border: 1px solid #d9cfb8;
@@ -203,8 +251,8 @@ function statusLabel(status) {
   top: -8px;
   left: 50%;
   transform: translateX(-50%);
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -216,21 +264,23 @@ function statusLabel(status) {
 .pin-lost { background: #c8553d; border-color: #a8442f; }
 .pin-found { background: #6b8e4e; border-color: #547039; }
 
-.card-cover { width: 100%; height: 240px; background: #e8dfc6; overflow: hidden; }
+.card-cover { width: 100%; height: 180px; background: #e8dfc6; overflow: hidden; }
 .card-cover :deep(.el-image) { width: 100%; height: 100%; }
 .card-cover :deep(.el-image img) { object-fit: cover; width: 100%; height: 100%; }
-.cover-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 48px; color: #b0a690; }
+.cover-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #b0a690; }
 
-.card-body { padding: 14px 16px 16px; }
+/* === card info hierarchy === */
+.card-body { padding: 12px 14px 14px; }
+.card-tags-row { display: flex; gap: 6px; align-items: center; }
 .card-type-tag {
-  display: inline-block; font-size: 12px; padding: 3px 10px; border-radius: 4px;
-  font-weight: 600; margin-right: 6px;
+  display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 3px;
+  font-weight: 600;
 }
 .card-type-tag.lost { background: #f7ede9; color: #c8553d; border: 1px solid #e2a294; }
 .card-type-tag.found { background: #e8efd9; color: #547039; border: 1px solid #b5cc97; }
 
 .card-status-tag {
-  display: inline-block; font-size: 12px; padding: 3px 10px; border-radius: 4px;
+  display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 3px;
   font-weight: 600;
 }
 .s-0 { background: #f7ede9; color: #a8442f; }
@@ -239,23 +289,52 @@ function statusLabel(status) {
 .s-4, .s-5 { background: #e8dfc6; color: #8a8170; }
 
 .card-title {
-  font-size: 17px; font-weight: 600; color: #2d2a26; margin: 8px 0 2px;
+  font-size: 15px; font-weight: 600; color: #2d2a26; margin: 8px 0 6px;
   line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.card-meta { display: flex; align-items: center; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.card-meta { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
 
 .meta-capsule {
-  padding: 3px 10px; border-radius: 4px; font-size: 12px; font-weight: 500;
+  padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 500;
 }
 .mc-cat { background: #f7ede9; color: #c8553d; }
 .mc-loc { background: #e8dfc6; color: #5c5448; }
-.mc-time { background: #faf6ee; color: #8a8170; font-family: 'JetBrains Mono', 'Courier New', monospace; }
 
-.empty-state { text-align: center; padding: 110px 0; }
+.card-time {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #b0a690;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+/* === empty state with CTA === */
+.empty-state { text-align: center; padding: 100px 0; }
 .empty-text { font-size: 16px; color: #8a8170; margin: 0 0 6px; }
-.empty-hint { font-size: 13px; color: #b0a690; margin: 0; }
+.empty-hint { font-size: 13px; color: #b0a690; margin: 0 0 20px; }
+.empty-action-btn {
+  background: #c8553d; color: #faf6ee; border: none; border-radius: 6px;
+  padding: 10px 28px; font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: all 0.15s;
+}
+.empty-action-btn:hover { background: #a8442f; }
+.empty-action-btn:active { transform: scale(0.97); }
 
-.pagination { display: flex; justify-content: center; margin-top: 26px; }
+/* === pagination paper theme === */
+.pagination { display: flex; justify-content: center; margin-top: 28px; }
+:deep(.pagination .el-pagination.is-background .btn-prev),
+:deep(.pagination .el-pagination.is-background .btn-next),
+:deep(.pagination .el-pagination.is-background .el-pager li) {
+  background: #f3ecdb; border: 1px solid #d9cfb8; border-radius: 4px;
+  color: #5c5448; font-weight: 500;
+}
+:deep(.pagination .el-pagination.is-background .btn-prev:hover),
+:deep(.pagination .el-pagination.is-background .btn-next:hover),
+:deep(.pagination .el-pagination.is-background .el-pager li:hover) {
+  background: #f7ede9; color: #c8553d; border-color: #e2a294;
+}
+:deep(.pagination .el-pagination.is-background .el-pager li.is-active) {
+  background: #c8553d; color: #faf6ee; border-color: #c8553d;
+}
 </style>
