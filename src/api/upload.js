@@ -2,7 +2,7 @@ import axios from 'axios'
 import { ElMessage } from 'element-plus'
 
 const uploadClient = axios.create({
-  baseURL: 'http://localhost:8081',
+  baseURL: 'http://172.18.112.1:8081',
   timeout: 30000,
 })
 

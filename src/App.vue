@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onBeforeUnmount, onMounted, provide, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { ArrowLeft, LogOut, MapPin, Plus } from 'lucide-vue-next'
 import { getUnreadCount } from '@/api/message'
 import { getConversations } from '@/api/pm'
 
@@ -11,7 +12,10 @@ const showNav = computed(() => route.path !== '/login')
 const isPublishPage = computed(() => route.path === '/publish')
 const unreadCount = ref(0)
 const pmUnread = ref(0)
+const isScrolled = ref(false)
+const scrollProgress = ref(0)
 let unreadTimer = null
+let scrollFrame = null
 
 function logout() {
   localStorage.removeItem('token')
@@ -43,10 +47,26 @@ function startUnreadPolling() {
   unreadTimer = window.setInterval(loadUnreadCount, 30000)
 }
 
+function updateScrollState() {
+  const scrollTop = window.scrollY || document.documentElement.scrollTop
+  const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
+  isScrolled.value = scrollTop > 8
+  scrollProgress.value = scrollableHeight > 0 ? Math.min(scrollTop / scrollableHeight, 1) : 0
+  scrollFrame = null
+}
+
+function scheduleScrollUpdate() {
+  if (scrollFrame !== null) return
+  scrollFrame = window.requestAnimationFrame(updateScrollState)
+}
+
 provide('refreshUnread', loadUnreadCount)
 
 onMounted(() => {
   startUnreadPolling()
+  updateScrollState()
+  window.addEventListener('scroll', scheduleScrollUpdate, { passive: true })
+  window.addEventListener('resize', scheduleScrollUpdate)
 })
 
 watch(showNav, (visible) => {
@@ -54,36 +74,64 @@ watch(showNav, (visible) => {
   else stopUnreadPolling()
 })
 
-onBeforeUnmount(stopUnreadPolling)
+onBeforeUnmount(() => {
+  stopUnreadPolling()
+  window.removeEventListener('scroll', scheduleScrollUpdate)
+  window.removeEventListener('resize', scheduleScrollUpdate)
+  if (scrollFrame !== null) window.cancelAnimationFrame(scrollFrame)
+})
 </script>
 
 <template>
   <div class="app-shell">
-    <header v-if="showNav" class="app-header">
+    <header v-if="showNav" class="site-header" :class="{ 'is-scrolled': isScrolled }">
       <div class="header-inner">
         <div class="header-left">
           <div class="brand" @click="router.push('/')">
-            <svg class="brand-pin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1 2.89-2.64l3.05 2.05a2 2 0 0 1-.14 3.5l-2.5 1.8a2 2 0 0 1-2.3-.1l-1.5-1.2a2 2 0 0 1-.5-2.6z"/><circle cx="12" cy="6" r="2.5"/></svg>
+            <MapPin class="brand-pin" :size="20" aria-hidden="true" />
             <span class="brand-text">校园失物招领</span>
           </div>
         </div>
 
         <nav class="nav-links">
           <router-link to="/" :class="{ active: route.path === '/' }">失物广场</router-link>
-          <router-link to="/publish" :class="{ active: route.path === '/publish' }">发布帖子</router-link>
-          <router-link to="/messages" :class="{ active: route.path === '/messages' }" class="nav-msg-link">
+          <router-link to="/publish" :class="{ active: route.path === '/publish' }"
+            >发布帖子</router-link
+          >
+          <router-link
+            to="/messages"
+            :class="{ active: route.path === '/messages' }"
+            class="nav-msg-link"
+          >
             消息
-            <span v-if="unreadCount + pmUnread > 0" class="nav-badge">{{ unreadCount + pmUnread }}</span>
+            <span v-if="unreadCount + pmUnread > 0" class="nav-badge">{{
+              unreadCount + pmUnread
+            }}</span>
           </router-link>
-          <router-link to="/claims" :class="{ active: route.path === '/claims' }">认领进度</router-link>
-          <router-link to="/profile" :class="{ active: route.path === '/profile' }">个人中心</router-link>
+          <router-link to="/claims" :class="{ active: route.path === '/claims' }"
+            >认领进度</router-link
+          >
+          <router-link to="/profile" :class="{ active: route.path === '/profile' }"
+            >个人中心</router-link
+          >
         </nav>
 
         <div class="header-right">
-          <el-button v-if="isPublishPage" class="header-back-btn" @click="router.push('/')">&larr; 返回广场</el-button>
-          <el-button v-else class="header-publish-btn" @click="router.push('/publish')">+ 发布帖子</el-button>
-          <button class="header-logout-btn" @click="logout">退出</button>
+          <button v-if="isPublishPage" class="header-action-btn" @click="router.push('/')">
+            <ArrowLeft :size="16" aria-hidden="true" />
+            <span>返回广场</span>
+          </button>
+          <button v-else class="header-action-btn" @click="router.push('/publish')">
+            <Plus :size="16" aria-hidden="true" />
+            <span>发布帖子</span>
+          </button>
+          <button class="header-logout-btn" title="退出登录" aria-label="退出登录" @click="logout">
+            <LogOut :size="17" aria-hidden="true" />
+          </button>
         </div>
+      </div>
+      <div class="scroll-progress" aria-hidden="true">
+        <span :style="{ transform: `scaleX(${scrollProgress})` }"></span>
       </div>
     </header>
     <main :class="{ 'has-header': showNav }">
@@ -93,165 +141,305 @@ onBeforeUnmount(stopUnreadPolling)
 </template>
 
 <style>
+:root {
+  --font-size-base: 1.1rem;
+  --app-bg: #eef2f7;
+  --app-wash-start: rgba(219, 234, 254, 0.7);
+  --app-wash-mid: rgba(255, 255, 255, 0.42);
+  --app-wash-end: rgba(237, 233, 254, 0.56);
+  --surface-white: #ffffff;
+  --surface-glass: rgba(255, 255, 255, 0.58);
+  --header-scrolled: rgba(245, 247, 252, 0.92);
+  --header-border: rgba(255, 255, 255, 0.28);
+  --text-strong: #1e293b;
+  --text-body: #475569;
+  --text-muted: #64748b;
+  --text-soft: #94a3b8;
+  --ink: #0f172a;
+  --ink-hover: #000000;
+  --accent-blue: #2563eb;
+  --accent-violet: #8b5cf6;
+  --danger: #dc2626;
+  --danger-soft: #fef2f2;
+  --line: #e2e8f0;
+  --line-strong: #cbd5e1;
+  --transparent: transparent;
+  --header-shadow: 0 18px 54px rgba(7, 11, 24, 0.14);
+  --button-shadow: 0 12px 28px rgba(15, 23, 42, 0.24);
+  --focus-ring: rgba(37, 99, 235, 0.22);
+  --app-background: linear-gradient(
+    125deg,
+    var(--app-wash-start) 0%,
+    var(--app-wash-mid) 48%,
+    var(--app-wash-end) 100%
+  );
+  --progress-gradient: linear-gradient(
+    90deg,
+    var(--ink) 0%,
+    var(--accent-blue) 52%,
+    var(--accent-violet) 100%
+  );
+}
+
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
 html {
   overflow-y: scroll;
+  scroll-behavior: smooth;
 }
 
 body {
-  font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #faf6ee;
-  color: #2d2a26;
+  min-width: 320px;
+  min-height: 100vh;
+  color: var(--text-body);
+  font-family:
+    'Noto Sans SC',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  font-size: var(--font-size-base);
+  background-color: var(--app-bg);
+  background-image: var(--app-background);
+  background-attachment: fixed;
 }
 
-/* paper fiber texture */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-image:
-    radial-gradient(circle at 20% 30%, rgba(45,42,38,0.015) 0.5px, transparent 0.5px),
-    radial-gradient(circle at 70% 60%, rgba(45,42,38,0.012) 0.4px, transparent 0.4px),
-    radial-gradient(circle at 40% 80%, rgba(45,42,38,0.01) 0.3px, transparent 0.3px);
-  background-size: 28px 28px, 36px 36px, 44px 44px;
+button,
+input,
+textarea,
+select {
+  font: inherit;
 }
 
-.app-shell { position: relative; z-index: 1; }
+.app-shell {
+  position: relative;
+  z-index: 1;
+}
 
-/* === header: 60px two-column layout === */
-.app-header {
+.site-header {
   position: fixed;
   top: 0;
-  left: 0;
   right: 0;
+  left: 0;
+  z-index: 50;
   height: 60px;
-  background: #2d2a26;
-  border-bottom: 3px solid #c8553d;
-  z-index: 100;
+  background-color: var(--surface-glass);
+  border-bottom: 1px solid var(--transparent);
+  transition:
+    background-color 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    backdrop-filter 220ms ease;
+}
+
+.site-header.is-scrolled {
+  background-color: var(--header-scrolled);
+  border-bottom-color: var(--header-border);
+  box-shadow: var(--header-shadow);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
 }
 
 .header-inner {
-  max-width: 1400px;
-  margin: 0 auto;
-  height: 100%;
   display: flex;
+  width: 100%;
+  max-width: 1540px;
+  height: 100%;
+  padding: 0 31px;
+  margin: 0 auto;
   align-items: center;
   justify-content: space-between;
-  padding: 0 28px;
   gap: 24px;
 }
 
-.header-left {
-  flex-shrink: 0;
+.header-left,
+.header-right {
+  flex: none;
 }
 
 .brand {
-  font-family: 'Noto Serif SC', Georgia, serif;
-  font-size: 26px;
-  font-weight: 700;
-  color: #faf6ee;
-  cursor: pointer;
-  letter-spacing: 1.5px;
   display: flex;
   align-items: center;
   gap: 8px;
+  color: var(--text-strong);
+  font-family: 'Noto Serif SC', Georgia, serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .brand-pin {
-  color: #c8553d;
-  flex-shrink: 0;
+  flex: none;
+  color: var(--accent-blue);
 }
 
-/* === nav: underline active indicator === */
 .nav-links {
   display: flex;
-  align-items: center;
-  gap: 4px;
+  min-width: 0;
   flex: 1;
+  align-items: stretch;
+  align-self: stretch;
   justify-content: center;
+  gap: 4px;
 }
 
 .nav-links a {
-  text-decoration: none;
-  color: #b0a690;
-  padding: 6px 16px;
-  border-radius: 0;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 15px;
+  color: var(--text-muted);
   font-size: 15px;
   font-weight: 500;
-  transition: color 0.2s;
-  position: relative;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 180ms ease;
 }
 
-.nav-links a:hover {
-  color: #faf6ee;
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--text-strong);
 }
 
 .nav-links a.active {
-  color: #faf6ee;
-  font-weight: 600;
+  font-weight: 700;
+}
+
+.nav-links a::after {
+  position: absolute;
+  right: 15px;
+  bottom: 7px;
+  left: 15px;
+  height: 2px;
+  content: '';
+  background: var(--ink);
+  border-radius: 999px;
+  opacity: 0;
+  transform: scaleX(0.35);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
 }
 
 .nav-links a.active::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 16px;
-  right: 16px;
-  height: 3px;
-  border-radius: 2px;
-  background: #c8553d;
+  opacity: 1;
+  transform: scaleX(1);
 }
 
-.nav-msg-link { position: relative; }
+.nav-msg-link {
+  position: relative;
+}
+
 .nav-badge {
-  position: absolute; top: -2px; right: -2px;
-  background: #c8553d; color: #faf6ee; font-size: 10px; font-weight: 700;
-  min-width: 16px; height: 16px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center; padding: 0 4px;
+  position: absolute;
+  top: 8px;
+  right: 2px;
+  display: flex;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  align-items: center;
+  justify-content: center;
+  color: var(--surface-white);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  background: var(--ink);
+  border-radius: 999px;
 }
 
-/* === right actions: primary publish + ghost logout === */
 .header-right {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
+  gap: 8px;
 }
 
-.header-publish-btn {
-  background: #c8553d; border: none; color: #faf6ee; font-size: 13px; font-weight: 600;
-  border-radius: 6px; padding: 8px 20px; transition: all 0.15s; white-space: nowrap;
+.header-action-btn,
+.header-logout-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--surface-white);
+  background: var(--ink);
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
 }
-.header-publish-btn:hover { background: #a8442f; color: #faf6ee; }
-.header-publish-btn:active { transform: scale(0.97); }
 
-.header-back-btn {
-  background: #c8553d; border: none; color: #faf6ee; font-size: 13px; font-weight: 600;
-  border-radius: 6px; padding: 8px 20px; transition: background 0.15s; white-space: nowrap;
+.header-action-btn {
+  min-height: 38px;
+  padding: 0 18px;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
 }
-.header-back-btn:hover { background: #a8442f; color: #faf6ee; }
 
 .header-logout-btn {
-  background: none; border: none; color: #8a8170; font-size: 13px;
-  padding: 6px 10px; cursor: pointer; transition: color 0.15s; font-weight: 500;
+  width: 38px;
+  height: 38px;
+  color: var(--text-muted);
+  background: var(--transparent);
 }
-.header-logout-btn:hover { color: #d9cfb8; }
-.header-logout-btn:active { transform: scale(0.97); }
+
+.header-action-btn:hover,
+.header-action-btn:focus-visible {
+  background: var(--ink-hover);
+  box-shadow: var(--button-shadow);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.header-logout-btn:hover,
+.header-logout-btn:focus-visible {
+  color: var(--text-strong);
+  background: var(--surface-glass);
+  outline: none;
+}
+
+.header-action-btn:active,
+.header-logout-btn:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.scroll-progress {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 3px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.scroll-progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--progress-gradient);
+  transform-origin: left center;
+  will-change: transform;
+}
 
 main.has-header {
-  padding-top: 60px;
   min-height: 100vh;
+  padding-top: 60px;
 }
 
-/* === notification dropdown === */
 .notify-bell {
   position: relative;
   margin-right: 16px;
@@ -267,100 +455,281 @@ main.has-header {
   position: absolute;
   top: 48px;
   right: 80px;
+  z-index: 101;
   width: 340px;
   max-height: 420px;
-  background: #faf6ee;
-  border-radius: 8px;
-  border: 1px solid #d9cfb8;
-  z-index: 101;
   overflow: hidden;
+  background: var(--header-scrolled);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--header-shadow);
+  backdrop-filter: blur(18px);
 }
 
 .notify-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding: 14px 16px;
-  border-bottom: 1px solid #e8dfc6;
-  font-weight: 600;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text-strong);
   font-size: 15px;
-  color: #2d2a26;
+  font-weight: 600;
+  border-bottom: 1px solid var(--line);
 }
 
 .notify-list {
-  overflow-y: auto;
   max-height: 350px;
+  overflow-y: auto;
 }
 
 .notify-item {
   padding: 12px 16px;
-  border-bottom: 1px solid #f0e8d2;
+  border-bottom: 1px solid var(--line);
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background-color 150ms ease;
 }
 
-.notify-item:hover {
-  background: #f3ecdb;
-}
-
+.notify-item:hover,
 .notify-item.unread {
-  background: #f7ede9;
+  background: var(--surface-glass);
 }
 
 .notify-title {
+  margin-bottom: 4px;
+  color: var(--text-strong);
   font-size: 14px;
   font-weight: 600;
-  color: #2d2a26;
-  margin-bottom: 4px;
 }
 
 .notify-content {
-  font-size: 12px;
-  color: #8a8170;
   margin-bottom: 4px;
+  color: var(--text-muted);
+  font-size: 12px;
   white-space: pre-line;
 }
 
 .notify-time {
-  font-size: 11px;
-  color: #b0a690;
+  color: var(--text-soft);
   font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 11px;
 }
 
 .notify-empty {
   padding: 40px 0;
-  text-align: center;
-  color: #b0a690;
+  color: var(--text-soft);
   font-size: 14px;
+  text-align: center;
 }
-</style>
 
-<style>
-/* el-plus dialog overrides — bulletin board theme */
-.el-dialog { border-radius: 8px !important; overflow: hidden; border: 1px solid #d9cfb8; background: #faf6ee; }
-.el-dialog__header { padding: 18px 24px 0 !important; margin: 0 !important; }
-.el-dialog__title { font-family: 'Noto Serif SC', Georgia, serif; font-size: 17px !important; font-weight: 700 !important; color: #2d2a26 !important; }
-.el-dialog__body { padding: 22px 24px !important; color: #5c5448; }
-.el-dialog__footer { padding: 10px 24px 18px !important; }
-.el-dialog .el-input__wrapper { border-radius: 6px; box-shadow: 0 0 0 1px #d9cfb8 inset; background: #fff; }
-.el-dialog .el-input__wrapper:hover { box-shadow: 0 0 0 1px #c4b896 inset; }
-.el-dialog .el-input.is-focus .el-input__wrapper { box-shadow: 0 0 0 1px #c8553d inset; }
-.el-dialog .el-button--primary { background: #c8553d !important; border-color: #c8553d !important; border-radius: 6px !important; font-weight: 600 !important; }
-.el-dialog .el-button--primary:hover { background: #a8442f !important; border-color: #a8442f !important; }
-.el-dialog .el-button { border-radius: 6px !important; }
-.el-message-box { border-radius: 8px !important; padding: 0 !important; border: 1px solid #d9cfb8; background: #faf6ee; }
-.el-message-box__header { padding: 18px 24px 6px !important; }
-.el-message-box__title { font-family: 'Noto Serif SC', Georgia, serif; font-size: 17px !important; font-weight: 700 !important; color: #2d2a26 !important; }
-.el-message-box__body { padding: 6px 24px 22px !important; }
-.el-message-box__message { color: #5c5448 !important; font-size: 14px !important; margin: 0 !important; }
-.el-message-box__input { padding-top: 8px !important; }
-.el-message-box__input .el-input__wrapper { border-radius: 6px; box-shadow: 0 0 0 1px #d9cfb8 inset; background: #fff; }
-.el-message-box__input .el-input__wrapper:hover { box-shadow: 0 0 0 1px #c4b896 inset; }
-.el-message-box__input .el-input.is-focus .el-input__wrapper { box-shadow: 0 0 0 1px #c8553d inset; }
-.el-message-box__btns { padding: 0 24px 20px !important; }
-.el-message-box__btns .el-button--primary { background: #c8553d !important; border-color: #c8553d !important; border-radius: 6px !important; font-weight: 600 !important; }
-.el-message-box__btns .el-button--primary:hover { background: #a8442f !important; }
-.el-message-box__btns .el-button { border-radius: 6px !important; }
-.el-message-box__content { padding: 0 !important; color: #5c5448 !important; font-size: 14px !important; }
-.el-message-box__status.el-icon-warning { color: #c9956b !important; }
+.el-dialog,
+.el-message-box {
+  overflow: hidden;
+  background: var(--header-scrolled) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--header-shadow) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+}
+
+.el-dialog__header {
+  padding: 18px 24px 0 !important;
+  margin: 0 !important;
+}
+
+.el-dialog__title,
+.el-message-box__title {
+  color: var(--text-strong) !important;
+  font-family: 'Noto Serif SC', Georgia, serif;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+}
+
+.el-dialog__body {
+  padding: 22px 24px !important;
+  color: var(--text-body);
+}
+
+.el-dialog__footer {
+  padding: 10px 24px 18px !important;
+}
+
+.el-dialog .el-input__wrapper,
+.el-message-box__input .el-input__wrapper {
+  background: var(--surface-white);
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px var(--line) inset;
+}
+
+.el-dialog .el-input__wrapper:hover,
+.el-message-box__input .el-input__wrapper:hover {
+  box-shadow: 0 0 0 1px var(--line-strong) inset;
+}
+
+.el-dialog .el-input.is-focus .el-input__wrapper,
+.el-message-box__input .el-input.is-focus .el-input__wrapper {
+  box-shadow: 0 0 0 2px var(--focus-ring) inset;
+}
+
+.el-dialog .el-button,
+.el-message-box__btns .el-button {
+  border-radius: 999px !important;
+}
+
+.el-dialog .el-button--primary,
+.el-message-box__btns .el-button--primary {
+  color: var(--surface-white) !important;
+  font-weight: 700 !important;
+  background: var(--ink) !important;
+  border-color: var(--ink) !important;
+}
+
+.el-dialog .el-button--primary:hover,
+.el-message-box__btns .el-button--primary:hover {
+  background: var(--ink-hover) !important;
+  border-color: var(--ink-hover) !important;
+}
+
+.el-message-box {
+  padding: 0 !important;
+}
+
+.el-message-box__header {
+  padding: 18px 24px 6px !important;
+}
+
+.el-message-box__body {
+  padding: 6px 24px 22px !important;
+}
+
+.el-message-box__message,
+.el-message-box__content {
+  padding: 0 !important;
+  margin: 0 !important;
+  color: var(--text-body) !important;
+  font-size: 14px !important;
+}
+
+.el-message-box__input {
+  padding-top: 8px !important;
+}
+
+.el-message-box__btns {
+  padding: 0 24px 20px !important;
+}
+
+.el-message-box__status.el-icon-warning {
+  color: var(--danger) !important;
+}
+
+@media (max-width: 1120px) {
+  .header-inner {
+    padding: 0 20px;
+    gap: 12px;
+  }
+
+  .nav-links a {
+    padding: 0 10px;
+  }
+
+  .nav-links a::after {
+    right: 10px;
+    left: 10px;
+  }
+
+  .brand {
+    font-size: 21px;
+  }
+}
+
+@media (max-width: 800px) {
+  .site-header {
+    height: 108px;
+  }
+
+  .header-inner {
+    height: 108px;
+    padding: 8px 16px 0;
+    flex-wrap: wrap;
+    gap: 0 12px;
+  }
+
+  .brand {
+    font-size: 20px;
+  }
+
+  .header-right {
+    margin-left: auto;
+  }
+
+  .nav-links {
+    order: 3;
+    width: 100%;
+    height: 46px;
+    flex: 0 0 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-links a {
+    flex: none;
+    padding: 0 14px;
+    font-size: 14px;
+  }
+
+  .nav-links a:first-child {
+    padding-left: 0;
+  }
+
+  .nav-links a::after {
+    right: 14px;
+    left: 14px;
+  }
+
+  .nav-links a:first-child::after {
+    left: 0;
+  }
+
+  .nav-badge {
+    top: 4px;
+  }
+
+  main.has-header {
+    padding-top: 108px;
+  }
+}
+
+@media (max-width: 420px) {
+  .header-action-btn {
+    width: 36px;
+    min-height: 36px;
+    padding: 0;
+  }
+
+  .header-action-btn span {
+    display: none;
+  }
+
+  .header-logout-btn {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 </style>
