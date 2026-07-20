@@ -6,6 +6,7 @@ export function login(data) {
     url: '/api/auth/login',
     method: 'post',
     data,
+    handleErrorLocally: true,
   })
 }
 
@@ -15,6 +16,7 @@ export function register(data) {
     url: '/api/auth/register',
     method: 'post',
     data,
+    handleErrorLocally: true,
   })
 }
 
