@@ -434,30 +434,29 @@ function statusLabel(status) {
   color: var(--gray-600);
   font-family: var(--font-body);
   font-size: 1.1rem;
-  background: radial-gradient(
-    ellipse at 30% 20%,
-    #bfdbfe 0%,
-    #dbeafe 35%,
-    #eff6ff 70%,
-    #f0f4ff 100%
-  );
+  background: #fafbfd;
 }
 
 .mouse-glow {
   position: fixed;
-  z-index: 0;
   width: 400px;
   height: 400px;
-  pointer-events: none;
-  background: radial-gradient(circle, rgba(147, 197, 253, 0.25) 0%, transparent 70%);
   border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(99, 102, 241, 0.4) 0%,
+    rgba(139, 92, 246, 0.25) 40%,
+    transparent 70%
+  );
   filter: blur(60px);
-  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
   transform: translate(-50%, -50%);
   transition:
     left 0.3s ease-out,
     top 0.3s ease-out,
     opacity 0.5s ease;
+  opacity: 0;
 }
 
 .mouse-glow.active {
@@ -522,6 +521,17 @@ function statusLabel(status) {
   gap: 26px;
   align-items: flex-start;
 }
+.sidebar,
+.content-area {
+  background: linear-gradient(180deg, rgba(250, 252, 255, 0.94) 0%, rgba(228, 238, 255, 0.86) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: 24px;
+  box-shadow:
+    0 34px 90px rgba(34, 48, 132, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+}
 .sidebar {
   display: flex;
   width: 280px;
@@ -529,20 +539,18 @@ function statusLabel(status) {
   flex: 0 0 280px;
   flex-direction: column;
   gap: 14px;
-  background: linear-gradient(135deg, rgba(240, 245, 255, 0.95), rgba(230, 240, 255, 0.95));
-  border: 1px solid rgba(255, 255, 255, 0.62);
-  border-radius: 16px;
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
+}
+.post-card,
+.filter-card {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
 }
 .filter-card {
   padding: 18px;
-  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(239, 246, 255, 0.95));
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 12px;
-  box-shadow: var(--shadow-filter);
-  backdrop-filter: blur(12px) saturate(160%);
-  -webkit-backdrop-filter: blur(12px) saturate(160%);
 }
 .search-card {
   padding: 0;
@@ -616,12 +624,6 @@ function statusLabel(status) {
   min-height: 360px;
   padding: 22px;
   flex: 1;
-  background: linear-gradient(135deg, rgba(240, 245, 255, 0.95), rgba(230, 240, 255, 0.95));
-  border: 1px solid rgba(255, 255, 255, 0.62);
-  border-radius: 16px;
-  box-shadow: var(--shadow-glass);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
 }
 .card-grid {
   display: grid;
@@ -632,13 +634,8 @@ function statusLabel(status) {
   min-width: 0;
   min-height: 320px;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(239, 246, 255, 0.95));
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
-  backdrop-filter: blur(12px) saturate(160%);
-  -webkit-backdrop-filter: blur(12px) saturate(160%);
 }
 .post-card:hover,
 .post-card:focus-visible {
