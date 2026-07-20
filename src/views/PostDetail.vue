@@ -496,12 +496,12 @@ function goChat(otherId) {
 .comments-card {
   padding: 26px;
   margin-bottom: 18px;
-  background: linear-gradient(135deg, rgba(248, 250, 252, 0.92), rgba(239, 246, 255, 0.92));
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(240, 245, 255, 0.95), rgba(230, 240, 255, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: 16px;
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(12px) saturate(160%);
-  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
 }
 .comments-card {
   margin-bottom: 0;

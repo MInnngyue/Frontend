@@ -224,11 +224,11 @@ select {
 }
 
 .site-header.is-scrolled {
-  background: rgba(245, 247, 252, 0.92);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(18px) saturate(180%);
   -webkit-backdrop-filter: blur(18px) saturate(180%);
-  border-bottom-color: rgba(255, 255, 255, 0.28);
-  box-shadow: 0 18px 54px rgba(7, 11, 24, 0.14);
+  border-bottom-color: rgba(226, 232, 240, 0.6);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
 .header-inner {
@@ -386,10 +386,12 @@ select {
   color: #0f172a;
   font-size: 14px;
   font-weight: 600;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(15, 23, 42, 0.16);
   border-radius: 8px;
   cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: all 0.2s ease;
 }
 
@@ -403,7 +405,7 @@ select {
 
 .header-logout-btn:hover,
 .header-logout-btn:focus-visible {
-  background: #f8fafc;
+  background: rgba(255, 255, 255, 0.9);
   border-color: rgba(15, 23, 42, 0.32);
   outline: none;
 }

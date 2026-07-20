@@ -18,7 +18,13 @@ const queryParams = ref({ type: null, itemCategory: '', keyword: '' })
 
 const itemCategories = ref([])
 const catExpanded = ref(false)
+const placeholders = ['校园卡', '电子产品', '钱包', '钥匙', '书包', '水杯']
+const currentPlaceholder = ref(0)
+const glowX = ref(0)
+const glowY = ref(0)
+const glowActive = ref(false)
 let revealObserver = null
+let placeholderTimer = null
 
 function observeRevealElements() {
   const pageRoot = document.querySelector('.post-square')
@@ -48,13 +54,19 @@ function initRevealObserver() {
 
 onMounted(async () => {
   initRevealObserver()
+  placeholderTimer = window.setInterval(() => {
+    currentPlaceholder.value = (currentPlaceholder.value + 1) % placeholders.length
+  }, 2000)
   await nextTick()
   observeRevealElements()
   itemCategories.value = (await getCategories('item_category')).data
   fetchPosts()
 })
 
-onBeforeUnmount(() => revealObserver?.disconnect())
+onBeforeUnmount(() => {
+  revealObserver?.disconnect()
+  if (placeholderTimer !== null) window.clearInterval(placeholderTimer)
+})
 
 async function fetchPosts() {
   loading.value = true
@@ -108,6 +120,16 @@ function onPageChange(p) {
   fetchPosts()
 }
 
+function onMouseMove(event) {
+  glowX.value = event.clientX
+  glowY.value = event.clientY
+  glowActive.value = true
+}
+
+function onMouseLeave() {
+  glowActive.value = false
+}
+
 function typeLabel(type) {
   return type === 0 ? '寻物' : '招领'
 }
@@ -118,7 +140,13 @@ function statusLabel(status) {
 </script>
 
 <template>
-  <div class="page post-square">
+  <div class="page post-square" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
+    <div
+      class="mouse-glow"
+      :class="{ active: glowActive }"
+      :style="{ left: `${glowX}px`, top: `${glowY}px` }"
+      aria-hidden="true"
+    />
     <div class="square-inner">
       <header class="page-header" data-reveal>
         <div>
@@ -140,7 +168,7 @@ function statusLabel(status) {
               <el-input
                 v-model="queryParams.keyword"
                 class="search-input"
-                placeholder="搜索关键词..."
+                :placeholder="placeholders[currentPlaceholder]"
                 clearable
                 @keyup.enter="onSearch"
                 @clear="onSearch"
@@ -400,14 +428,45 @@ function statusLabel(status) {
   --font-mono: 'JetBrains Mono', monospace;
 
   min-height: calc(100vh - 60px);
+  position: relative;
+  isolation: isolate;
   padding: 31px;
   color: var(--gray-600);
   font-family: var(--font-body);
   font-size: 1.1rem;
-  background: radial-gradient(ellipse at 30% 20%, #dbeafe 0%, #eff6ff 40%, #f0f4ff 100%);
+  background: radial-gradient(
+    ellipse at 30% 20%,
+    #bfdbfe 0%,
+    #dbeafe 35%,
+    #eff6ff 70%,
+    #f0f4ff 100%
+  );
+}
+
+.mouse-glow {
+  position: fixed;
+  z-index: 0;
+  width: 400px;
+  height: 400px;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(147, 197, 253, 0.25) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition:
+    left 0.3s ease-out,
+    top 0.3s ease-out,
+    opacity 0.5s ease;
+}
+
+.mouse-glow.active {
+  opacity: 1;
 }
 
 .square-inner {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 1540px;
   margin: 0 auto;
@@ -466,15 +525,21 @@ function statusLabel(status) {
 .sidebar {
   display: flex;
   width: 280px;
+  padding: 14px;
   flex: 0 0 280px;
   flex-direction: column;
   gap: 14px;
+  background: linear-gradient(135deg, rgba(240, 245, 255, 0.95), rgba(230, 240, 255, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: 16px;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
 }
 .filter-card {
   padding: 18px;
-  background: linear-gradient(135deg, rgba(248, 250, 252, 0.92), rgba(239, 246, 255, 0.92));
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(239, 246, 255, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
   box-shadow: var(--shadow-filter);
   backdrop-filter: blur(12px) saturate(160%);
   -webkit-backdrop-filter: blur(12px) saturate(160%);
@@ -551,12 +616,12 @@ function statusLabel(status) {
   min-height: 360px;
   padding: 22px;
   flex: 1;
-  background: var(--bg-glass);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(240, 245, 255, 0.95), rgba(230, 240, 255, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: 16px;
   box-shadow: var(--shadow-glass);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
 }
 .card-grid {
   display: grid;
@@ -567,9 +632,9 @@ function statusLabel(status) {
   min-width: 0;
   min-height: 320px;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(248, 250, 252, 0.92), rgba(239, 246, 255, 0.92));
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(239, 246, 255, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
   backdrop-filter: blur(12px) saturate(160%);
