@@ -13,7 +13,6 @@ const isPublishPage = computed(() => route.path === '/publish')
 const unreadCount = ref(0)
 const pmUnread = ref(0)
 const isScrolled = ref(false)
-const scrollProgress = ref(0)
 let unreadTimer = null
 let scrollFrame = null
 
@@ -49,9 +48,7 @@ function startUnreadPolling() {
 
 function updateScrollState() {
   const scrollTop = window.scrollY || document.documentElement.scrollTop
-  const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
   isScrolled.value = scrollTop > 8
-  scrollProgress.value = scrollableHeight > 0 ? Math.min(scrollTop / scrollableHeight, 1) : 0
   scrollFrame = null
 }
 
@@ -66,7 +63,6 @@ onMounted(() => {
   startUnreadPolling()
   updateScrollState()
   window.addEventListener('scroll', scheduleScrollUpdate, { passive: true })
-  window.addEventListener('resize', scheduleScrollUpdate)
 })
 
 watch(showNav, (visible) => {
@@ -77,7 +73,6 @@ watch(showNav, (visible) => {
 onBeforeUnmount(() => {
   stopUnreadPolling()
   window.removeEventListener('scroll', scheduleScrollUpdate)
-  window.removeEventListener('resize', scheduleScrollUpdate)
   if (scrollFrame !== null) window.cancelAnimationFrame(scrollFrame)
 })
 </script>
@@ -127,13 +122,11 @@ onBeforeUnmount(() => {
             <Plus :size="16" aria-hidden="true" />
             <span>发布帖子</span>
           </button>
-          <button class="header-logout-btn" title="退出登录" aria-label="退出登录" @click="logout">
-            <LogOut :size="17" aria-hidden="true" />
+          <button class="header-logout-btn" title="退出登录" @click="logout">
+            <LogOut :size="16" aria-hidden="true" />
+            <span>退出</span>
           </button>
         </div>
-      </div>
-      <div class="scroll-progress" aria-hidden="true">
-        <span :style="{ transform: `scaleX(${scrollProgress})` }"></span>
       </div>
     </header>
     <main :class="{ 'has-header': showNav }">
@@ -152,15 +145,12 @@ onBeforeUnmount(() => {
   --surface-white: #ffffff;
   --surface-glass: rgba(255, 255, 255, 0.58);
   --header-scrolled: rgba(245, 247, 252, 0.92);
-  --header-border: rgba(255, 255, 255, 0.28);
   --text-strong: #1e293b;
   --text-body: #475569;
   --text-muted: #64748b;
   --text-soft: #94a3b8;
   --ink: #0f172a;
   --ink-hover: #000000;
-  --accent-blue: #2563eb;
-  --accent-violet: #8b5cf6;
   --danger: #dc2626;
   --danger-soft: #fef2f2;
   --line: #e2e8f0;
@@ -174,12 +164,6 @@ onBeforeUnmount(() => {
     var(--app-wash-start) 0%,
     var(--app-wash-mid) 48%,
     var(--app-wash-end) 100%
-  );
-  --progress-gradient: linear-gradient(
-    90deg,
-    var(--ink) 0%,
-    var(--accent-blue) 52%,
-    var(--accent-violet) 100%
   );
 }
 
@@ -230,8 +214,8 @@ select {
   left: 0;
   z-index: 50;
   height: 60px;
-  background-color: var(--surface-glass);
-  border-bottom: 1px solid var(--transparent);
+  background: transparent;
+  border-bottom: 1px solid transparent;
   transition:
     background-color 220ms ease,
     border-color 220ms ease,
@@ -240,11 +224,11 @@ select {
 }
 
 .site-header.is-scrolled {
-  background: linear-gradient(135deg, rgba(248, 250, 252, 0.92), rgba(239, 246, 255, 0.92));
-  border-bottom-color: var(--header-border);
-  box-shadow: var(--header-shadow);
+  background: rgba(245, 247, 252, 0.92);
   backdrop-filter: blur(18px) saturate(180%);
   -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border-bottom-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 18px 54px rgba(7, 11, 24, 0.14);
 }
 
 .header-inner {
@@ -270,7 +254,7 @@ select {
   gap: 8px;
   color: var(--text-strong);
   font-family: 'Noto Serif SC', Georgia, serif;
-  font-size: 24px;
+  font-size: 29px;
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0;
@@ -306,8 +290,8 @@ select {
   align-items: center;
   padding: 0 15px;
   color: var(--text-muted);
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 600;
   line-height: 1;
   text-decoration: none;
   white-space: nowrap;
@@ -372,12 +356,17 @@ select {
   gap: 8px;
 }
 
-.header-action-btn,
-.header-logout-btn {
+.header-action-btn {
   display: inline-flex;
+  min-height: 38px;
+  padding: 0 18px;
   align-items: center;
   justify-content: center;
+  gap: 7px;
   color: var(--surface-white);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
   background: var(--ink);
   border: 0;
   border-radius: 999px;
@@ -389,20 +378,19 @@ select {
     transform 180ms ease;
 }
 
-.header-action-btn {
-  min-height: 38px;
-  padding: 0 18px;
-  gap: 7px;
-  font-size: 13px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
 .header-logout-btn {
-  width: 38px;
-  height: 38px;
-  color: var(--text-muted);
-  background: var(--transparent);
+  display: inline-flex;
+  padding: 8px 18px;
+  align-items: center;
+  gap: 6px;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 600;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .header-action-btn:hover,
@@ -415,33 +403,14 @@ select {
 
 .header-logout-btn:hover,
 .header-logout-btn:focus-visible {
-  color: var(--text-strong);
-  background: var(--surface-glass);
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.32);
   outline: none;
 }
 
 .header-action-btn:active,
 .header-logout-btn:active {
   transform: translateY(0) scale(0.97);
-}
-
-.scroll-progress {
-  position: absolute;
-  right: 0;
-  bottom: -1px;
-  left: 0;
-  height: 3px;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.scroll-progress span {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background: var(--progress-gradient);
-  transform-origin: left center;
-  will-change: transform;
 }
 
 main.has-header {
@@ -646,7 +615,7 @@ main.has-header {
   }
 
   .brand {
-    font-size: 21px;
+    font-size: 25px;
   }
 }
 
@@ -663,7 +632,7 @@ main.has-header {
   }
 
   .brand {
-    font-size: 20px;
+    font-size: 24px;
   }
 
   .header-right {
@@ -687,7 +656,7 @@ main.has-header {
   .nav-links a {
     flex: none;
     padding: 0 14px;
-    font-size: 14px;
+    font-size: 17px;
   }
 
   .nav-links a:first-child {
@@ -724,8 +693,21 @@ main.has-header {
   }
 
   .header-logout-btn {
-    width: 36px;
-    height: 36px;
+    padding: 8px 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .header-inner {
+    gap: 0 4px;
+  }
+
+  .brand {
+    font-size: 23px;
+  }
+
+  .header-action-btn {
+    display: none;
   }
 }
 

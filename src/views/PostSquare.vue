@@ -404,7 +404,7 @@ function statusLabel(status) {
   color: var(--gray-600);
   font-family: var(--font-body);
   font-size: 1.1rem;
-  background: url('/bg.webp') center / cover no-repeat fixed;
+  background: radial-gradient(ellipse at 30% 20%, #dbeafe 0%, #eff6ff 40%, #f0f4ff 100%);
 }
 
 .square-inner {
@@ -419,7 +419,6 @@ function statusLabel(status) {
   justify-content: space-between;
   padding-bottom: 18px;
   margin-bottom: 26px;
-  border-bottom: 2px solid var(--gray-200);
 }
 
 .page-title {
