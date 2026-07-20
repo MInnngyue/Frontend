@@ -404,7 +404,7 @@ function statusLabel(status) {
   color: var(--gray-600);
   font-family: var(--font-body);
   font-size: 1.1rem;
-  background: var(--bg-page);
+  background: url('/bg.webp') center / cover no-repeat fixed;
 }
 
 .square-inner {
@@ -426,7 +426,7 @@ function statusLabel(status) {
   margin: 0;
   color: var(--gray-800);
   font-family: var(--font-heading);
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 700;
   line-height: 1.35;
   letter-spacing: 0;
@@ -435,7 +435,7 @@ function statusLabel(status) {
 .page-subtitle {
   margin: 4px 0 0;
   color: var(--gray-500);
-  font-size: 15.4px;
+  font-size: 16px;
   line-height: 1.6;
 }
 .total-block {
@@ -449,10 +449,13 @@ function statusLabel(status) {
   color: var(--gray-500);
   font-size: 15.4px;
 }
+.total-label {
+  font-size: 16px;
+}
 .total-count {
   color: var(--primary);
   font-family: var(--font-mono);
-  font-size: 31px;
+  font-size: 36px;
   font-weight: 700;
 }
 
@@ -470,12 +473,12 @@ function statusLabel(status) {
 }
 .filter-card {
   padding: 18px;
-  background: var(--bg-sidebar);
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.92), rgba(239, 246, 255, 0.92));
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-filter);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
 }
 .search-card {
   padding: 0;
@@ -565,11 +568,13 @@ function statusLabel(status) {
   min-width: 0;
   min-height: 320px;
   overflow: hidden;
-  background: var(--bg-sidebar);
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.92), rgba(239, 246, 255, 0.92));
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.2s ease;
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
 }
 .post-card:hover,
 .post-card:focus-visible {

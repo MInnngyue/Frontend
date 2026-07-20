@@ -413,23 +413,25 @@ function goChat(otherId) {
 }
 .back-btn {
   display: inline-flex;
-  min-height: 42px;
   align-items: center;
-  gap: 6px;
-  padding: 9px 18px;
-  color: var(--gray-600);
-  font-family: var(--font-body);
-  font-size: 15.4px;
-  background: var(--bg-glass-soft);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-full);
+  gap: 8px;
+  padding: 10px 24px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.92);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition:
+    transform 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease;
 }
 .back-btn:hover {
-  color: var(--gray-800);
-  background: var(--gray-50);
-  border-color: var(--gray-300);
+  transform: translateY(-2px);
+  background: #000000;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.24);
 }
 
 .cover-section {
@@ -494,12 +496,12 @@ function goChat(otherId) {
 .comments-card {
   padding: 26px;
   margin-bottom: 18px;
-  background: var(--bg-glass);
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.92), rgba(239, 246, 255, 0.92));
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
 }
 .comments-card {
   margin-bottom: 0;

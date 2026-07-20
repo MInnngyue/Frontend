@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onBeforeUnmount, onMounted, provide, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ArrowLeft, LogOut, MapPin, Plus } from 'lucide-vue-next'
+import { ArrowLeft, Backpack, LogOut, Plus } from 'lucide-vue-next'
 import { getUnreadCount } from '@/api/message'
 import { getConversations } from '@/api/pm'
 
@@ -88,7 +88,9 @@ onBeforeUnmount(() => {
       <div class="header-inner">
         <div class="header-left">
           <div class="brand" @click="router.push('/')">
-            <MapPin class="brand-pin" :size="20" aria-hidden="true" />
+            <span class="brand-icon" aria-hidden="true">
+              <Backpack :size="24" :stroke-width="1.8" />
+            </span>
             <span class="brand-text">校园失物招领</span>
           </div>
         </div>
@@ -238,7 +240,7 @@ select {
 }
 
 .site-header.is-scrolled {
-  background-color: var(--header-scrolled);
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.92), rgba(239, 246, 255, 0.92));
   border-bottom-color: var(--header-border);
   box-shadow: var(--header-shadow);
   backdrop-filter: blur(18px) saturate(180%);
@@ -276,9 +278,16 @@ select {
   cursor: pointer;
 }
 
-.brand-pin {
+.brand-icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
   flex: none;
-  color: var(--accent-blue);
+  color: #fff;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.24);
+  place-items: center;
 }
 
 .nav-links {
