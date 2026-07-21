@@ -583,6 +583,7 @@ function statusLabel(status) {
   flex: 0 0 280px;
   flex-direction: column;
   gap: 14px;
+  transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 .post-card,
 .filter-card {
@@ -958,8 +959,7 @@ function statusLabel(status) {
 .sidebar[data-reveal] {
   transition:
     opacity 760ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 760ms cubic-bezier(0.16, 1, 0.3, 1),
-    top 0.3s ease;
+    transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 [data-reveal].is-visible {
