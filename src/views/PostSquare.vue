@@ -28,10 +28,6 @@ const glowTargetY = ref(0)
 const glowCurrentX = ref(0)
 const glowCurrentY = ref(0)
 let glowTicking = false
-const sidebarRef = ref(null)
-const sidebarCurrentY = ref(0)
-const sidebarTargetY = ref(0)
-let sidebarTicking = false
 let revealObserver = null
 let placeholderTimer = null
 
@@ -68,8 +64,6 @@ onMounted(async () => {
   }, 2000)
   await nextTick()
   observeRevealElements()
-  window.addEventListener('scroll', handleSidebarScroll, { passive: true })
-  handleSidebarScroll()
   itemCategories.value = (await getCategories('item_category')).data
   fetchPosts()
 })
@@ -77,7 +71,6 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   revealObserver?.disconnect()
   if (placeholderTimer !== null) window.clearInterval(placeholderTimer)
-  window.removeEventListener('scroll', handleSidebarScroll)
 })
 
 async function fetchPosts() {
@@ -162,51 +155,6 @@ function onMouseLeave() {
   glowActive.value = false
 }
 
-// 侧边栏滚动跟随
-function animateSidebar() {
-  const ease = 0.3
-  sidebarCurrentY.value += (sidebarTargetY.value - sidebarCurrentY.value) * ease
-
-  if (sidebarRef.value) {
-    sidebarRef.value.style.transform = `translateY(${sidebarCurrentY.value}px)`
-  }
-
-  if (Math.abs(sidebarTargetY.value - sidebarCurrentY.value) > 0.5) {
-    requestAnimationFrame(animateSidebar)
-  } else {
-    sidebarTicking = false
-  }
-}
-
-function handleSidebarScroll() {
-  if (!sidebarRef.value) return
-
-  const topOffset = 76
-
-  const scrollY = window.scrollY
-  const pageEl = document.querySelector('.post-square')
-  if (!pageEl) return
-  const pageRect = pageEl.getBoundingClientRect()
-
-  // 侧边栏在页面内的最大可移动距离
-  const sidebarH = sidebarRef.value.offsetHeight
-  const contentH = document.querySelector('.content-area')?.offsetHeight || 0
-  const maxScroll = Math.max(0, contentH - sidebarH)
-
-  // 目标偏移量：滚动超过 topOffset 后开始跟随，不超过最大距离
-  let targetY = 0
-  if (scrollY > topOffset) {
-    targetY = Math.min(scrollY - topOffset, maxScroll)
-  }
-
-  sidebarTargetY.value = targetY
-
-  if (!sidebarTicking) {
-    sidebarTicking = true
-    requestAnimationFrame(animateSidebar)
-  }
-}
-
 function typeLabel(type) {
   return type === 0 ? '寻物' : '招领'
 }
@@ -232,7 +180,7 @@ function statusLabel(status) {
     />
     <div class="square-inner">
       <div class="main-layout">
-        <aside ref="sidebarRef" class="sidebar" data-reveal style="--reveal-delay: 90ms">
+        <aside class="sidebar" data-reveal style="--reveal-delay: 90ms">
           <section class="filter-card search-card">
             <div class="site-search">
               <Search class="site-search-icon" :size="19" aria-hidden="true" />
@@ -627,6 +575,8 @@ function statusLabel(status) {
   -webkit-backdrop-filter: blur(16px) saturate(180%);
 }
 .sidebar {
+  position: sticky;
+  top: 76px;
   display: flex;
   width: 280px;
   padding: 14px;
@@ -1005,6 +955,13 @@ function statusLabel(status) {
   transition-delay: var(--reveal-delay, 0ms);
 }
 
+.sidebar[data-reveal] {
+  transition:
+    opacity 760ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 760ms cubic-bezier(0.16, 1, 0.3, 1),
+    top 0.3s ease;
+}
+
 [data-reveal].is-visible {
   opacity: 1;
   transform: translate3d(0, 0, 0) scale(1);
@@ -1045,6 +1002,7 @@ function statusLabel(status) {
     flex-direction: column;
   }
   .sidebar {
+    position: static;
     display: grid;
     width: 100%;
     flex: none;

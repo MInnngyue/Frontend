@@ -138,13 +138,14 @@ async function handleMsgClick(m) {
   margin: 0 auto;
   padding: 31px;
   position: relative;
+  overflow: hidden;
   isolation: isolate;
   color: #475569;
   font-family: 'HarmonyOS Sans', 'PingFang SC', sans-serif;
 }
 
 .aurora-glow {
-  position: fixed;
+  position: absolute;
   width: 300px;
   height: 300px;
   left: 0;

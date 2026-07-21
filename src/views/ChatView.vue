@@ -119,12 +119,13 @@ const displayMessages = computed(() => {
   height: calc(100vh - 60px);
   padding: 31px;
   position: relative;
+  overflow: hidden;
   isolation: isolate;
   font-family: 'HarmonyOS Sans', 'PingFang SC', sans-serif;
 }
 
 .aurora-glow {
-  position: fixed;
+  position: absolute;
   width: 300px;
   height: 300px;
   left: 0;

@@ -316,12 +316,13 @@ async function onSubmit() {
   padding: 31px 20px 48px;
   min-height: calc(100vh - 60px);
   position: relative;
+  overflow: hidden;
   isolation: isolate;
 }
 
 /* 极光 Aurora 双光团 */
 .aurora-glow {
-  position: fixed;
+  position: absolute;
   width: 300px;
   height: 300px;
   left: 0;
