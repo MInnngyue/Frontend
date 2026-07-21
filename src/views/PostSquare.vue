@@ -434,28 +434,36 @@ function statusLabel(status) {
   color: var(--gray-600);
   font-family: var(--font-body);
   font-size: 1.1rem;
-  background: #fafbfd;
+  background: radial-gradient(
+    ellipse at 30% 20%,
+    #bfdbfe 0%,
+    #dbeafe 35%,
+    #eff6ff 70%,
+    #f0f4ff 100%
+  );
 }
 
 .mouse-glow {
   position: fixed;
-  width: 400px;
-  height: 400px;
+  width: 280px;
+  height: 280px;
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(99, 102, 241, 0.4) 0%,
-    rgba(139, 92, 246, 0.25) 40%,
-    transparent 70%
+    rgba(59, 130, 246, 0.45) 0%,
+    rgba(99, 102, 241, 0.35) 25%,
+    rgba(139, 92, 246, 0.28) 50%,
+    rgba(45, 212, 191, 0.18) 75%,
+    transparent 100%
   );
-  filter: blur(60px);
+  filter: blur(25px);
   pointer-events: none;
   z-index: 0;
   transform: translate(-50%, -50%);
   transition:
-    left 0.3s ease-out,
-    top 0.3s ease-out,
-    opacity 0.5s ease;
+    left 0.08s linear,
+    top 0.08s linear,
+    opacity 0.4s ease;
   opacity: 0;
 }
 
@@ -523,7 +531,7 @@ function statusLabel(status) {
 }
 .sidebar,
 .content-area {
-  background: linear-gradient(180deg, rgba(250, 252, 255, 0.94) 0%, rgba(228, 238, 255, 0.86) 100%);
+  background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.62);
   border-radius: 24px;
   box-shadow:
@@ -542,7 +550,12 @@ function statusLabel(status) {
 }
 .post-card,
 .filter-card {
-  background: rgba(255, 255, 255, 0.8);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.88) 0%,
+    rgba(240, 247, 255, 0.84) 45%,
+    rgba(224, 238, 255, 0.80) 100%
+  );
   border: 1px solid rgba(15, 23, 42, 0.08);
   border-radius: 20px;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);

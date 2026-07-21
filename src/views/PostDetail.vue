@@ -496,7 +496,7 @@ function goChat(otherId) {
 .comments-card {
   padding: 26px;
   margin-bottom: 18px;
-  background: linear-gradient(180deg, rgba(250, 252, 255, 0.94) 0%, rgba(228, 238, 255, 0.86) 100%);
+  background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(255, 255, 255, 0.62);
   border-radius: 24px;
   box-shadow:
