@@ -575,17 +575,14 @@ function statusLabel(status) {
 }
 .post-card,
 .filter-card {
-  background: linear-gradient(
-    135deg,
-    rgba(200, 220, 255, 0.45) 0%,
-    rgba(220, 200, 255, 0.35) 50%,
-    rgba(255, 210, 240, 0.25) 100%
-  );
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 20px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
-  backdrop-filter: blur(12px) saturate(160%);
-  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  box-shadow:
+    0 8px 32px rgba(31, 38, 135, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 .filter-card {
   padding: 18px;
