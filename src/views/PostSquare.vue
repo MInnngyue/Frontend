@@ -23,6 +23,11 @@ const currentPlaceholder = ref(0)
 const glowX = ref(0)
 const glowY = ref(0)
 const glowActive = ref(false)
+const glowTargetX = ref(0)
+const glowTargetY = ref(0)
+const glowCurrentX = ref(0)
+const glowCurrentY = ref(0)
+let glowTicking = false
 let revealObserver = null
 let placeholderTimer = null
 
@@ -121,9 +126,29 @@ function onPageChange(p) {
 }
 
 function onMouseMove(event) {
-  glowX.value = event.clientX
-  glowY.value = event.clientY
+  glowTargetX.value = event.clientX
+  glowTargetY.value = event.clientY
   glowActive.value = true
+  if (!glowTicking) {
+    glowTicking = true
+    requestAnimationFrame(animateGlow)
+  }
+}
+
+function animateGlow() {
+  const ease = 0.15
+  glowCurrentX.value += (glowTargetX.value - glowCurrentX.value) * ease
+  glowCurrentY.value += (glowTargetY.value - glowCurrentY.value) * ease
+  glowX.value = glowCurrentX.value
+  glowY.value = glowCurrentY.value
+  if (
+    Math.abs(glowTargetX.value - glowCurrentX.value) > 0.5 ||
+    Math.abs(glowTargetY.value - glowCurrentY.value) > 0.5
+  ) {
+    requestAnimationFrame(animateGlow)
+  } else {
+    glowTicking = false
+  }
 }
 
 function onMouseLeave() {
@@ -142,9 +167,15 @@ function statusLabel(status) {
 <template>
   <div class="page post-square" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
     <div
-      class="mouse-glow"
+      class="aurora-glow"
       :class="{ active: glowActive }"
-      :style="{ left: `${glowX}px`, top: `${glowY}px` }"
+      :style="{ transform: `translate3d(${glowX - 120}px, ${glowY - 80}px, 0)` }"
+      aria-hidden="true"
+    />
+    <div
+      class="aurora-glow aurora-glow--teal"
+      :class="{ active: glowActive }"
+      :style="{ transform: `translate3d(${glowX - 100}px, ${glowY - 120}px, 0)` }"
       aria-hidden="true"
     />
     <div class="square-inner">
@@ -434,40 +465,34 @@ function statusLabel(status) {
   color: var(--gray-600);
   font-family: var(--font-body);
   font-size: 1.1rem;
-  background: radial-gradient(
-    ellipse at 30% 20%,
-    #bfdbfe 0%,
-    #dbeafe 35%,
-    #eff6ff 70%,
-    #f0f4ff 100%
-  );
 }
 
-.mouse-glow {
+/* 极光 Aurora 双光团 */
+.aurora-glow {
   position: fixed;
-  width: 280px;
-  height: 280px;
+  width: 240px;
+  height: 240px;
+  left: 0;
+  top: 0;
   border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(59, 130, 246, 0.45) 0%,
-    rgba(99, 102, 241, 0.35) 25%,
-    rgba(139, 92, 246, 0.28) 50%,
-    rgba(45, 212, 191, 0.18) 75%,
-    transparent 100%
-  );
-  filter: blur(25px);
   pointer-events: none;
   z-index: 0;
-  transform: translate(-50%, -50%);
-  transition:
-    left 0.08s linear,
-    top 0.08s linear,
-    opacity 0.4s ease;
+  will-change: transform;
   opacity: 0;
+  transition: opacity 0.5s ease;
+  filter: blur(50px);
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.35) 0%, rgba(124, 58, 237, 0.12) 40%, transparent 70%);
+  mix-blend-mode: normal;
 }
 
-.mouse-glow.active {
+.aurora-glow--teal {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, rgba(6, 182, 212, 0.1) 40%, transparent 70%);
+  mix-blend-mode: screen;
+}
+
+.aurora-glow.active {
   opacity: 1;
 }
 
@@ -552,9 +577,9 @@ function statusLabel(status) {
 .filter-card {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.88) 0%,
-    rgba(240, 247, 255, 0.84) 45%,
-    rgba(224, 238, 255, 0.80) 100%
+    rgba(200, 220, 255, 0.45) 0%,
+    rgba(220, 200, 255, 0.35) 50%,
+    rgba(255, 210, 240, 0.25) 100%
   );
   border: 1px solid rgba(15, 23, 42, 0.08);
   border-radius: 20px;
