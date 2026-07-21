@@ -178,19 +178,19 @@ function statusLabel(status) {
       :style="{ transform: `translate3d(${glowX - 100}px, ${glowY - 120}px, 0)` }"
       aria-hidden="true"
     />
-    <div class="square-inner">
-      <header class="page-header" data-reveal>
-        <div>
-          <h1 class="page-title">失物广场</h1>
-          <p class="page-subtitle">在这里找到你丢失的，或拾到他人遗失的</p>
-        </div>
-        <div class="total-block">
-          <span class="total-prefix">共</span>
-          <span class="total-count">{{ total }}</span>
-          <span class="total-label">条帖子</span>
-        </div>
-      </header>
+    <header class="page-header" data-reveal>
+      <div>
+        <h1 class="page-title">失物广场</h1>
+        <p class="page-subtitle">在这里找到你丢失的，或拾到他人遗失的</p>
+      </div>
+      <div class="total-block">
+        <span class="total-prefix">共</span>
+        <span class="total-count">{{ total }}</span>
+        <span class="total-label">条帖子</span>
+      </div>
+    </header>
 
+    <div class="square-inner">
       <div class="main-layout">
         <aside class="sidebar" data-reveal style="--reveal-delay: 90ms">
           <section class="filter-card search-card">
@@ -510,6 +510,10 @@ function statusLabel(status) {
   justify-content: space-between;
   padding-bottom: 18px;
   margin-bottom: 26px;
+  max-width: 1540px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 }
 
 .page-title {
