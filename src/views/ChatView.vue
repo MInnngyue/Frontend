@@ -135,15 +135,15 @@ const displayMessages = computed(() => {
   will-change: transform;
   opacity: 0;
   transition: opacity 0.5s ease;
-  filter: blur(30px);
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.5) 0%, rgba(139, 92, 246, 0.18) 40%, transparent 70%);
+  filter: blur(40px);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, rgba(139, 92, 246, 0.1) 40%, transparent 70%);
   mix-blend-mode: normal;
 }
 
 .aurora-glow--teal {
   width: 260px;
   height: 260px;
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.45) 0%, rgba(6, 182, 212, 0.15) 40%, transparent 70%);
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.25) 0%, rgba(6, 182, 212, 0.08) 40%, transparent 70%);
   mix-blend-mode: screen;
 }
 

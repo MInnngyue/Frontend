@@ -164,7 +164,7 @@ function onMouseLeave() {
 
 // 侧边栏滚动跟随
 function animateSidebar() {
-  const ease = 0.08
+  const ease = 0.3
   sidebarCurrentY.value += (sidebarTargetY.value - sidebarCurrentY.value) * ease
 
   if (sidebarRef.value) {
@@ -181,10 +181,7 @@ function animateSidebar() {
 function handleSidebarScroll() {
   if (!sidebarRef.value) return
 
-  const header = document.querySelector('.site-header')
-  const headerH = header ? header.offsetHeight : 60
-  const gap = 16
-  const topOffset = headerH + gap
+  const topOffset = 76
 
   const scrollY = window.scrollY
   const pageEl = document.querySelector('.post-square')
@@ -537,15 +534,15 @@ function statusLabel(status) {
   will-change: transform;
   opacity: 0;
   transition: opacity 0.5s ease;
-  filter: blur(30px);
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.5) 0%, rgba(139, 92, 246, 0.18) 40%, transparent 70%);
+  filter: blur(40px);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, rgba(139, 92, 246, 0.1) 40%, transparent 70%);
   mix-blend-mode: normal;
 }
 
 .aurora-glow--teal {
   width: 260px;
   height: 260px;
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.45) 0%, rgba(6, 182, 212, 0.15) 40%, transparent 70%);
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.25) 0%, rgba(6, 182, 212, 0.08) 40%, transparent 70%);
   mix-blend-mode: screen;
 }
 
@@ -685,15 +682,15 @@ function statusLabel(status) {
   cursor: pointer;
   transition: all 0.2s;
 }
-.chip:hover {
-  color: var(--primary);
+.sidebar .chip:hover {
+  color: var(--ink);
   background: var(--primary-light);
-  border-color: var(--primary);
+  border-color: var(--ink);
 }
-.chip.active {
+.sidebar .chip.active {
   color: var(--bg-card);
-  background: var(--primary);
-  border-color: var(--primary);
+  background: var(--ink);
+  border-color: var(--ink);
 }
 .category-list {
   overflow: hidden;
@@ -701,12 +698,12 @@ function statusLabel(status) {
 .category-list.collapsed {
   max-height: 192px;
 }
-.toggle-more-btn {
+.sidebar .toggle-more-btn {
   display: block;
   width: 100%;
   padding: 8px 0 0;
   margin-top: 4px;
-  color: var(--primary);
+  color: var(--ink);
   font-family: var(--font-body);
   font-size: 14.3px;
   font-weight: 600;
@@ -714,8 +711,8 @@ function statusLabel(status) {
   border: 0;
   cursor: pointer;
 }
-.toggle-more-btn:hover {
-  color: var(--primary-hover);
+.sidebar .toggle-more-btn:hover {
+  color: var(--ink-hover);
 }
 
 .content-area {
@@ -927,9 +924,9 @@ function statusLabel(status) {
     border-color 0.2s,
     box-shadow 0.2s;
 }
-.site-search:focus-within {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 4px var(--focus-ring);
+.sidebar .site-search:focus-within {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.1);
 }
 .site-search-icon {
   flex: none;
