@@ -28,6 +28,10 @@ const glowTargetY = ref(0)
 const glowCurrentX = ref(0)
 const glowCurrentY = ref(0)
 let glowTicking = false
+const sidebarRef = ref(null)
+const sidebarCurrentY = ref(0)
+const sidebarTargetY = ref(0)
+let sidebarTicking = false
 let revealObserver = null
 let placeholderTimer = null
 
@@ -64,6 +68,8 @@ onMounted(async () => {
   }, 2000)
   await nextTick()
   observeRevealElements()
+  window.addEventListener('scroll', handleSidebarScroll, { passive: true })
+  handleSidebarScroll()
   itemCategories.value = (await getCategories('item_category')).data
   fetchPosts()
 })
@@ -71,6 +77,7 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   revealObserver?.disconnect()
   if (placeholderTimer !== null) window.clearInterval(placeholderTimer)
+  window.removeEventListener('scroll', handleSidebarScroll)
 })
 
 async function fetchPosts() {
@@ -155,6 +162,54 @@ function onMouseLeave() {
   glowActive.value = false
 }
 
+// 侧边栏滚动跟随
+function animateSidebar() {
+  const ease = 0.08
+  sidebarCurrentY.value += (sidebarTargetY.value - sidebarCurrentY.value) * ease
+
+  if (sidebarRef.value) {
+    sidebarRef.value.style.transform = `translateY(${sidebarCurrentY.value}px)`
+  }
+
+  if (Math.abs(sidebarTargetY.value - sidebarCurrentY.value) > 0.5) {
+    requestAnimationFrame(animateSidebar)
+  } else {
+    sidebarTicking = false
+  }
+}
+
+function handleSidebarScroll() {
+  if (!sidebarRef.value) return
+
+  const header = document.querySelector('.site-header')
+  const headerH = header ? header.offsetHeight : 60
+  const gap = 16
+  const topOffset = headerH + gap
+
+  const scrollY = window.scrollY
+  const pageEl = document.querySelector('.post-square')
+  if (!pageEl) return
+  const pageRect = pageEl.getBoundingClientRect()
+
+  // 侧边栏在页面内的最大可移动距离
+  const sidebarH = sidebarRef.value.offsetHeight
+  const contentH = document.querySelector('.content-area')?.offsetHeight || 0
+  const maxScroll = Math.max(0, contentH - sidebarH)
+
+  // 目标偏移量：滚动超过 topOffset 后开始跟随，不超过最大距离
+  let targetY = 0
+  if (scrollY > topOffset) {
+    targetY = Math.min(scrollY - topOffset, maxScroll)
+  }
+
+  sidebarTargetY.value = targetY
+
+  if (!sidebarTicking) {
+    sidebarTicking = true
+    requestAnimationFrame(animateSidebar)
+  }
+}
+
 function typeLabel(type) {
   return type === 0 ? '寻物' : '招领'
 }
@@ -169,18 +224,18 @@ function statusLabel(status) {
     <div
       class="aurora-glow"
       :class="{ active: glowActive }"
-      :style="{ transform: `translate3d(${glowX - 120}px, ${glowY - 80}px, 0)` }"
+      :style="{ transform: `translate3d(${glowX - 150}px, ${glowY - 100}px, 0)` }"
       aria-hidden="true"
     />
     <div
       class="aurora-glow aurora-glow--teal"
       :class="{ active: glowActive }"
-      :style="{ transform: `translate3d(${glowX - 100}px, ${glowY - 120}px, 0)` }"
+      :style="{ transform: `translate3d(${glowX - 130}px, ${glowY - 160}px, 0)` }"
       aria-hidden="true"
     />
     <div class="square-inner">
       <div class="main-layout">
-        <aside class="sidebar" data-reveal style="--reveal-delay: 90ms">
+        <aside ref="sidebarRef" class="sidebar" data-reveal style="--reveal-delay: 90ms">
           <section class="filter-card search-card">
             <div class="site-search">
               <Search class="site-search-icon" :size="19" aria-hidden="true" />
@@ -472,8 +527,8 @@ function statusLabel(status) {
 /* 极光 Aurora 双光团 */
 .aurora-glow {
   position: fixed;
-  width: 240px;
-  height: 240px;
+  width: 300px;
+  height: 300px;
   left: 0;
   top: 0;
   border-radius: 50%;
@@ -482,15 +537,15 @@ function statusLabel(status) {
   will-change: transform;
   opacity: 0;
   transition: opacity 0.5s ease;
-  filter: blur(50px);
-  background: radial-gradient(circle, rgba(124, 58, 237, 0.35) 0%, rgba(124, 58, 237, 0.12) 40%, transparent 70%);
+  filter: blur(30px);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.5) 0%, rgba(139, 92, 246, 0.18) 40%, transparent 70%);
   mix-blend-mode: normal;
 }
 
 .aurora-glow--teal {
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, rgba(6, 182, 212, 0.1) 40%, transparent 70%);
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.45) 0%, rgba(6, 182, 212, 0.15) 40%, transparent 70%);
   mix-blend-mode: screen;
 }
 

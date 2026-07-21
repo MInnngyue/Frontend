@@ -5,8 +5,10 @@ import { publishPost } from '@/api/post'
 import { getCategories, getCategoryChildren } from '@/api/category'
 import { uploadImage } from '@/api/upload'
 import { ElMessage } from 'element-plus'
+import { useAuroraGlow } from '@/composables/useAuroraGlow'
 
 const router = useRouter()
+const { glowX, glowY, glowActive, onMouseMove, onMouseLeave } = useAuroraGlow()
 
 const formRef = ref(null)
 const submitting = ref(false)
@@ -130,7 +132,19 @@ async function onSubmit() {
 </script>
 
 <template>
-  <div class="page publish-page">
+  <div class="page publish-page" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
+    <div
+      class="aurora-glow"
+      :class="{ active: glowActive }"
+      :style="{ transform: `translate3d(${glowX - 150}px, ${glowY - 100}px, 0)` }"
+      aria-hidden="true"
+    />
+    <div
+      class="aurora-glow aurora-glow--teal"
+      :class="{ active: glowActive }"
+      :style="{ transform: `translate3d(${glowX - 130}px, ${glowY - 160}px, 0)` }"
+      aria-hidden="true"
+    />
     <header class="page-header" data-reveal>
       <h1 class="page-title">发布帖子</h1>
       <p class="page-subtitle">填写物品信息，帮助找回或归还</p>
@@ -301,6 +315,43 @@ async function onSubmit() {
   margin: 0 auto;
   padding: 31px 20px 48px;
   min-height: calc(100vh - 60px);
+  position: relative;
+  isolation: isolate;
+}
+
+/* 极光 Aurora 双光团 */
+.aurora-glow {
+  position: fixed;
+  width: 300px;
+  height: 300px;
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  filter: blur(30px);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.5) 0%, rgba(139, 92, 246, 0.18) 40%, transparent 70%);
+  mix-blend-mode: normal;
+}
+
+.aurora-glow--teal {
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.45) 0%, rgba(6, 182, 212, 0.15) 40%, transparent 70%);
+  mix-blend-mode: screen;
+}
+
+.aurora-glow.active {
+  opacity: 1;
+}
+
+.page-header,
+.publish-form {
+  position: relative;
+  z-index: 1;
 }
 
 .page-header {
