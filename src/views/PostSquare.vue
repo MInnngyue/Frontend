@@ -178,18 +178,6 @@ function statusLabel(status) {
       :style="{ transform: `translate3d(${glowX - 100}px, ${glowY - 120}px, 0)` }"
       aria-hidden="true"
     />
-    <header class="page-header" data-reveal>
-      <div>
-        <h1 class="page-title">失物广场</h1>
-        <p class="page-subtitle">在这里找到你丢失的，或拾到他人遗失的</p>
-      </div>
-      <div class="total-block">
-        <span class="total-prefix">共</span>
-        <span class="total-count">{{ total }}</span>
-        <span class="total-label">条帖子</span>
-      </div>
-    </header>
-
     <div class="square-inner">
       <div class="main-layout">
         <aside class="sidebar" data-reveal style="--reveal-delay: 90ms">
@@ -314,94 +302,108 @@ function statusLabel(status) {
           </section>
         </aside>
 
-        <main class="content-area" v-loading="loading" data-reveal style="--reveal-delay: 160ms">
-          <div v-if="posts.length === 0 && !loading" class="empty-state" data-reveal>
-            <svg
-              class="empty-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M20 7h-4a2 2 0 0 1-2-2V1" />
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
-              <path d="M8 13h8M8 17h5" />
-            </svg>
-            <p class="empty-text">广场暂时空空如也</p>
-            <p class="empty-hint">发一条寻物或招领，帮自己也帮别人</p>
-            <button type="button" class="empty-btn" @click="goPublish">去发布帖子</button>
-          </div>
+        <div class="content-col">
+          <header class="page-header" data-reveal>
+            <div>
+              <h1 class="page-title">失物广场</h1>
+              <p class="page-subtitle">在这里找到你丢失的，或拾到他人遗失的</p>
+            </div>
+            <div class="total-block">
+              <span class="total-prefix">共</span>
+              <span class="total-count">{{ total }}</span>
+              <span class="total-label">条帖子</span>
+            </div>
+          </header>
 
-          <div v-else class="card-grid">
-            <article
-              v-for="(post, index) in posts"
-              :key="post.id"
-              class="post-card"
-              tabindex="0"
-              data-reveal
-              :style="{ '--reveal-delay': `${Math.min(index, 5) * 65}ms` }"
-              @click="goDetail(post.id)"
-              @keyup.enter="goDetail(post.id)"
-            >
-              <div class="card-cover">
-                <el-image
-                  v-if="post.coverImage"
-                  :src="imageUrl(post.coverImage)"
-                  fit="cover"
-                  class="cover-img"
-                />
-                <div v-else class="cover-placeholder">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                  >
-                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                    <circle cx="8.5" cy="8.5" r="1.5" />
-                    <path d="m21 15-5-5L5 21" />
-                  </svg>
-                </div>
-              </div>
+          <main class="content-area" v-loading="loading" data-reveal style="--reveal-delay: 160ms">
+            <div v-if="posts.length === 0 && !loading" class="empty-state" data-reveal>
+              <svg
+                class="empty-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M20 7h-4a2 2 0 0 1-2-2V1" />
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
+                <path d="M8 13h8M8 17h5" />
+              </svg>
+              <p class="empty-text">广场暂时空空如也</p>
+              <p class="empty-hint">发一条寻物或招领，帮自己也帮别人</p>
+              <button type="button" class="empty-btn" @click="goPublish">去发布帖子</button>
+            </div>
 
-              <div class="card-body">
-                <div class="card-tags">
-                  <span class="tag-type" :class="post.type === 0 ? 'lost' : 'found'">{{
-                    typeLabel(post.type)
-                  }}</span>
-                  <span class="tag-status" :class="'s-' + post.status">{{
-                    statusLabel(post.status)
-                  }}</span>
+            <div v-else class="card-grid">
+              <article
+                v-for="(post, index) in posts"
+                :key="post.id"
+                class="post-card"
+                tabindex="0"
+                data-reveal
+                :style="{ '--reveal-delay': `${Math.min(index, 5) * 65}ms` }"
+                @click="goDetail(post.id)"
+                @keyup.enter="goDetail(post.id)"
+              >
+                <div class="card-cover">
+                  <el-image
+                    v-if="post.coverImage"
+                    :src="imageUrl(post.coverImage)"
+                    fit="cover"
+                    class="cover-img"
+                  />
+                  <div v-else class="cover-placeholder">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <rect x="3" y="3" width="18" height="18" rx="2" />
+                      <circle cx="8.5" cy="8.5" r="1.5" />
+                      <path d="m21 15-5-5L5 21" />
+                    </svg>
+                  </div>
                 </div>
-                <h2 class="card-title">{{ post.title || '无标题' }}</h2>
-                <div class="card-meta">
-                  <span>{{ post.itemCategory }}</span>
-                  <span class="divider">·</span>
-                  <span>{{ post.locationCampus }}</span>
-                  <span class="divider">·</span>
-                  <time>{{ post.lostTime?.substring(0, 10) }}</time>
-                </div>
-              </div>
-            </article>
-          </div>
 
-          <div v-if="total > pageSize" class="pagination">
-            <el-pagination
-              background
-              layout="prev, pager, next"
-              :total="total"
-              :page-size="pageSize"
-              v-model:current-page="page"
-              @current-change="onPageChange"
-            />
-          </div>
-        </main>
+                <div class="card-body">
+                  <div class="card-tags">
+                    <span class="tag-type" :class="post.type === 0 ? 'lost' : 'found'">{{
+                      typeLabel(post.type)
+                    }}</span>
+                    <span class="tag-status" :class="'s-' + post.status">{{
+                      statusLabel(post.status)
+                    }}</span>
+                  </div>
+                  <h2 class="card-title">{{ post.title || '无标题' }}</h2>
+                  <div class="card-meta">
+                    <span>{{ post.itemCategory }}</span>
+                    <span class="divider">·</span>
+                    <span>{{ post.locationCampus }}</span>
+                    <span class="divider">·</span>
+                    <time>{{ post.lostTime?.substring(0, 10) }}</time>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <div v-if="total > pageSize" class="pagination">
+              <el-pagination
+                background
+                layout="prev, pager, next"
+                :total="total"
+                :page-size="pageSize"
+                v-model:current-page="page"
+                @current-change="onPageChange"
+              />
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   </div>
@@ -510,10 +512,6 @@ function statusLabel(status) {
   justify-content: space-between;
   padding-bottom: 18px;
   margin-bottom: 26px;
-  max-width: 1540px;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
 }
 
 .page-title {
@@ -557,6 +555,13 @@ function statusLabel(status) {
   display: flex;
   gap: 26px;
   align-items: flex-start;
+}
+.content-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 .sidebar,
 .content-area {
@@ -662,7 +667,6 @@ function statusLabel(status) {
   min-width: 0;
   min-height: 360px;
   padding: 22px;
-  flex: 1;
 }
 .card-grid {
   display: grid;
