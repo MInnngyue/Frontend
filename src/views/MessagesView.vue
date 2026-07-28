@@ -6,7 +6,7 @@ import { getConversations } from '@/api/pm'
 import { useAuroraGlow } from '@/composables/useAuroraGlow'
 
 const router = useRouter()
-const { glowX, glowY, glowActive, onMouseMove, onMouseLeave } = useAuroraGlow()
+const { glowX, glowY, glowActive, glowBlocked, onMouseMove, onMouseLeave } = useAuroraGlow()
 const systemMsgs = ref([])
 const conversations = ref([])
 const sysExpanded = ref(false)
@@ -57,13 +57,13 @@ async function handleMsgClick(m) {
   <div class="page msg-page" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
     <div
       class="aurora-glow"
-      :class="{ active: glowActive }"
+      :class="{ active: glowActive, blocked: glowBlocked }"
       :style="{ transform: `translate3d(${glowX - 150}px, ${glowY - 100}px, 0)` }"
       aria-hidden="true"
     />
     <div
       class="aurora-glow aurora-glow--teal"
-      :class="{ active: glowActive }"
+      :class="{ active: glowActive, blocked: glowBlocked }"
       :style="{ transform: `translate3d(${glowX - 130}px, ${glowY - 160}px, 0)` }"
       aria-hidden="true"
     />
@@ -80,7 +80,7 @@ async function handleMsgClick(m) {
     </header>
 
     <div class="msg-content">
-      <section class="msg-section" data-reveal style="--reveal-delay: 60ms">
+      <section class="msg-section" data-aurora-block data-reveal style="--reveal-delay: 60ms">
         <h2 class="section-title">
           <span class="section-num">01</span>
           系统通知
@@ -104,7 +104,7 @@ async function handleMsgClick(m) {
         </div>
       </section>
 
-      <section class="msg-section" data-reveal style="--reveal-delay: 120ms">
+      <section class="msg-section" data-aurora-block data-reveal style="--reveal-delay: 120ms">
         <h2 class="section-title">
           <span class="section-num">02</span>
           私信
@@ -133,9 +133,7 @@ async function handleMsgClick(m) {
 <style scoped>
 .msg-page {
   width: 100%;
-  max-width: 720px;
   min-height: calc(100vh - 60px);
-  margin: 0 auto;
   padding: 31px;
   position: relative;
   isolation: isolate;
@@ -171,8 +169,17 @@ async function handleMsgClick(m) {
   opacity: 1;
 }
 
+.aurora-glow.blocked {
+  opacity: 0;
+  transition: none;
+}
+
 .page-header,
 .msg-content {
+  width: 100%;
+  max-width: 658px;
+  margin-right: auto;
+  margin-left: auto;
   position: relative;
   z-index: 1;
 }

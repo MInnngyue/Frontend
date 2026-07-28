@@ -6,7 +6,7 @@ import { useAuroraGlow } from '@/composables/useAuroraGlow'
 
 const route = useRoute()
 const router = useRouter()
-const { glowX, glowY, glowActive, onMouseMove, onMouseLeave } = useAuroraGlow()
+const { glowX, glowY, glowActive, glowBlocked, onMouseMove, onMouseLeave } = useAuroraGlow()
 const otherId = ref(parseInt(route.query.userId))
 if (!otherId.value || isNaN(otherId.value)) {
   router.push('/messages')
@@ -67,18 +67,18 @@ const displayMessages = computed(() => {
   <div class="chat-page" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
     <div
       class="aurora-glow"
-      :class="{ active: glowActive }"
+      :class="{ active: glowActive, blocked: glowBlocked }"
       :style="{ transform: `translate3d(${glowX - 150}px, ${glowY - 100}px, 0)` }"
       aria-hidden="true"
     />
     <div
       class="aurora-glow aurora-glow--teal"
-      :class="{ active: glowActive }"
+      :class="{ active: glowActive, blocked: glowBlocked }"
       :style="{ transform: `translate3d(${glowX - 130}px, ${glowY - 160}px, 0)` }"
       aria-hidden="true"
     />
 
-    <div class="chat-container">
+    <div class="chat-container" data-aurora-block>
       <header class="chat-header">
         <button class="back-btn" type="button" @click="router.push('/messages')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
@@ -149,6 +149,11 @@ const displayMessages = computed(() => {
 
 .aurora-glow.active {
   opacity: 1;
+}
+
+.aurora-glow.blocked {
+  opacity: 0;
+  transition: none;
 }
 
 .chat-container {

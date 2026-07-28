@@ -76,6 +76,7 @@ function handleInput(event) {
   display: flex;
   align-items: center;
   height: 48px;
+  overflow: hidden;
   color: var(--gray-400);
   background: var(--gray-50);
   border: 1px solid var(--gray-200);
@@ -124,6 +125,16 @@ function handleInput(event) {
 
 .auth-field__input::placeholder {
   color: var(--gray-400);
+}
+
+.auth-field__input:autofill,
+.auth-field__input:-webkit-autofill,
+.auth-field__input:-webkit-autofill::first-line {
+  font-family: var(--font-body) !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  -webkit-text-fill-color: var(--gray-800) !important;
 }
 
 .auth-field__input:focus-visible {

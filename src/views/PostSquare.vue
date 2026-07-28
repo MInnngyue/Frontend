@@ -5,8 +5,10 @@ import { Search } from 'lucide-vue-next'
 import { getPosts } from '@/api/post'
 import { getCategories } from '@/api/category'
 import { imageUrl } from '@/utils/url'
+import { useAuroraGlow } from '@/composables/useAuroraGlow'
 
 const router = useRouter()
+const { glowX, glowY, glowActive, glowBlocked, onMouseMove, onMouseLeave } = useAuroraGlow()
 const posts = ref([])
 const loading = ref(false)
 const total = ref(0)
@@ -20,16 +22,82 @@ const itemCategories = ref([])
 const catExpanded = ref(false)
 const placeholders = ['校园卡', '电子产品', '钱包', '钥匙', '书包', '水杯']
 const currentPlaceholder = ref(0)
-const glowX = ref(0)
-const glowY = ref(0)
-const glowActive = ref(false)
-const glowTargetX = ref(0)
-const glowTargetY = ref(0)
-const glowCurrentX = ref(0)
-const glowCurrentY = ref(0)
-let glowTicking = false
+const sidebarFollowRef = ref(null)
 let revealObserver = null
 let placeholderTimer = null
+let sidebarFollowFrame = null
+let sidebarFollowOffset = 0
+let sidebarFollowLastScrollY = 0
+let sidebarFollowLastTime = 0
+
+const SIDEBAR_FOLLOW_STRENGTH = 0.22
+const SIDEBAR_FOLLOW_LIMIT = 18
+const SIDEBAR_FOLLOW_RESPONSE = 10
+
+function sidebarFollowEnabled() {
+  return (
+    window.innerWidth > 768 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
+}
+
+function renderSidebarFollow() {
+  if (!sidebarFollowRef.value) return
+  sidebarFollowRef.value.style.transform = `translate3d(0, ${sidebarFollowOffset.toFixed(2)}px, 0)`
+}
+
+function stopSidebarFollow() {
+  if (sidebarFollowFrame !== null) window.cancelAnimationFrame(sidebarFollowFrame)
+  sidebarFollowFrame = null
+  sidebarFollowOffset = 0
+  sidebarFollowLastTime = 0
+  sidebarFollowRef.value?.style.removeProperty('transform')
+}
+
+function animateSidebarFollow(timestamp) {
+  const deltaTime = Math.min((timestamp - sidebarFollowLastTime) / 1000, 0.05)
+  const damping = 1 - Math.exp(-SIDEBAR_FOLLOW_RESPONSE * deltaTime)
+  sidebarFollowOffset += (0 - sidebarFollowOffset) * damping
+  sidebarFollowLastTime = timestamp
+
+  if (Math.abs(sidebarFollowOffset) <= 0.1) {
+    sidebarFollowOffset = 0
+    renderSidebarFollow()
+    sidebarFollowFrame = null
+    sidebarFollowLastTime = 0
+    return
+  }
+
+  renderSidebarFollow()
+  sidebarFollowFrame = window.requestAnimationFrame(animateSidebarFollow)
+}
+
+function onSidebarScroll() {
+  const scrollY = window.scrollY || document.documentElement.scrollTop
+  const scrollDelta = scrollY - sidebarFollowLastScrollY
+  sidebarFollowLastScrollY = scrollY
+
+  if (!sidebarFollowEnabled()) {
+    stopSidebarFollow()
+    return
+  }
+  if (scrollDelta === 0) return
+
+  sidebarFollowOffset = Math.max(
+    -SIDEBAR_FOLLOW_LIMIT,
+    Math.min(SIDEBAR_FOLLOW_LIMIT, sidebarFollowOffset - scrollDelta * SIDEBAR_FOLLOW_STRENGTH),
+  )
+  renderSidebarFollow()
+
+  if (sidebarFollowFrame === null) {
+    sidebarFollowLastTime = performance.now()
+    sidebarFollowFrame = window.requestAnimationFrame(animateSidebarFollow)
+  }
+}
+
+function onSidebarViewportChange() {
+  sidebarFollowLastScrollY = window.scrollY || document.documentElement.scrollTop
+  if (!sidebarFollowEnabled()) stopSidebarFollow()
+}
 
 function observeRevealElements() {
   const pageRoot = document.querySelector('.post-square')
@@ -59,6 +127,9 @@ function initRevealObserver() {
 
 onMounted(async () => {
   initRevealObserver()
+  sidebarFollowLastScrollY = window.scrollY || document.documentElement.scrollTop
+  window.addEventListener('scroll', onSidebarScroll, { passive: true })
+  window.addEventListener('resize', onSidebarViewportChange)
   placeholderTimer = window.setInterval(() => {
     currentPlaceholder.value = (currentPlaceholder.value + 1) % placeholders.length
   }, 2000)
@@ -71,6 +142,9 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   revealObserver?.disconnect()
   if (placeholderTimer !== null) window.clearInterval(placeholderTimer)
+  window.removeEventListener('scroll', onSidebarScroll)
+  window.removeEventListener('resize', onSidebarViewportChange)
+  stopSidebarFollow()
 })
 
 async function fetchPosts() {
@@ -125,36 +199,6 @@ function onPageChange(p) {
   fetchPosts()
 }
 
-function onMouseMove(event) {
-  glowTargetX.value = event.clientX
-  glowTargetY.value = event.clientY
-  glowActive.value = true
-  if (!glowTicking) {
-    glowTicking = true
-    requestAnimationFrame(animateGlow)
-  }
-}
-
-function animateGlow() {
-  const ease = 0.15
-  glowCurrentX.value += (glowTargetX.value - glowCurrentX.value) * ease
-  glowCurrentY.value += (glowTargetY.value - glowCurrentY.value) * ease
-  glowX.value = glowCurrentX.value
-  glowY.value = glowCurrentY.value
-  if (
-    Math.abs(glowTargetX.value - glowCurrentX.value) > 0.5 ||
-    Math.abs(glowTargetY.value - glowCurrentY.value) > 0.5
-  ) {
-    requestAnimationFrame(animateGlow)
-  } else {
-    glowTicking = false
-  }
-}
-
-function onMouseLeave() {
-  glowActive.value = false
-}
-
 function typeLabel(type) {
   return type === 0 ? '寻物' : '招领'
 }
@@ -168,19 +212,20 @@ function statusLabel(status) {
   <div class="page post-square" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
     <div
       class="aurora-glow"
-      :class="{ active: glowActive }"
+      :class="{ active: glowActive, blocked: glowBlocked }"
       :style="{ transform: `translate3d(${glowX - 150}px, ${glowY - 100}px, 0)` }"
       aria-hidden="true"
     />
     <div
       class="aurora-glow aurora-glow--teal"
-      :class="{ active: glowActive }"
+      :class="{ active: glowActive, blocked: glowBlocked }"
       :style="{ transform: `translate3d(${glowX - 130}px, ${glowY - 160}px, 0)` }"
       aria-hidden="true"
     />
     <div class="square-inner">
       <div class="main-layout">
-        <aside class="sidebar" data-reveal style="--reveal-delay: 90ms">
+        <div ref="sidebarFollowRef" class="sidebar-follow">
+          <aside class="sidebar" data-aurora-block data-reveal style="--reveal-delay: 90ms">
           <section class="filter-card search-card">
             <div class="site-search">
               <Search class="site-search-icon" :size="19" aria-hidden="true" />
@@ -300,7 +345,8 @@ function statusLabel(status) {
               {{ catExpanded ? '收起' : '更多' }}
             </button>
           </section>
-        </aside>
+          </aside>
+        </div>
 
         <div class="content-col">
           <header class="page-header" data-reveal>
@@ -315,7 +361,13 @@ function statusLabel(status) {
             </div>
           </header>
 
-          <main class="content-area" v-loading="loading" data-reveal style="--reveal-delay: 160ms">
+          <main
+            class="content-area"
+            v-loading="loading"
+            data-aurora-block
+            data-reveal
+            style="--reveal-delay: 160ms"
+          >
             <div v-if="posts.length === 0 && !loading" class="empty-state" data-reveal>
               <svg
                 class="empty-icon"
@@ -498,6 +550,11 @@ function statusLabel(status) {
   opacity: 1;
 }
 
+.aurora-glow.blocked {
+  opacity: 0;
+  transition: none;
+}
+
 .square-inner {
   position: relative;
   z-index: 1;
@@ -574,13 +631,17 @@ function statusLabel(status) {
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
 }
-.sidebar {
+.sidebar-follow {
   position: sticky;
   top: 76px;
-  display: flex;
   width: 280px;
-  padding: 14px;
   flex: 0 0 280px;
+  will-change: transform;
+}
+.sidebar {
+  display: flex;
+  width: 100%;
+  padding: 14px;
   flex-direction: column;
   gap: 14px;
   transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -1001,6 +1062,13 @@ function statusLabel(status) {
   .main-layout {
     flex-direction: column;
   }
+  .sidebar-follow {
+    position: static;
+    width: 100%;
+    flex: none;
+    transform: none !important;
+    will-change: auto;
+  }
   .sidebar {
     position: static;
     display: grid;
@@ -1050,6 +1118,10 @@ function statusLabel(status) {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .sidebar-follow {
+    transform: none !important;
+    will-change: auto;
+  }
   [data-reveal],
   [data-reveal].is-visible,
   [data-reveal].is-visible.post-card:hover,

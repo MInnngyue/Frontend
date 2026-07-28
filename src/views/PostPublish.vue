@@ -8,7 +8,7 @@ import { ElMessage } from 'element-plus'
 import { useAuroraGlow } from '@/composables/useAuroraGlow'
 
 const router = useRouter()
-const { glowX, glowY, glowActive, onMouseMove, onMouseLeave } = useAuroraGlow()
+const { glowX, glowY, glowActive, glowBlocked, onMouseMove, onMouseLeave } = useAuroraGlow()
 
 const formRef = ref(null)
 const submitting = ref(false)
@@ -135,13 +135,13 @@ async function onSubmit() {
   <div class="page publish-page" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
     <div
       class="aurora-glow"
-      :class="{ active: glowActive }"
+      :class="{ active: glowActive, blocked: glowBlocked }"
       :style="{ transform: `translate3d(${glowX - 150}px, ${glowY - 100}px, 0)` }"
       aria-hidden="true"
     />
     <div
       class="aurora-glow aurora-glow--teal"
-      :class="{ active: glowActive }"
+      :class="{ active: glowActive, blocked: glowBlocked }"
       :style="{ transform: `translate3d(${glowX - 130}px, ${glowY - 160}px, 0)` }"
       aria-hidden="true"
     />
@@ -151,7 +151,7 @@ async function onSubmit() {
     </header>
 
     <el-form ref="formRef" :model="form" :rules="rules" class="publish-form" @submit.prevent="onSubmit">
-      <section class="form-section" data-reveal style="--reveal-delay: 60ms">
+      <section class="form-section" data-aurora-block data-reveal style="--reveal-delay: 60ms">
         <h2 class="section-title">
           <span class="section-num">01</span>
           物品信息
@@ -192,7 +192,7 @@ async function onSubmit() {
         </div>
       </section>
 
-      <section class="form-section" data-reveal style="--reveal-delay: 120ms">
+      <section class="form-section" data-aurora-block data-reveal style="--reveal-delay: 120ms">
         <h2 class="section-title">
           <span class="section-num">02</span>
           时间地点
@@ -254,7 +254,7 @@ async function onSubmit() {
         </div>
       </section>
 
-      <section class="form-section" data-reveal style="--reveal-delay: 180ms">
+      <section class="form-section" data-aurora-block data-reveal style="--reveal-delay: 180ms">
         <h2 class="section-title">
           <span class="section-num">03</span>
           补充描述
@@ -311,8 +311,7 @@ async function onSubmit() {
 
 <style scoped>
 .publish-page {
-  max-width: 720px;
-  margin: 0 auto;
+  width: 100%;
   padding: 31px 20px 48px;
   min-height: calc(100vh - 60px);
   position: relative;
@@ -348,8 +347,17 @@ async function onSubmit() {
   opacity: 1;
 }
 
+.aurora-glow.blocked {
+  opacity: 0;
+  transition: none;
+}
+
 .page-header,
 .publish-form {
+  width: 100%;
+  max-width: 680px;
+  margin-right: auto;
+  margin-left: auto;
   position: relative;
   z-index: 1;
 }

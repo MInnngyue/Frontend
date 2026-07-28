@@ -4,7 +4,7 @@ import { getErrorMessage } from '@/utils/error'
 
 // 创建 axios 实例
 const request = axios.create({
-  baseURL: 'http://172.18.112.1:8081',
+  baseURL: 'http://localhost:8081',
   timeout: 10000,
 })
 

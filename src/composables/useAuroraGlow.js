@@ -4,6 +4,7 @@ export function useAuroraGlow() {
   const glowX = ref(0)
   const glowY = ref(0)
   const glowActive = ref(false)
+  const glowBlocked = ref(false)
   const glowTargetX = ref(0)
   const glowTargetY = ref(0)
   const glowCurrentX = ref(0)
@@ -27,6 +28,12 @@ export function useAuroraGlow() {
   }
 
   function onMouseMove(event) {
+    glowBlocked.value = Boolean(event.target?.closest?.('[data-aurora-block]'))
+    if (glowBlocked.value) {
+      glowActive.value = false
+      return
+    }
+
     glowTargetX.value = event.clientX
     glowTargetY.value = event.clientY
     glowActive.value = true
@@ -37,6 +44,7 @@ export function useAuroraGlow() {
   }
 
   function onMouseLeave() {
+    glowBlocked.value = false
     glowActive.value = false
   }
 
@@ -44,6 +52,7 @@ export function useAuroraGlow() {
     glowX,
     glowY,
     glowActive,
+    glowBlocked,
     onMouseMove,
     onMouseLeave,
   }
