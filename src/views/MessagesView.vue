@@ -231,7 +231,7 @@ async function handleMsgClick(m) {
 .msg-section {
   padding: 24px 28px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 20px;
   box-shadow:

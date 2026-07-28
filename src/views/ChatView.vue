@@ -161,7 +161,7 @@ const displayMessages = computed(() => {
   overflow: hidden;
   position: relative;
   z-index: 1;
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 20px;
   box-shadow:

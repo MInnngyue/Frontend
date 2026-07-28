@@ -382,7 +382,7 @@ async function onSubmit() {
 
 /* 毛玻璃卡片 — 与广场小卡片完全一致 */
 .form-section {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 20px;
   box-shadow:
